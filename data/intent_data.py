@@ -28,7 +28,17 @@ class intentData():
                 "ecart-type du prix ttc du collier or",
                 "prix de vente ht de la robe rouge baby"
             ]
-        }, "boutique": {
+        },"bonjour": {
+            "examples" : ["bonjour",
+                "hey",
+                "hello",
+                "Bonjour",
+                "yo",
+                "coucou !",
+                "Salut !",
+                "Comment ca va ?"
+            ]
+        },"boutique": {
             "examples" : ["Quel est le pourcentage du sellthru au Japon",
                 "Quel est le sellthru du Japon pendant la Cruise",
                 "Et celui de l'année dernière ?",

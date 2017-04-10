@@ -3,19 +3,23 @@
 import numpy as np
 from sklearn.pipeline import Pipeline
 import sys
+import re
 sys.path.append('/usr/local/Cellar/python3/3.6.0/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages')
 import fasttext
-#from stop_words import get_stop_words
-#stop_words = get_stop_words('fr')
+from stop_words import get_stop_words
+stop_words_old = get_stop_words('fr')
+not_stop_words = ["ou","où","qui","quand","quel","quelle","quelle"]
+stop_words = [x for x in stop_words_old if x not in not_stop_words]
 from sklearn import neighbors
 from sklearn.externals import joblib
 
 def tokenize(text):
-    tokens = text.lower().split(' ')
+    stripped_punctuation = re.sub(r'[-_;,.?!]',' ',text.lower())
+    tokens = stripped_punctuation.split(' ')
     cleaned = []
     for token in tokens:
-        #if token not in stop_words:
-        cleaned.append(token)
+        if token not in stop_words:
+            cleaned.append(token)
     #print("left: "+' '.join(str(x) for x in cleaned))
     return cleaned
 

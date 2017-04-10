@@ -1,0 +1,63 @@
+import random
+
+class Response(object):
+
+	bonjour = [
+		"Hello! Comment ca va ?",
+		"Bonjour :)",
+		"Bongiorno !",
+		"Salut! Prêt à utiliser DiorBot ?"
+	]
+	
+	def make(self, data):
+		intent = data['intent']
+		if intent=="bonjour":
+			return str(random.choice(self.bonjour))
+		else:
+			return self.build_custom_answer(data)
+
+	def build_custom_answer(self, data):
+
+		cities = data['cities']
+		countries = data['countries']
+		nationalities = data['nationalities']
+		dates = data['dates']
+		intent = data['intent']
+
+		resp = "Mmh... Tu as l'air d'avoir envie d'une info sur "
+		if intent in ['produit', 'vendeur']:
+			resp += 'un '+intent+";;"
+		else:
+			resp += 'une '+intent+";;"
+
+		if (len(cities)>0 or len(countries)>0):
+			resp += "Avec un critère géographique ("
+			if len(cities)>0:
+				resp += ",".join(cities)+","
+			if len(countries)>0:
+				resp += ",".join(countries)+","
+			if resp[-1]==",":
+				resp = resp[:-1]
+			resp += ");;"
+		else:
+			resp += "Aucun paramètre géographique;;"
+
+		if len(nationalities)>0:
+			if len(nationalities)>1:
+				resp += "Relatif aux nationalités: "+",".join(nationalities)+";;"
+			else:
+				resp += "Relatif à la nationalité: "+nationalities[0]+";;"
+
+		if len(dates)>0:
+			resp += "Durant "+",".join(dates)
+		else:
+			resp += "Aucune date spécifiée"
+
+		return str(resp)
+
+
+
+
+
+
+

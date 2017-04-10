@@ -45,7 +45,7 @@ class DateExtractor(object):
                 return [post_word]
         return []
 
-    def extract(self,sentence):
+    def extract(self,sentence,text=False):
         sentence_split = self.clean(sentence)#.split(" ")
         #print(sentence_split)
         sentence_length = len(sentence_split)
@@ -63,7 +63,8 @@ class DateExtractor(object):
                 print("{} : {}".format(date_string,output))
             except:
                 pass
-        #return " ".join(sentence_split).replace(date_string,"DATE").rstrip()
+        if text:
+            return " ".join(sentence_split).replace(date_string,"DATE").rstrip()
         return allDates
 
 

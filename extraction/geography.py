@@ -7,8 +7,8 @@ stop_words_old = get_stop_words('fr')
 not_stop_words = ["ou","où","qui","quand","quel","quelle","quelle"]
 stop_words = [x for x in stop_words_old if x not in not_stop_words]
 import fasttext
-model_fasttext_path = '/Users/xav/Downloads/wiki.fr/wiki.fr.bin'
-model_fasttext = fasttext.load_model(model_fasttext_path)
+# model_fasttext_path = '/Users/xav/Downloads/wiki.fr/wiki.fr.bin'
+# model_fasttext = fasttext.load_model(model_fasttext_path)
 import numpy as np
 
 class WordClassification(object):
@@ -24,7 +24,8 @@ class WordClassification(object):
         return np.dot(a,b)/(np.linalg.norm(a)*np.linalg.norm(b))
     
     def tokenize(self, text):
-        tokens = text.lower().split(' ')
+        stripped_punctuation = re.sub(r'[-_;,.?!]',' ',text.lower())
+        tokens = stripped_punctuation.split(' ')
         cleaned = []
         for token in tokens:
             if token not in stop_words:
@@ -55,7 +56,8 @@ class WordClassification(object):
                 #print(score)
                 scores[idx] = score
                 if (score > self.threshold):
-                    found.append({term: score})
+                    found.append(term)
+                    #found.append({term: score})
 
         return found
     
@@ -65,6 +67,18 @@ class WordClassification(object):
         return self.find_similar(self.countries,text)
     def find_similar_nationality(self, text):
         return self.find_similar(self.nationalities,text)
+
+    def get_cleaned(self,text):
+        result = self.find_similar_city(text)+self.find_similar_country(text)
+        cloned_text = '%s' % text
+        for element in result:
+            cloned_text = cloned_text.replace(element,"GEO")
+
+        result = self.find_similar_nationality(text)
+        for element in result:
+            cloned_text = cloned_text.replace(element,"NAT")
+        print("cleaned text: ",cloned_text)
+        return cloned_text
     
     def find_similar_words(self, text):
         json = {
@@ -76,11 +90,11 @@ class WordClassification(object):
 
 
 # world = WordClassification(model_fasttext)
-# print(world.find_similar_words("La semaine dernière, qui a conclu le plus de ventes à madrid"))
-# print(world.find_similar_words("Les américains achètent-ils plus que les japonais"))
-# print(world.find_similar_words("Quelle part de russes dans les achats de Lady Dior"))
-# print(world.find_similar_words("Cette semaine, combien y a-t-il eu de clients marocains"))
-# print(world.find_similar_words("Est-ce que la plupart des clients au Moyen Orient sont locaux"))
+# print(world.get_cleaned("La semaine dernière, qui a conclu le plus de ventes à madrid"))
+# print(world.get_cleaned("Les américains achètent-ils plus que les japonais"))
+# print(world.get_cleaned("Quelle part de russes dans les achats de Lady Dior"))
+# print(world.get_cleaned("Cette semaine, combien y a-t-il eu de clients marocains"))
+# print(world.get_cleaned("Est-ce que la plupart des clients au Moyen Orient sont locaux"))
 
 
 
