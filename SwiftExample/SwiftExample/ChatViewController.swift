@@ -11,8 +11,6 @@ import JSQMessagesViewController
 
 class ChatViewController: JSQMessagesViewController {
     var messages = [JSQMessage]()
-    let defaults = UserDefaults.standard
-    var conversation: Conversation?
     var incomingBubble: JSQMessagesBubbleImage!
     var outgoingBubble: JSQMessagesBubbleImage!
     fileprivate var displayName: String!
@@ -37,18 +35,18 @@ class ChatViewController: JSQMessagesViewController {
 
         self.collectionView?.reloadData()
         self.collectionView?.layoutIfNeeded()
+        
     }
     
     func setupFavButton() {
         let button = UIButton.init(type: .custom)
         button.setImage(UIImage.init(named: "star"), for: UIControlState.normal)
-        button.setTitle("Favorits", for: UIControlState.normal)
-        button.addTarget(self, action:#selector(favTapped), for: UIControlEvents.touchUpInside)
 //        let backButton = UIBarButtonItem(title: "Favorits", style: UIBarButtonItemStyle.plain, target: self, action: #selector(favTapped))
 //        navigationItem.rightBarButtonItem = backButton
         button.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
-        let barButton = UIBarButtonItem.init(customView: button)
-        self.navigationItem.rightBarButtonItem = barButton
+//        self.navigationItem.rightBarButtonItem = barButton
+        self.navigationItem.title = "DiorBot"
+        self.inputToolbar.contentView?.leftBarButtonItem = button
     }
     
     func favTapped() {
@@ -58,9 +56,15 @@ class ChatViewController: JSQMessagesViewController {
     
     func fake_reply(message: JSQMessage) {
         
-        self.toogleTyping()
         self.messages.append(message)
         self.finishSendingMessage(animated: true)
+        
+    }
+    
+    func reply(sentence: String) {
+        
+        let message_reply = JSQMessage(senderId: "Bot", senderDisplayName: "Bot", date: Date(), text: sentence)
+        self.fake_reply(message: message_reply)
         
     }
     
@@ -68,6 +72,23 @@ class ChatViewController: JSQMessagesViewController {
         
         self.showTypingIndicator = !self.showTypingIndicator
         
+    }
+    
+    func send_message(sentence: String){
+        print("sending {"+sentence+"} to server")
+        DispatchQueue.global(qos: .background).async {
+            let parsed_messages = Methods().parse_message(sentence: sentence)
+            let sentences = parsed_messages.components(separatedBy: ";;")
+            DispatchQueue.main.async {
+                print("done")
+                self.toogleTyping()
+                for sentence in sentences {
+                    if sentence != "" {
+                        self.reply(sentence: sentence)
+                    }
+                }
+            }
+        }
     }
     
     // MARK: JSQMessagesViewController method overrides
@@ -85,43 +106,44 @@ class ChatViewController: JSQMessagesViewController {
     }
     
     func send_message(text: String, senderId: String, senderDisplayName: String, date: Date) {
+        print("got message: "+text)
         let message = JSQMessage(senderId: senderId, senderDisplayName: senderDisplayName, date: date, text: text)
-        let message_reply = JSQMessage(senderId: "Bot", senderDisplayName: "Bot", date: date, text: text)
+//        let message_reply = JSQMessage(senderId: "Bot", senderDisplayName: "Bot", date: date, text: text)
         self.messages.append(message)
+        print("done appending message")
         self.finishSendingMessage(animated: true)
+        print("added to screen")
         
         toogleTyping()
-        DispatchQueue.main.asyncAfter(deadline: .now() + 5.0, execute: {
-            self.fake_reply(message: message_reply)
-        })
+        print("sending msg to server")
+        self.send_message(sentence: text)
+//        DispatchQueue.main.asyncAfter(deadline: .now() + 5.0, execute: {
+//            self.fake_reply(message: message_reply)
+//        })
     }
     
     override func didPressAccessoryButton(_ sender: UIButton) {
         self.inputToolbar.contentView!.textView!.resignFirstResponder()
         
-        let sheet = UIAlertController(title: "Ajoutez un objet à votre message", message: nil, preferredStyle: .actionSheet)
+        let sheet = UIAlertController(title: "Vos questions favorites", message: nil, preferredStyle: .actionSheet)
         
-        let photoAction = UIAlertAction(title: "Ajouter une photo", style: .default) { (action) in
-            /**
-             *  Create fake photo
-             */
-            let photoItem = JSQPhotoMediaItem(image: UIImage(named: "goldengate"))
-            self.addMedia(photoItem)
+        let fav1 = UIAlertAction(title: "La semaine dernière, qui a conclu le plus de ventes à madrid", style: .default) { (action) in
+            self.send_message(text: "La semaine dernière, qui a conclu le plus de ventes à madrid", senderId: self.senderId(), senderDisplayName: self.senderId(), date: Date())
         }
         
-        let fileAction = UIAlertAction(title: "Ajouter un fichier", style: .default) { (action) in
-            /**
-             *  Add fake location
-             */
-            let locationItem = self.buildLocationItem()
-            
-            self.addMedia(locationItem)
+        let fav2 = UIAlertAction(title: "Les américains achètent-ils plus que les japonais", style: .default) { (action) in
+            self.send_message(text: "Les américains achètent-ils plus que les japonais", senderId: self.senderId(), senderDisplayName: self.senderId(), date: Date())
         }
         
-        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+        let fav3 = UIAlertAction(title: "Quelle part de russes dans les achats de Lady Dior", style: .default) { (action) in
+            self.send_message(text: "Quelle part de russes dans les achats de Lady Dior", senderId: self.senderId(), senderDisplayName: self.senderId(), date: Date())
+        }
         
-        sheet.addAction(photoAction)
-        sheet.addAction(fileAction)
+        let cancelAction = UIAlertAction(title: "Annuler", style: .cancel, handler: nil)
+        
+        sheet.addAction(fav1)
+        sheet.addAction(fav2)
+        sheet.addAction(fav3)
         sheet.addAction(cancelAction)
         
         self.present(sheet, animated: true, completion: nil)
@@ -178,11 +200,11 @@ class ChatViewController: JSQMessagesViewController {
          *
          *  Show a timestamp for every 3rd message
          */
-        if (indexPath.item % 3 == 0) {
-            let message = self.messages[indexPath.item]
-            
-            return JSQMessagesTimestampFormatter.shared().attributedTimestamp(for: message.date)
-        }
+//        if (indexPath.item % 3 == 0) {
+//            let message = self.messages[indexPath.item]
+//            
+//            return JSQMessagesTimestampFormatter.shared().attributedTimestamp(for: message.date)
+//        }
         
         return nil
     }
@@ -196,12 +218,12 @@ class ChatViewController: JSQMessagesViewController {
          *  Example on showing or removing senderDisplayName based on user settings.
          *  This logic should be consistent with what you return from `heightForCellTopLabelAtIndexPath:`
          */
-        if defaults.bool(forKey: Setting.removeSenderDisplayName.rawValue) {
-            return nil
-        }
+//        if defaults.bool(forKey: Setting.removeSenderDisplayName.rawValue) {
+//            return nil
+//        }
         
         if message.senderId == self.senderId() {
-            return nil
+            return NSAttributedString(string: "Vous")
         }
 
         return NSAttributedString(string: message.senderDisplayName)
@@ -218,11 +240,11 @@ class ChatViewController: JSQMessagesViewController {
          *
          *  Show a timestamp for every 3rd message
          */
-        if indexPath.item % 3 == 0 {
-            return kJSQMessagesCollectionViewCellLabelHeightDefault
-        }
+//        if indexPath.item % 3 == 0 {
+//            return kJSQMessagesCollectionViewCellLabelHeightDefault
+//        }
     
-        return 10.0
+        return 0.0
     }
 
     override func collectionView(_ collectionView: JSQMessagesCollectionView, layout collectionViewLayout: JSQMessagesCollectionViewFlowLayout, heightForMessageBubbleTopLabelAt indexPath: IndexPath) -> CGFloat {
@@ -231,9 +253,9 @@ class ChatViewController: JSQMessagesViewController {
          *  Example on showing or removing senderDisplayName based on user settings.
          *  This logic should be consistent with what you return from `attributedTextForCellTopLabelAtIndexPath:`
          */
-        if defaults.bool(forKey: Setting.removeSenderDisplayName.rawValue) {
-            return 0.0
-        }
+//        if defaults.bool(forKey: Setting.removeSenderDisplayName.rawValue) {
+//            return 0.0
+//        }
         
         /**
          *  iOS7-style sender name labels

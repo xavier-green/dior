@@ -122,8 +122,8 @@ class Server {
                 
                 // In case of error, send notification observed from App Delegate
                 // Shows pop up the says an error happened
-                NotificationCenter.default.post(name: Notification.Name(rawValue: "ERROR_BACK"), object: errors)
-                return
+//                NotificationCenter.default.post(name: Notification.Name(rawValue: "ERROR_BACK"), object: errors)
+//                return
                 
             }
             dataString = NSString(data: data!, encoding: String.Encoding.utf8.rawValue) as? String
@@ -140,7 +140,9 @@ class Server {
         _ = semaphore.wait(timeout: .distantFuture)
         
         if let error = errors {
-            print(error)
+            print("ERROR *************")
+//            print(error)
+            return "Malheureusement il y a eu un problème avec le serveur 😭"
         }
         
         return dataString!
