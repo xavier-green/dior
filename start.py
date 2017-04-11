@@ -43,6 +43,7 @@ print("Training model")
 
 intent_model = intentModel(model_fasttext)
 intent_model.train(data)
+intent_model.predict("prix ht de la rose des vents")
 
 app = Flask("test")
 

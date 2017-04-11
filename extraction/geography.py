@@ -6,10 +6,11 @@ from stop_words import get_stop_words
 stop_words_old = get_stop_words('fr')
 not_stop_words = ["ou","où","qui","quand","quel","quelle","quelle"]
 stop_words = [x for x in stop_words_old if x not in not_stop_words]
-import fasttext
+# import fasttext
 # model_fasttext_path = '/Users/xav/Downloads/wiki.fr/wiki.fr.bin'
 # model_fasttext = fasttext.load_model(model_fasttext_path)
 import numpy as np
+import re
 
 class WordClassification(object):
     
@@ -90,11 +91,11 @@ class WordClassification(object):
 
 
 # world = WordClassification(model_fasttext)
-# print(world.get_cleaned("La semaine dernière, qui a conclu le plus de ventes à madrid"))
-# print(world.get_cleaned("Les américains achètent-ils plus que les japonais"))
-# print(world.get_cleaned("Quelle part de russes dans les achats de Lady Dior"))
-# print(world.get_cleaned("Cette semaine, combien y a-t-il eu de clients marocains"))
-# print(world.get_cleaned("Est-ce que la plupart des clients au Moyen Orient sont locaux"))
+# print(world.find_similar_words("La semaine dernière, qui a conclu le plus de ventes à madrid"))
+# print(world.find_similar_words("Les américains achètent-ils plus que les japonais"))
+# print(world.find_similar_words("Quelle part de russes dans les achats de Lady Dior"))
+# print(world.find_similar_words("Cette semaine, combien y a-t-il eu de clients marocains"))
+# print(world.find_similar_words("Est-ce que la plupart des clients au Moyen Orient sont locaux"))
 
 
 
