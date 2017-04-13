@@ -26,20 +26,18 @@ from response import Response
 resp = Response()
 
 print("Importing treetagger")
-from treetaggerpython.treetagger import TreeTagger
-tt = TreeTagger(language='french')
 
 print("Training model")
 
 intent_model = intentModel(model_fasttext)
 intent_model.train(data)
-intent_model.predict("prix ht de la rose des vents")
+#intent_model.predict("prix ht de la rose des vents")
 
 app = Flask("test")
 
 world = WordClassification(model_fasttext)
 datex = DateExtractor()
-word = ProductExtractor('/Users/xav/Downloads/products.csv', tt)
+word = ProductExtractor('/Users/xav/Downloads/products.csv')
 
 @app.route('/params/<string:sentence>')
 def vector_get(sentence):

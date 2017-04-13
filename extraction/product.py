@@ -8,25 +8,24 @@ stop_words_old = get_stop_words('fr')
 not_stop_words = ["ou","où","qui","quand","quel","quelle","quelle"]
 stop_words = [x for x in stop_words_old if x not in not_stop_words]
 import re
-# from treetaggerpython.treetagger import TreeTagger
-# tt = TreeTagger(language='french')
+from textblob import TextBlob
+from textblob_fr import PatternTagger, PatternAnalyzer
 from nltk.util import ngrams 
 
 class ProductExtractor(object):
     
     authorized = [
-        "ADJ-NOM","NOM-ADJ","ADJ","NOM-ADJ-NOM","NOM","NOM-DET-NOM","ADJ-DET-NOM","NOM-DET-ADJ","NOM-PRP-NOM","ADJ-PRP-NOM"
+        "JJ","NN","NNS","NN-JJ","JJ-NN","NNS-JJ","JJ-NNS","NNS-IN-NNS","NN-IN-NN","JJ-IN-NNS","NNS-IN-JJ","JJ-IN-NN","NN-IN-JJ"
     ]
     
     not_replace = [
         "GEO", "NAT", "DATE", "prix", "vente", "stock", "boutique"
     ]
     
-    def __init__(self, csv_path, tree, n_max=3):
+    def __init__(self, csv_path, n_max=3):
         self.csv = pd.read_csv(csv_path,names=['Produit']).dropna()
         print("Cleaning csv ...")
         self.clean_csv()
-        self.tree_tagger = tree
         self.n_max = n_max
     
     def removeRowWithSpecialCharacterAndNumbers(self, w):
@@ -57,18 +56,12 @@ class ProductExtractor(object):
         return filtered_tokens
 
     def tag_dict(self, sentence):
-        print(sentence)
         cleaned = " ".join(self.aggressive_tokenize(sentence))
-        print(cleaned)
-        tags = self.tree_tagger.tag(cleaned)
-        tag_dict = dict()
-        for tag in tags:
-            print(tag)
-            word = tag[0]
-            word_tag = tag[1].split(":")[0]
-            if not word in tag_dict:
-                tag_dict[word] = word_tag
-        return tag_dict
+        t = TextBlob(sentence, pos_tagger=PatternTagger(), analyzer=PatternAnalyzer()).tags
+        d = dict()
+        for a in t:
+            d[a[0].lower()] = a[1]
+        return d
     
     def extract(self, sentence):
         results = []
@@ -110,5 +103,5 @@ class ProductExtractor(object):
             copy = copy.replace(w, "ITEM")
         return copy
     
-# itm = ProductExtractor('/Users/xav/Downloads/products.csv', tt)
+# itm = ProductExtractor('data/products.csv')
 # print(itm.extract("Combien de rose des vents et de souliers avons-nous vendu la semaine derniere"))
