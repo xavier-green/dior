@@ -37,7 +37,7 @@ app = Flask("test")
 
 world = WordClassification(model_fasttext)
 datex = DateExtractor()
-word = ProductExtractor('/Users/xav/Downloads/products.csv')
+word = ProductExtractor('data/products.csv')
 
 @app.route('/params/<string:sentence>')
 def vector_get(sentence):

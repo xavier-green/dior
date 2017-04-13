@@ -18,8 +18,6 @@ not_stop_words = ["ou","où","qui","quand","quel","quelle","quelle"]
 stop_words = [x for x in stop_words_old if x not in not_stop_words]
 from sklearn import neighbors
 from sklearn.externals import joblib
-from treetaggerpython.treetagger import TreeTagger
-tt = TreeTagger(language='french')
 
 def tokenize(text):
     stripped_punctuation = re.sub(r'[-_;,.?!]',' ',text.lower())
@@ -54,7 +52,7 @@ class intentModel(object):
         self.trained_model = None
         self.world = WordClassification(self.word2vec_model)
         self.datex = DateExtractor()
-        self.itm = ProductExtractor('/Users/xav/Downloads/products.csv', tt)
+        self.itm = ProductExtractor('data/products.csv')
 
     def remove_variables(self, text):
         without_date = self.datex.extract(text,text=True)
