@@ -15,11 +15,11 @@ from nltk.util import ngrams
 class ProductExtractor(object):
     
     authorized = [
-        "JJ","NN","NNS","NN-JJ","JJ-NN","NNS-JJ","JJ-NNS","NNS-IN-NNS","NN-IN-NN","JJ-IN-NNS","NNS-IN-JJ","JJ-IN-NN","NN-IN-JJ"
+        "JJ","NN","NNS","NN-JJ","JJ-NN","NN-NN","NNS-NNS","NNS-NN","NN-NNS","NNS-JJ","JJ-NNS","NNS-IN-NNS","NN-IN-NN","JJ-IN-NNS","NNS-IN-JJ","JJ-IN-NN","NN-IN-JJ"
     ]
     
     not_replace = [
-        "GEO", "NAT", "DATE", "prix", "vente", "stock", "boutique"
+        "GEO", "NAT", "DATE", "prix", "vente", "stock", "boutique","part"
     ]
     
     def __init__(self, csv_path, n_max=3):
