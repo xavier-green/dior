@@ -66,4 +66,4 @@ def vector_post():
         return "incorrect request (no sentence field)"
     return str(model_fasttext[sentence.split()[0]])
 
-app.run()
+app.run(host="0.0.0.0")
