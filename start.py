@@ -7,6 +7,8 @@ print("Importing geo class")
 from extraction.geography import WordClassification
 print("Importing date class")
 from extraction.date import DateExtractor
+print("Importing item class")
+from extraction.product import ProductExtractor
 
 print("Importing training data")
 from data import intent_data
@@ -19,25 +21,13 @@ import fasttext
 model_fasttext_path = '/Users/xav/Downloads/wiki.fr/wiki.fr.bin'
 model_fasttext = fasttext.load_model(model_fasttext_path)
 
-world = WordClassification(model_fasttext)
-datex = DateExtractor()
-
-def strip_geo_dates(text):
-    without_date = datex.extract(text,text=True)
-    without_geo = world.get_cleaned(without_date)
-    return without_geo
-
-print("Cleaning data...")
-for intent in data:
-    new_examples = []
-    for exampleLine in data[intent]["examples"]:
-        new_examples.append(strip_geo_dates(exampleLine))
-    data[intent]["examples"] = new_examples
-print(data)
-
 print("Importing responses")
 from response import Response
 resp = Response()
+
+print("Importing treetagger")
+from treetaggerpython.treetagger import TreeTagger
+tt = TreeTagger(language='french')
 
 print("Training model")
 
@@ -47,16 +37,22 @@ intent_model.predict("prix ht de la rose des vents")
 
 app = Flask("test")
 
-@app.route('/<string:sentence>')
+world = WordClassification(model_fasttext)
+datex = DateExtractor()
+word = ProductExtractor('/Users/xav/Downloads/products.csv', tt)
+
+@app.route('/params/<string:sentence>')
 def vector_get(sentence):
     global model_fasttext
     if model_fasttext is None:
         model_fasttext = fasttext.load_model(model_fasttext_path)
-    intent_extracted = intent_model.predict(strip_geo_dates(sentence))
+    intent_extracted = intent_model.predict(sentence)
     geo_extracted = world.find_similar_words(sentence)
     dates_extracted = datex.extract(sentence)
+    items_extracted = word.extract(sentence)
     geo_extracted['dates'] = dates_extracted
     geo_extracted['intent'] = intent_extracted
+    geo_extracted['items'] = items_extracted
     return resp.make(geo_extracted)
     # return str(geo_extracted) # returns the vector of the first word just to check that the model was used
 

@@ -1,4 +1,10 @@
 # coding=utf-8
+import sys
+import os
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'extraction'))
+from product import ProductExtractor
+from geography import WordClassification
+from date import DateExtractor
 
 import numpy as np
 from sklearn.pipeline import Pipeline
@@ -12,6 +18,8 @@ not_stop_words = ["ou","où","qui","quand","quel","quelle","quelle"]
 stop_words = [x for x in stop_words_old if x not in not_stop_words]
 from sklearn import neighbors
 from sklearn.externals import joblib
+from treetaggerpython.treetagger import TreeTagger
+tt = TreeTagger(language='french')
 
 def tokenize(text):
     stripped_punctuation = re.sub(r'[-_;,.?!]',' ',text.lower())
@@ -44,12 +52,22 @@ class intentModel(object):
     def __init__(self, fasttext_model):
         self.word2vec_model = fasttext_model
         self.trained_model = None
+        self.world = WordClassification(self.word2vec_model)
+        self.datex = DateExtractor()
+        self.itm = ProductExtractor('/Users/xav/Downloads/products.csv', tt)
+
+    def remove_variables(self, text):
+        without_date = self.datex.extract(text,text=True)
+        without_geo = self.world.get_cleaned(without_date)
+        #without_item = self.itm.clean_text(without_geo)
+        #print(text+" -- "+without_item)
+        return without_geo
 
     def train(self, data, save_file=False):
         X, y = [], []
         for intent in data:
             for exampleLine in data[intent]["examples"]:
-                X.append(exampleLine)
+                X.append(self.remove_variables(exampleLine))
                 y.append(intent)
         X, y = np.array(X), np.array(y)
         print("Done setting up X and y")
@@ -64,7 +82,7 @@ class intentModel(object):
             print("Done saving it to pickle file")
 
     def predict(self, question):
-        return self.trained_model.predict([question])[0]
+        return self.trained_model.predict([self.remove_variables(question)])[0]
 
 
 

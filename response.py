@@ -23,12 +23,19 @@ class Response(object):
 		nationalities = data['nationalities']
 		dates = data['dates']
 		intent = data['intent']
+		items = data['items']
 
 		resp = "Mmh... Tu as l'air d'avoir envie d'une info sur "
 		if intent in ['produit', 'vendeur']:
 			resp += 'un '+intent+";;"
 		else:
 			resp += 'une '+intent+";;"
+
+		if (len(items)>0):
+			resp += "Au sujet de produits ("+",".join(items)
+			if resp[-1]==",":
+				resp = resp[:-1]
+			resp += ");;"
 
 		if (len(cities)>0 or len(countries)>0):
 			resp += "Avec un critère géographique ("
@@ -39,8 +46,6 @@ class Response(object):
 			if resp[-1]==",":
 				resp = resp[:-1]
 			resp += ");;"
-		else:
-			resp += "Aucun paramètre géographique;;"
 
 		if len(nationalities)>0:
 			if len(nationalities)>1:
@@ -49,9 +54,10 @@ class Response(object):
 				resp += "Relatif à la nationalité: "+nationalities[0]+";;"
 
 		if len(dates)>0:
-			resp += "Durant "+",".join(dates)
-		else:
-			resp += "Aucune date spécifiée"
+			resp += "Avec un critère géographique ("+",".join(dates)
+			if resp[-1]==",":
+				resp = resp[:-1]
+			resp += ");;"
 
 		return str(resp)
 

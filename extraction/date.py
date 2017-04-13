@@ -4,10 +4,6 @@ import re
 import unicodedata
 import sys
 sys.path.append('/usr/local/Cellar/python3/3.6.0/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages')
-from stop_words import get_stop_words
-stop_words_old = get_stop_words('fr')
-not_stop_words = ["ou","où","qui","quand","quel","quelle","quelle","cette","ce"]
-stop_words = [x for x in stop_words_old if x not in not_stop_words]
 
 jours = ["Lundi","Lu","Lun","Mardi","Mercredi","Mer","Me","Jeudi","Jeu","Je","Vendredi","Ven","Ve","Samedi","Sam","Sa","Dimanche","Dim","Di"]
 mois = ["Janvier","Janv","Jan","Février","Févr","Fév","Mars","Avril","Avr","Mai","Juin","Jun","Juillet","Juil","Jul","Août","Aoû","Septembre","Sept","Sep","Octobre","Oct","Novembre","Nov","Décembre","Déc"]
@@ -18,14 +14,13 @@ post_words = ["dernier","derniers","derniere","dernière"]
 class DateExtractor(object):
 
     def clean(self,text):
-        print(text)
+        #print(text)
         #search_string = ''.join((c for c in unicodedata.normalize('NFD', text) if unicodedata.category(c) != 'Mn'))
         stripped_punctuation = re.sub(r'[-_;,.?!]',' ',text.lower())
         tokens = stripped_punctuation.split(' ')
         cleaned = []
         for token in tokens:
-            if token not in stop_words:
-                cleaned.append(token)
+            cleaned.append(token)
         #print("left: "+' '.join(str(x) for x in cleaned))
         return cleaned
 
@@ -60,7 +55,7 @@ class DateExtractor(object):
                 #print(date_part)
                 date_string = " ".join(date_part)
                 allDates.append(date_string)
-                print("{} : {}".format(date_string,output))
+                #print("{} : {}".format(date_string,output))
             except:
                 pass
         if text:
