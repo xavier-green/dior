@@ -48,13 +48,13 @@ class Response(object):
 			resp += ");;"
 
 		if len(nationalities)>0:
-			if len(nationalities)>1:
-				resp += "Relatif aux nationalités: "+",".join(nationalities)+";;"
-			else:
-				resp += "Relatif à la nationalité: "+nationalities[0]+";;"
+			resp += "Avec un critère de nationalité ("+",".join(nationalities)
+			if resp[-1]==",":
+				resp = resp[:-1]
+			resp += ");;"
 
 		if len(dates)>0:
-			resp += "Avec un critère géographique ("+",".join(dates)
+			resp += "Avec un critère de date ("+",".join(dates)
 			if resp[-1]==",":
 				resp = resp[:-1]
 			resp += ");;"
