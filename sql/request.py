@@ -1,24 +1,33 @@
 # coding=utf-8
 
-from tables import item
+from tables import *
 
 class query(object):
-    def __init__ (self, table, columns):
+    def __init__ (self, table, columns, number):
+        # Vérifie que toutes les colonnes demandées appartiennent à la table indiquée
         Bool = True
         for c in columns :
             if c not in table.columns:
                 Bool = False
         assert Bool or columns[0] == '*', "La table " + table.name + " ne possède pas un des attributs demandés parmi " + ', '.join(columns)
 
+        # Met en forme les colonnes demandées
         if columns[0] != "*" :
             objectif = table.alias + '.' + table.prefix + columns[0]
             for i in range(1, len(columns)):
                 objectif += ', ' + table.alias + '.' + table.prefix + columns[i]
         else :
             objectif = "*"
+            
+        # Met en forme un éventuel TOP i éléments
+        top = '' if number == 0 else 'TOP %i ' % (number)
         
-        self.request = "SELECT TOP 3 " + objectif + " FROM " + table.name + " AS " + table.alias + "\n"
+        # Ecrit le début de la requête
+        self.request = "SELECT " + top + objectif + " FROM " + table.name + " AS " + table.alias + "\n"
+        
+        # Stock les tables utilisées dans la requête, et le nombre de where
         self.joints = [table]
+        self.wcount = 0
         
     def join(self, table1, table2, join1, join2):
         assert table1 in self.joints, "Vous tentez de joindre deux tables absentes de la requête."
@@ -34,26 +43,20 @@ class query(object):
         assert table in self.joints, "Vous faites appel à la table " + table.name + " absente de la requête, utilisez JOIN pour l'ajouter"
         assert column in table.columns, "La table " + table.name + " ne possède pas d'attribut " + table.prefix + column
         
-        self.request += "WHERE " + table.alias + '.' + table.prefix + column + " LIKE '%" + description + "%'\n"
+        und = 'WHERE ' if self.wcount == 0 else 'AND '
+        self.wcount += 1
+        
+        self.request += und + table.alias + '.' + table.prefix + column + " LIKE '%" + description + "%'\n"
     
     def groupby(self, table, column):
         assert table in self.joints,  "Vous faites appel à la table " + table.name + " absente de la requête, utilisez JOIN pour l'ajouter"
+        assert column in table.columns, "La table " + table.name + " ne possède pas d'attribut " + table.prefix + column
         
-    def write_query(self):
+        self.request += "GROUP BY " + table.alias + '.' + table.prefix + column + "\n"
+        
+    def write(self):
         self.request += "GO\n"
         self.request += "QUIT"
         self.file = open("example.sql", "w")
         self.file.write(self.request)
         self.file.close()
-
-test = query(item, ['*'])
-test.join(item, color_size, "Code", "Code")
-test.where(item, 'Description', 'bustier')
-test.write_query()
-
-test20 = query(color_size, ['Color'])
-test20.join(color_size, item, 'Code', 'Code')
-test20.where(item, 'Description', 'rose des vents')
-test20.write_query()
-
-#print(test20.request)

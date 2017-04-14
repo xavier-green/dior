@@ -10,6 +10,10 @@ from extraction.date import DateExtractor
 print("Importing item class")
 from extraction.product import ProductExtractor
 
+print("Importing sql files")
+from sql.answer import answer
+ans = answer()
+
 print("Importing training data")
 from data import intent_data
 data = intent_data.intentData.data
@@ -52,6 +56,7 @@ def vector_get(sentence):
     geo_extracted['intent'] = intent_extracted
     geo_extracted['items'] = items_extracted
     return resp.make(geo_extracted)
+    return ans.make(geo_extracted)
     # return str(geo_extracted) # returns the vector of the first word just to check that the model was used
 
 @app.route('/', methods=["POST"]) # same but getting the sentence via POST
