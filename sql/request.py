@@ -60,5 +60,5 @@ class query(object):
         # Database call
         p = subprocess.run('docker exec  mssql /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P D10R_password! -d Reporting -W -w 999 -s | -Q'.split() + [self.request], stdout=subprocess.PIPE, universal_newlines=True)
         # Delete last line '(n rows affected)'
-        out = p.stdout.splitlines()[1:-2]
-        return(csv.DictReader(p.stdout.splitlines(), delimiter='|'))
+        out = p.stdout.splitlines()[:-1]
+        return(csv.DictReader(out, delimiter='|'))
