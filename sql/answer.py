@@ -28,4 +28,3 @@ class answer(object):
                 string += self.produit(product)
                 
         return string
-    
