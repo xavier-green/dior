@@ -24,16 +24,5 @@ class answer(object):
             for product in items:
                 print("\nVoici la liste des produits contenant " + product)
                 self.produit(product)
-
-data = {
-        'cities' : '',
-        'countries' : '',
-        'nationalities' : '',
-        'dates' : '',
-        'intent' : 'produit',
-        'items' : ('rose des vents', 'pantalon')
-        }
-test = answer()
-test.make(data)
             
     

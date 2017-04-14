@@ -55,8 +55,8 @@ def vector_get(sentence):
     geo_extracted['dates'] = dates_extracted
     geo_extracted['intent'] = intent_extracted
     geo_extracted['items'] = items_extracted
+    ans.make(geo_extracted)
     return resp.make(geo_extracted)
-    return ans.make(geo_extracted)
     # return str(geo_extracted) # returns the vector of the first word just to check that the model was used
 
 @app.route('/', methods=["POST"]) # same but getting the sentence via POST
