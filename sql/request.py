@@ -1,6 +1,6 @@
 # coding=utf-8
 
-from tables import *
+from sql.tables import *
 
 class query(object):
     def __init__ (self, table, columns, number):
