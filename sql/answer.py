@@ -1,7 +1,7 @@
 # coding=utf-8
 
-from tables import table, country, nationality, customer, department, division, family, retail, color_size, item
-from request import query
+from sql.tables import table, country, nationality, customer, department, division, family, retail, color_size, item
+from sql.request import query
 
 class answer(object):
     
