@@ -57,6 +57,5 @@ class query(object):
 
     def write(self):
         self.request += "GO\n"
-        p = subprocess.Popen('docker exec  mssql /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P D10R_password! -d Reporting -W -w 999 -s"|" -Q'.split().append(self.request), stdout=subprocess.PIPE, universal_newlines=True)
-        output, err = p.communicate()
-        return(csv.DictReader(output.splitlines(), delimiter='|'))
+        p = subprocess.run('docker exec  mssql /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P D10R_password! -d Reporting -W -w 999 -s | -Q'.split() + [self.request], stdout=subprocess.PIPE, universal_newlines=True)
+        return(csv.DictReader(p.stdout.splitlines(), delimiter='|'))
