@@ -5,6 +5,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'extraction'))
 from product import ProductExtractor
 from geography import WordClassification
 from date import DateExtractor
+from boutique import extract_boutique
 
 import numpy as np
 from sklearn.pipeline import Pipeline
@@ -54,13 +55,15 @@ class intentModel(object):
         self.world = WordClassification(self.word2vec_model)
         self.datex = DateExtractor()
         self.itm = ProductExtractor('data/products.csv')
+        self.boutique = extract_boutique('data/Boutiques.csv')
 
     def remove_variables(self, text):
         without_date = self.datex.extract(text,text=True)
         without_geo = self.world.get_cleaned(without_date)
         without_item = self.itm.clean_text(without_geo)
-        print(text+" -- "+without_item)
-        return without_geo
+        without_boutique = self.boutique.clean_text(without_item)
+        print(text+" -- "+without_boutique)
+        return without_boutique
 
     def train(self, data, save_file=False):
         X, y = [], []

@@ -21,8 +21,8 @@ class WordClassification(object):
         return np.dot(a,b)/(np.linalg.norm(a)*np.linalg.norm(b))
     
     def tokenize(self, text):
-        stripped_punctuation = re.sub(r'[-_;,.?!]',' ',text.lower())
-        tokens = stripped_punctuation.split(' ')
+        #stripped_punctuation = re.sub(r'[-_;,.?!]',' ',text.lower())
+        tokens = text.split(' ')
         cleaned = []
         for token in tokens:
             cleaned.append(token)
@@ -68,10 +68,12 @@ class WordClassification(object):
         result = self.find_similar_city(text)+self.find_similar_country(text)
         cloned_text = '%s' % text
         for element in result:
+            print("GEO replacing: "+element)
             cloned_text = cloned_text.replace(element,"GEO")
 
         result = self.find_similar_nationality(text)
         for element in result:
+            print("NAT replacing: "+element)
             cloned_text = cloned_text.replace(element,"NAT")
         #print("cleaned text: ",cloned_text)
         return cloned_text

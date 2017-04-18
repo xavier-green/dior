@@ -12,19 +12,19 @@ from textblob import TextBlob
 from textblob_fr import PatternTagger, PatternAnalyzer
 from nltk.util import ngrams 
 
-class ProductExtractor(object):
+class extract_boutique(object):
     
     authorized = [
-        "JJ","NN","NNS","NN-JJ","JJ-NN","NN-NN","NNS-NNS","NNS-NN","NN-NNS","NNS-JJ","JJ-NNS","NNS-IN-NNS","NN-IN-NN","JJ-IN-NNS","NNS-IN-JJ","JJ-IN-NN","NN-IN-JJ","NN-NN-NN"
+        "JJ","NN","NNS","NN-JJ","JJ-NN","NN-NN","NNS-NNS","NNS-NN","NN-NNS","NNS-JJ","JJ-NNS","NNS-IN-NNS","NN-IN-NN","JJ-IN-NNS","NNS-IN-JJ","JJ-IN-NN","NN-IN-JJ"
     ]
     
     not_replace = [
-        "geo", "nat", "date", "prix", "vente", "stock", "boutique","part", "couleur", "matière", "francais", "moyen", "jours", "couverture", "article", "new", "mix", "type", "cruise", "zone", "clients", "gros", "grands", "top", "nom"
+        "geo", "nat", "date", "prix", "vente", "femme", "stock", "yo", "sales"
     ]
     
     def __init__(self, csv_path, n_max=3):
-        self.csv = pd.read_csv(csv_path,names=['Produit']).dropna()
-        #print("Cleaning csv ...")
+        self.csv = pd.read_csv(csv_path,names=['Code','Boutique']).dropna()
+        print("Cleaning csv ...")
         self.clean_csv()
         self.n_max = n_max
     
@@ -32,28 +32,33 @@ class ProductExtractor(object):
         pattern = re.compile('^[a-zA-Z-\' ]+$')
         return pattern.match(w) != None
     
-    def removShortStrings(self, x):
-        return " "+" ".join([w.lower() for w in x.split(" ")if len(w)>2]).rstrip().lstrip()+" "
+    def remove_wholesale(self, x):
+        return not ('Wholesale' in x)
+    
+    def removeCityNames(self, x):
+        if " - " in x:
+            return " "+x.split(" - ")[1].lower().rstrip().lstrip()+" "
+        return x.lower()
     
     def clean_csv(self):
-        self.csv = self.csv[self.csv.Produit.apply(self.removeRowWithSpecialCharacterAndNumbers)]
-        self.csv['Produit'] = self.csv.Produit.apply(self.removShortStrings)
+        self.csv = self.csv[self.csv.Boutique.apply(self.removeRowWithSpecialCharacterAndNumbers)]
+        self.csv = self.csv[self.csv.Boutique.apply(self.remove_wholesale)]
+        self.csv['Boutique'] = self.csv.Boutique.apply(self.removeCityNames)
         self.csv = self.csv.drop_duplicates()
-        empties = self.csv['Produit'] != ""
+        empties = self.csv['Boutique'] != ""
         self.csv = self.csv[empties]
     
     def csv_contains(self, w):
-        return self.csv[self.csv.Produit.str.contains(" "+w.rstrip().lstrip()+" ")]
+        return self.csv[self.csv.Boutique.str.contains(" "+w.rstrip().lstrip()+" ")]
     
     def get_product(self, sentence):
         return len(self.csv_contains(sentence))>0
     
     def aggressive_tokenize(self, text):
         min_length = 3
+        text = re.sub('[,;?:!.]', '', text);
         words = map(lambda word: word.lower(), text.split(" "));
-        p = re.compile('^[a-zA-Z\' ]+$');
-        filtered_tokens = list(filter(lambda token:p.match(token) and len(token)>=min_length,words));
-        return filtered_tokens
+        return list(words)
 
     def tag_dict(self, sentence):
         cleaned = " ".join(self.aggressive_tokenize(sentence))
@@ -67,6 +72,7 @@ class ProductExtractor(object):
         results = []
         sentence = sentence.lower()
         tags_dict = self.tag_dict(sentence)
+        #print(tags_dict)
         for i in range(1,self.n_max+1):
             results = self.extract_N(sentence, tags_dict, results, i)
         return results
@@ -74,10 +80,11 @@ class ProductExtractor(object):
     def extract_N(self, sentence, tags_dict, prev_results, n):
         prev_results_copy = prev_results[:]
         #print("******** Extracting "+str(n)+"-gram")
-        sentence_tokens = sentence.split(" ")
+        sentence_tokens = self.aggressive_tokenize(sentence)
+        #print(sentence_tokens)
         ng = ngrams(sentence_tokens,n)
         ok_products = []
-        for item in ng: #tqdm_notebook(ng):
+        for item in ng:
             short_sentence = " ".join(item)
             auth = not (len([w for w in self.not_replace if w in short_sentence])>0 or len([w for w in item if w not in tags_dict])>0)
             if auth:
@@ -97,12 +104,18 @@ class ProductExtractor(object):
         return ok_products+[a for a in prev_results_copy if a != '']
     
     def clean_text(self, text):
-        copy = text[:]
+        copy = text[:].lower()
         to_replace = self.extract(text)
         for w in to_replace:
-            print("ITEM replacing: "+w)
-            copy = copy.replace(w, "ITEM")
+            print("SHOP replacing: "+w)
+            copy = copy.replace(w, "SHOP")
         return copy
     
-# itm = ProductExtractor('data/products.csv')
-# print(itm.extract("Combien de rose des vents et de souliers avons-nous vendu la semaine derniere"))
+# itm = extract_boutique('/Users/xav/Desktop/DTY/Dior/rest/data/Boutiques.csv')
+# print("Montaigne, Bond Street et Peking Road ont-elles une couverture moyenne de stocks en Sacs Femme supérieure à 3 mois ?")
+# print(itm.clean_text("Montaigne, Bond Street et Peking Road ont-elles une couverture moyenne de stocks en Sacs Femme supérieure à 3 mois ?"))
+
+
+
+
+
