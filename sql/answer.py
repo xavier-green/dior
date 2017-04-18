@@ -4,7 +4,8 @@ from sql.tables import table, country, nationality, customer, department, divisi
 from sql.request import query
 
 class answer(object):
-
+    
+    # Cette fonction a été déplacée dans ../intent/produit.py
     def produit(self, product):
         demande = query(item, ['Description'], 50)
         demande.where(item, 'Description', product)
@@ -25,5 +26,5 @@ class answer(object):
             for product in items:
                 string += "\nVoici la liste des produits contenant " + product + "\n"
                 string += self.produit(product)
-
+                
         return string
