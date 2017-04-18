@@ -40,7 +40,7 @@ class Produit(object):
 		if (len(self.cities)>0 or len(self.countries)>0):
 			resp += "Avec un critère géographique ("
 			if len(self.cities)>0:
-				res  p += ",".join(self.cities)+","
+				resp += ",".join(self.cities)+","
 			if len(self.countries)>0:
 				resp += ",".join(self.countries)+","
 			if resp[-1]==",":
