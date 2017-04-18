@@ -28,9 +28,9 @@ class WordClassification(object):
             cleaned.append(token)
         return cleaned
     
-    def find_similar(self,corpus,text):
+    def find_similar(self,similar_classed,text):
         
-        total_comparison_corpus = corpus
+        total_comparison_corpus = similar_classed
 
         C = np.zeros((len(total_comparison_corpus),self.word2vec_model.dim))
 
