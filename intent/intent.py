@@ -58,8 +58,8 @@ class intentModel(object):
     def remove_variables(self, text):
         without_date = self.datex.extract(text,text=True)
         without_geo = self.world.get_cleaned(without_date)
-        #without_item = self.itm.clean_text(without_geo)
-        #print(text+" -- "+without_item)
+        without_item = self.itm.clean_text(without_geo)
+        print(text+" -- "+without_item)
         return without_geo
 
     def train(self, data, save_file=False):
