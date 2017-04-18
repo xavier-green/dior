@@ -1,0 +1,5 @@
+SELECT TOP 50 IT.ITEM_Description FROM ITEM_ITEM AS IT
+WHERE IT.ITEM_Description LIKE '%pantalon%'
+GROUP BY IT.ITEM_Description
+GO
+QUIT

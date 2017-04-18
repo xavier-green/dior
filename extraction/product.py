@@ -19,7 +19,7 @@ class ProductExtractor(object):
     ]
     
     not_replace = [
-        "GEO", "NAT", "DATE", "prix", "vente", "stock", "boutique","part"
+        "GEO", "NAT", "DATE", "prix", "vente", "stock", "boutique","part", "couleur", "matière"
     ]
     
     def __init__(self, csv_path, n_max=3):
