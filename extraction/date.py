@@ -112,6 +112,5 @@ class DateExtractor(object):
         return allDates
 
 
-datex = DateExtractor()
-print(datex.extract_numerical("La semaine dernière, qui a conclu le plus de ventes à Ginza"))
-
+# datex = DateExtractor()
+# print(datex.extract_numerical("La semaine dernière, qui a conclu le plus de ventes à Ginza"))

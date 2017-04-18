@@ -1,3 +1,5 @@
+from sql.request import query
+from sql.tables import table, country, nationality, customer, department, division, family, retail, color_size, item
 
 class Produit(object):
 
@@ -20,9 +22,18 @@ class Produit(object):
 		# select COUNT
 		# nationalites -> vente
 		# item obligatoire
+
+		# IN PROGRESS
+
+
 		if len(self.items) == 0:
 			return "Veuillez préciser un produit svp"
-		return "Ok"
+		else:
+			demande = query(item, ['Description'], 50)
+			for search_item in self.items:
+				demande.where(item, 'Description', search_item)
+			demande.groupby(item, 'Description')
+			return demande.write()
 
 	def append_details(self, text):
 		resp = text[:]+";;"
