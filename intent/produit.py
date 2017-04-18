@@ -69,18 +69,20 @@ class Produit(object):
 		product_query.write()
 		return product_query.request
 	
-		#else:
-		#	demande = query(item, ['Description'], 50)
-		#	demande.where(item, 'Description', product)
-		#	demande.groupby(item, 'Description')
-		#	return demande.write()
+		# Test de Rémi
+		else:
+			demande = query(item, ['Description'], 50)
+			for search_item in self.items:
+				demande.where(item, 'Description', search_item)
+			demande.groupby(item, 'Description')
+			return demande.write()
 
 	def append_details(self, text):
 		resp = text[:]+";;"
 		if (len(self.cities)>0 or len(self.countries)>0):
 			resp += "Avec un critère géographique ("
 			if len(self.cities)>0:
-				resp += ",".join(self.cities)+","
+				res  p += ",".join(self.cities)+","
 			if len(self.countries)>0:
 				resp += ",".join(self.countries)+","
 			if resp[-1]==",":
