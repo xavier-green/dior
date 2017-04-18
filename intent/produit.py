@@ -25,24 +25,24 @@ class Produit(object):
 		return "Ok"
 
 	def append_details(self, text):
-        resp = text[:]+";;"
-        if (len(self.cities)>0 or len(self.countries)>0):
-            resp += "Avec un critère géographique ("
-            if len(self.cities)>0:
-                resp += ",".join(self.cities)+","
-            if len(self.countries)>0:
-                resp += ",".join(self.countries)+","
-            if resp[-1]==",":
-                resp = resp[:-1]
-            resp += ");;"
-        if len(self.nationalities)>0:
-            resp += "Avec un critère de nationalité ("+",".join(self.nationalities)
-            if resp[-1]==",":
-                resp = resp[:-1]
-            resp += ");;"
-        if len(self.dates)>0:
-            resp += "Avec un critère de date ("+",".join(self.dates)
-            if resp[-1]==",":
-                resp = resp[:-1]
-            resp += ");;"
-        return resp
+		resp = text[:]+";;"
+		if (len(self.cities)>0 or len(self.countries)>0):
+			resp += "Avec un critère géographique ("
+			if len(self.cities)>0:
+				resp += ",".join(self.cities)+","
+			if len(self.countries)>0:
+				resp += ",".join(self.countries)+","
+			if resp[-1]==",":
+				resp = resp[:-1]
+			resp += ");;"
+		if len(self.nationalities)>0:
+			resp += "Avec un critère de nationalité ("+",".join(self.nationalities)
+			if resp[-1]==",":
+				resp = resp[:-1]
+			resp += ");;"
+		if len(self.dates)>0:
+			resp += "Avec un critère de date ("+",".join(self.dates)
+			if resp[-1]==",":
+				resp = resp[:-1]
+			resp += ");;"
+		return resp
