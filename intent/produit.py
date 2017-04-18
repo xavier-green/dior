@@ -6,7 +6,6 @@ foo = SourceFileLoader("sql.tables", "../sql/tables.py").load_module()
 
 
 from sql.request import query
-from sql.tables import table
 
 # Import de toutes les tables utilisées
 from sql.tables import item, sale, boutique, country
@@ -32,6 +31,10 @@ class Produit(object):
 		# select COUNT
 		# nationalites -> vente
 		# item obligatoire
+
+		# IN PROGRESS
+
+
 		if len(self.items) == 0:
 			return "Veuillez préciser un produit svp"
 			
@@ -66,36 +69,31 @@ class Produit(object):
 		product_query.write()
 		return product_query.request
 	
-	
+		#else:
+		#	demande = query(item, ['Description'], 50)
+		#	demande.where(item, 'Description', product)
+		#	demande.groupby(item, 'Description')
+		#	return demande.write()
+
 	def append_details(self, text):
 		resp = text[:]+";;"
 		if (len(self.cities)>0 or len(self.countries)>0):
 			resp += "Avec un critère géographique ("
 			if len(self.cities)>0:
-				resp += "".join(self.cities)+", "
+				resp += ",".join(self.cities)+","
 			if len(self.countries)>0:
-				resp += "".join(self.countries)+","
+				resp += ",".join(self.countries)+","
 			if resp[-1]==",":
 				resp = resp[:-1]
 			resp += ");;"
-			if len(self.nationalities)>0:
-				resp += "Avec un critère de nationalité ("+",".join(self.nationalities)
-				if resp[-1]==",":
-					resp = resp[:-1]
-				resp += ");;"
-			if len(self.dates)>0:
-				resp += "Avec un critère de date ("+",".join(self.dates)
-				if resp[-1]==",":
-					resp = resp[:-1]
-				resp += ");;"
-			return resp
-
-data = {
-		'cities' : [],
-		'countries' : ['France'],
-		'nationalities' : [],
-		'dates' : [],
-		'items' : ['Rose des Vents']
-		}
-test = Produit(data)
-print(test.build_answer())
+		if len(self.nationalities)>0:
+			resp += "Avec un critère de nationalité ("+",".join(self.nationalities)
+			if resp[-1]==",":
+				resp = resp[:-1]
+			resp += ");;"
+		if len(self.dates)>0:
+			resp += "Avec un critère de date ("+",".join(self.dates)
+			if resp[-1]==",":
+				resp = resp[:-1]
+			resp += ");;"
+		return resp

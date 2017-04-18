@@ -54,8 +54,10 @@ def vector_get(sentence):
     intent_extracted = intent_model.predict(sentence)
     geo_extracted = world.find_similar_words(sentence)
     dates_extracted = datex.extract(sentence)
+    numerical_dates_extracted = datex.extract_numerical(sentence)
     items_extracted = word.extract(sentence)
     geo_extracted['dates'] = dates_extracted
+    geo_extracted['numerical_dates'] = numerical_dates_extracted
     geo_extracted['intent'] = intent_extracted
     geo_extracted['items'] = items_extracted
 

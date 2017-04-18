@@ -10,9 +10,8 @@ class answer(object):
         demande = query(item, ['Description'], 50)
         demande.where(item, 'Description', product)
         demande.groupby(item, 'Description')
-        demande.write()
-        return demande.request
-    
+        return demande.write()
+
     def make(self, data):
         cities = data['cities']
         countries = data['countries']
@@ -20,9 +19,9 @@ class answer(object):
         dates = data['dates']
         intent = data['intent']
         items = data['items']
-        
+
         string = ""
-        
+
         if intent == "produit":
             for product in items:
                 string += "\nVoici la liste des produits contenant " + product + "\n"
