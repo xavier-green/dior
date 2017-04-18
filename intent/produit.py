@@ -30,7 +30,8 @@ class Produit(object):
 			return "Veuillez préciser un produit svp"
 		else:
 			demande = query(item, ['Description'], 50)
-			demande.where(item, 'Description', product)
+			for search_item in self.items:
+				demande.where(item, 'Description', search_item)
 			demande.groupby(item, 'Description')
 			return demande.write()
 
@@ -39,7 +40,7 @@ class Produit(object):
 		if (len(self.cities)>0 or len(self.countries)>0):
 			resp += "Avec un critère géographique ("
 			if len(self.cities)>0:
-				resp += ",".join(self.cities)+","
+				res  p += ",".join(self.cities)+","
 			if len(self.countries)>0:
 				resp += ",".join(self.countries)+","
 			if resp[-1]==",":
