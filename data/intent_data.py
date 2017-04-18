@@ -1,7 +1,7 @@
 # coding=utf-8
 
 class intentData():
-    data={
+    data = {
         "produit": {
             "examples" : ["Combien de sacs avons-nous vendu la semaine derniere",
                 "quelle est la quantité de souliers vendus durant les 3 derniers jours",
@@ -106,3 +106,66 @@ class intentData():
             ]
         }
     }
+    test = {
+        "produit": {
+            "examples" : [
+                "Quelles sont les ventes de la semaine ?",
+                "Quels sont les prochains pics de ventes à anticiper ?",
+                "Comment cela se compare-t-il en valeur à l’année dernière, et l’année d’avant ?",
+                "Quelle est la tendance au Japon ce mois-ci, au global, auprès des Clientèles Locales et des Clientèles Touristiques ?",
+                "Quelles sont les Catégories s’étant le mieux vendu à Paris cette semaine ?",
+                "Quel chiffre a été fait au Moyen-Orient, et quelle est la croissance au Moyen-Orient depuis le début d’année à taux constants ?",
+                "Combien de Lady Dior ont été vendus cette semaine ?",
+                "Cela représente quelle part des ventes en volume de la semaine ?",
+                "Quels sont les volumes du MyLady ?",
+                "Quelle est la deuxième ligne de sacs la mieux vendue cette semaine ?",
+                "En PAP Femme, combien de points de Sell-Through ont été gagnés à date en volume sur la collection Croisière ?",
+                "Quelle est notre couverture moyenne de stocks en Sacs Femme?",
+                "Combien le Japon a-t-il commandé de sacs J’Adior lors des achats en showroom?",
+                "Comment se vend et progresse la Tribale ?",
+                "Comment se vendent et progressent les Souliers ?",
+                "Combien de Sacs Homme se sont vendus cette semaine ? (ventes et croissance)"
+            ]
+        },
+        "boutique": {
+            "examples" : [
+                "Y a-t-il eu des Family Sales ou des Soldes ayant augmenté le chiffre ?",
+                "Où en est la Gross Margin cette semaine, par rapport à l’année précédente et l’année d’avant?",
+                "Quelle est la première boutique cette semaine ?",
+                "Quel chiffre et quelle croissance ?",
+                "Montaigne, Bond Street et Peking Road ont-elles une couverture moyenne de stocks en Sacs Femme supérieure à 3 mois ?",
+                "Et en particulier sur les références les plus vendues à date de Lady Dior ?"
+            ]
+        },
+        "nationalite": {
+            "examples" : [
+                "Quelles sont les Nationalités Clientes ayant le plus acheté à Paris cette semaine ?",
+                "Avec quelles croissances vs. LY ?",
+                "Quelle est la tendance sur les Clientèles locales cette semaine ?",
+                "Quel est le poids des Clientèles Locales vs. Touristiques en Year To Date ?"
+            ]
+        },
+        "vendeur": {
+            "examples" : [
+
+            ]
+        },
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
