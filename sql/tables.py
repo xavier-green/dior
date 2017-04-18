@@ -7,7 +7,7 @@ class table(object):
         self.alias = alias
         self.columns = columns
 
-country = table("COUN_COUNTRY", "COUN_", "CO", ["Description", "Zone", "Currency", "Sub_Zone", "Description_FR"])
+country = table("COUN_COUNTRY", "COUN_", "CO", ["Code", "Description", "Zone", "Currency", "Sub_Zone", "Description_FR"])
 nationality = table("CRM_Country_Nationality", "CRM_", "CN", ["Code_ISO", "Country_Desc_FR", "Country_Desc_EN", "Nationality_Desc_FR", "Nationality_Desc_EN", "Zone", "Sub_Zone"])
 customer = table("CUST_CUSTOMER", "CUST_", "CU", [""])
 department = table("DEPT_Department", "DEPT_", "DE", ["Code", "Description", "Division"])
@@ -18,7 +18,7 @@ color_size = table("ITEM_COLOR_SIZE", "ITEM_", "CS", ["Code", "Color", "Size"])
 item = table("ITEM_ITEM", "ITEM_", "IT", ["Code", "Description", "Year", "Collection", "Division", "Line", "Family", "Sub_Family", "Theme", "Department", "Group", "Vendor", "Series", "RS_Style", "Segment", "Material", "Price_Cat", "Model"])
 boutique = table("loca_location", "LOCA_", "BT", ["Code", "Description", "Country", "City", "Zone", "Type", "Category", "Currency", "State", "Sub_Zone"])
 model = table("mod_model", "MOD_", "MD", ["Code", "Description"])
-sale = table("sale_sales", "SALE_", "SA", ["Style_Src", "Color_Src", "Size_Src"])
+sale = table("sale_sales", "SALE_", "SA", ["Location", "Date", "Style", "Color", "Size", "Country"])
 sub_family = table("SFAM_sub_Family", "SFAM_", "SF", [""])
 staff = table("STAFF_staff", "STAFF_", "STF", [""])
 state = table("STAT_STATE", "STAT_", "STT", [""])

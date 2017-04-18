@@ -5,6 +5,7 @@ from sql.request import query
 
 class answer(object):
     
+    # Cette fonction a été déplacée dans ../intent/produit.py
     def produit(self, product):
         demande = query(item, ['Description'], 50)
         demande.where(item, 'Description', product)
