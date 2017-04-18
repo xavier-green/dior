@@ -1,7 +1,7 @@
 # coding=utf-8
 
 import subprocess, csv
-from tables import *
+from sql.tables import *
 
 class query(object):
     def __init__ (self, table, columns, number):
@@ -58,8 +58,9 @@ class query(object):
     def write(self):
         self.request += "GO\n"
         # Database call
+        print(request)
         p = subprocess.run('docker exec  mssql /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P D10R_password! -d Reporting -W -w 999 -s | -Q'.split() + [self.request], stdout=subprocess.PIPE, universal_newlines=True)
         # Delete last line '(n rows affected)'
         out = p.stdout.splitlines()[:-1]
         out.pop(1)
-        return(csv.DictReader(out, delimiter='|'))
+        return(p.stdout)
