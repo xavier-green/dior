@@ -1,8 +1,8 @@
 # Pour pouvoir importer les fichiers sql
-from importlib.machinery import SourceFileLoader
+# from importlib.machinery import SourceFileLoader
 
-foo = SourceFileLoader("sql.request", "../sql/request.py").load_module()
-foo = SourceFileLoader("sql.tables", "../sql/tables.py").load_module()
+# foo = SourceFileLoader("sql.request", "../sql/request.py").load_module()
+# foo = SourceFileLoader("sql.tables", "../sql/tables.py").load_module()
 
 
 from sql.request import query
