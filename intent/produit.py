@@ -68,6 +68,14 @@ class Produit(object):
 		# La requête est terminée, on l'écrit
 		product_query.write()
 		return product_query.request
+	
+		# Test de Rémi
+		# else:
+		# 	demande = query(item, ['Description'], 50)
+		# 	for search_item in self.items:
+		# 		demande.where(item, 'Description', search_item)
+		# 	demande.groupby(item, 'Description')
+		# 	return demande.write()
 
 	def append_details(self, text):
 		resp = text[:]+";;"
