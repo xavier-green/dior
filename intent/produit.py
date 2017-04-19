@@ -104,14 +104,14 @@ class Produit(object):
 				resp = resp[:-1]
 			resp += ");;"
 		return resp
-
-data = {
-		'cities' : ['Paris', 'Madrid'],
-		'countries' : [],
-		'nationalities' : [],
-		'dates' : [],
-		'items' : ['robe']
-		}
-
-test = Produit(data)
-print(test.build_query())
+#
+# data = {
+# 		'cities' : ['Paris', 'Madrid'],
+# 		'countries' : [],
+# 		'nationalities' : [],
+# 		'dates' : [],
+# 		'items' : ['robe']
+# 		}
+#
+# test = Produit(data)
+# print(test.build_query())
