@@ -5,27 +5,34 @@ import subprocess, csv
 class query(object):
 
 	def __init__ (self, table, columns, number=0):
-		# Vérifie que toutes les colonnes demandées appartiennent à la table indiquée
-		Bool = True
-		for c in columns :
-			if c not in table.columns:
-				Bool = False
 		
-		assert Bool or columns[0] in ['*', 'count(*)'], "La table " + table.name + " ne possède pas un des attributs demandés parmi " + ', '.join(columns)
-
-		# Met en forme les colonnes demandées
-		if columns[0] not in ["*", 'count(*)'] :
-			objectif = table.alias + '.' + table.prefix + columns[0]
-			for i in range(1, len(columns)):
-				objectif += ', ' + table.alias + '.' + table.prefix + columns[i]
-		else :
-			objectif = columns[0]
+		self.used_tables = [table]
+		# Vérifie que toutes les colonnes demandées appartiennent à la table indiquée
+		objectif = []
+		for c in columns:
+			# Si c'est un couple (table, colonne), vérifier que la colonne existe dans la table
+			# Puis vérifier plus tard (au write) qu'on va bien join cette table
+			if isinstance(c, tuple) and len(c) == 2:
+				column_asked = c[1]
+				table_asked = c[0]
+				assert column_asked in table_asked.columns, "La table " + table_asked.name + " ne contient pas d'attribut " + table_asked.prefix + column_asked
+				objectif.append(table_asked.alias + '.' + table_asked.prefix + column_asked)
+				self.used_tables.append(table_asked)
+			# Sinon, si c'est un de ces strings là on accepte
+			elif c == "count(*)" or c == "*":
+				objectif.append(c)
+			# Sinon, on vérifie que c'est une colonne de la première table
+			elif c in table.columns:
+				objectif.append(table.alias + '.' + table.prefix + c)
+			# Si ce n'est pas un des trois cas précédent, la requête est invalide
+			else:
+				assert False, "Il semblerait que les colonnes demandées n'appartiennent à aucune table"
 
 		# Met en forme un éventuel TOP i éléments
 		top = '' if number == 0 else 'TOP %i ' % (number)
 		
 		# Ecrit le début de la requête
-		self.request = "SELECT " + top + objectif + " FROM " + table.name + " AS " + table.alias + "\n"
+		self.request = "SELECT " + top + ', '.join(objectif) + " FROM " + table.name + " AS " + table.alias + "\n"
 		
 		# Stock les tables utilisées dans la requête, et le nombre de where
 		self.joints = [table]
@@ -64,10 +71,16 @@ class query(object):
 		self.request += "GROUP BY " + table.alias + '.' + table.prefix + column + "\n"
 
 	def write(self):
+		# On vérifie que toutes les tables demandées sont bien join
+		used = set(self.used_tables)
+		joined = set(self.joints)
+		assert used.issubset(joined), "Some of the tables asked are not joined"
+		
+		# On termine la requête
 		self.request += "GO\n"
 		# Database call
-		p = subprocess.run('docker exec  mssql /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P D10R_password! -d Reporting -W -w 999 -s | -Q'.split() + [self.request], stdout=subprocess.PIPE, universal_newlines=True)
+		#p = subprocess.run('docker exec  mssql /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P D10R_password! -d Reporting -W -w 999 -s | -Q'.split() + [self.request], stdout=subprocess.PIPE, universal_newlines=True)
 		# Delete last line '(n rows affected)'
-		out = p.stdout.splitlines()[:-1]
-		out.pop(1)
-		return(csv.DictReader(out, delimiter='|'))
+		#out = p.stdout.splitlines()[:-1]
+		#out.pop(1)
+		#return(csv.DictReader(out, delimiter='|'))
