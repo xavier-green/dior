@@ -1,6 +1,6 @@
 import subprocess, os, socket, sys
 
-server_address = '/tmp/request.sock'
+server_address = './request.sock'
 
 # Make sure the socket does not already exist
 try:
@@ -19,15 +19,19 @@ sock.bind(server_address)
 sock.listen(1)
 
 while True:
+    print('waiting')
     con, add = sock.accept()
     try:
+        print('Connectecd!')
         while True:
             data = con.recv(8192).decode("utf-8")
+            print(data)
             if data:
-                # Database call
+                print('Sending the request to the MSSQL Server')
                 p = subprocess.run('docker exec  mssql /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P D10R_password! -d Reporting -W -w 999 -s | -Q'.split() + [data], stdout=subprocess.PIPE, universal_newlines=True)
                 con.sendall(bytes(p.stdout, 'utf-8'))
             else:
+                print('No more data')
                 break
     finally:
         con.close()
