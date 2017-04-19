@@ -72,7 +72,7 @@ class query(object):
 
 	def write(self):
 		sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-		sock.connect('./tmp/request.sock')
+		sock.connect('/tmp/request.sock')
 		out = sock.recv(8192).decode('utf-8').splitlines()[:-2]
 		out.pop(1)
 		return("\n".join(out))
