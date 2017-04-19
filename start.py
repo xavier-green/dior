@@ -29,8 +29,8 @@ print("Importing responses")
 from response import Response
 resp = Response()
 
-# print("Importing produit")
-# from intent.produit import Produit
+print("Importing produit")
+from intent.produit import Produit
 
 print("Importing treetagger")
 
