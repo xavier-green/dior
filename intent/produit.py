@@ -23,7 +23,7 @@ class Produit(object):
 		response_base = self.build_query()
 		print(response_base)
 		response_complete = self.append_details(response_base)
-		return response_complete + '\n'.join(out)
+		return response_complete 
 
 
 	def build_query(self):
