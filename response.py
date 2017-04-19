@@ -67,7 +67,7 @@ JOIN (
 )
 AS SA ON STF.STAFF_Code = SA.SALE_Staff
 GROUP BY STF.STAFF_Name ORDER BY sum(SA.SALE_Std_RP_WOTax_REF)/count(*) desc"""
-		sock.connect('./tmp/request.sock')
+		sock.connect('/tmp/request.sock')
 		sock.sendall(bytes(request, 'utf-8'))
 		out = sock.recv(8192).decode('utf-8').splitlines()[:-2]
 		out.pop(1)
