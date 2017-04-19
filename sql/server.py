@@ -1,6 +1,6 @@
 import subprocess, os, socket, sys
 
-server_address = './request.sock'
+server_address = '/tmp/request.sock'
 
 # Make sure the socket does not already exist
 try:
