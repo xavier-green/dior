@@ -65,7 +65,7 @@ class Produit(object):
 		if len(self.cities) == 0:
 			for pays in self.countries :
 				product_query.where(country, "Description_FR", pays)
-		print(query.request)
+		print(product_query.request)
 		# La requête est terminée, on l'écrit
 		# product_query.write()
 		return product_query.write()
