@@ -12,7 +12,7 @@ except FileNotFoundError:
 sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
 
 # Bind the socket to the port
-print('starting up on %s' % server_address
+print('starting up on %s' % server_address)
 sock.bind(server_address)
 
 # Listen for incoming connections
