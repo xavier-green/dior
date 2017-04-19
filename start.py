@@ -10,9 +10,9 @@ from extraction.date import DateExtractor
 print("Importing item class")
 from extraction.product import ProductExtractor
 
-# print("Importing sql files")
-# from sql.answer import answer
-# ans = answer()
+print("Importing sql files")
+from sql.answer import answer
+ans = answer()
 
 print("Importing training data")
 from data import intent_data
@@ -29,8 +29,8 @@ print("Importing responses")
 from response import Response
 resp = Response()
 
-print("Importing produit")
-from intent.produit import Produit
+# print("Importing produit")
+# from intent.produit import Produit
 
 print("Importing treetagger")
 
@@ -46,8 +46,10 @@ world = WordClassification(model_fasttext)
 datex = DateExtractor()
 word = ProductExtractor('data/products.csv')
 
-@app.route('/params/<string:sentence>')
+@app.route('/params/<string:sentence>', methods=["GET"])
 def vector_get(sentence):
+    print("new connection from: "+request.remote_addr)
+    print(request.environ['REMOTE_ADDR'])
     global model_fasttext
     if model_fasttext is None:
         model_fasttext = fasttext.load_model(model_fasttext_path)
@@ -61,9 +63,9 @@ def vector_get(sentence):
     geo_extracted['intent'] = intent_extracted
     geo_extracted['items'] = items_extracted
 
-    if intent_extracted == 'produit':
-        produit = Produit(geo_extracted)
-        return produit.build_answer()
+    # if intent_extracted == 'produit':
+    #     produit = Produit(geo_extracted)
+    #     return produit.build_answer()
 
     return resp.make(geo_extracted)#, ans.make(geo_extracted)
     # return str(geo_extracted) # returns the vector of the first word just to check that the model was used
