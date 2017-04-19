@@ -21,6 +21,7 @@ class Produit(object):
 
 	def build_answer(self):
 		response_base = self.build_query()
+		print(response_base)
 		sock = socket.socket(socket.AF_UNIX,socket.SOCK_STREAM)
 		sock.connect('/tmp/request.sock')
 		sock.sendall(bytes(response_base, 'utf-8'))
