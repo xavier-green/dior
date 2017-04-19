@@ -22,11 +22,6 @@ class Produit(object):
 	def build_answer(self):
 		response_base = self.build_query()
 		print(response_base)
-		sock = socket.socket(socket.AF_UNIX,socket.SOCK_STREAM)
-		sock.connect('/tmp/request.sock')
-		sock.sendall(bytes(response_base, 'utf-8'))
-		out = sock.recv(8192).decode('utf-8').splitlines()[:-2]
-		out.pop(1)
 		response_complete = self.append_details(response_base)
 		return response_complete + '\n'.join(out)
 
@@ -70,10 +65,10 @@ class Produit(object):
 		if len(self.cities) == 0:
 			for pays in self.countries :
 				product_query.where(country, "Description_FR", pays)
-
+		print(query.request)
 		# La requête est terminée, on l'écrit
-		product_query.write()
-		return product_query.request
+		# product_query.write()
+		return product_query.write()
 
 		# Test de Rémi
 		# else:
