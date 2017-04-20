@@ -24,7 +24,7 @@ print("Importing fasttext model")
 import sys
 sys.path.append('/usr/local/Cellar/python3/3.6.0/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages')
 import fasttext
-model_fasttext_path = '/Users/xav/Downloads/wiki.fr/wiki.fr.bin'
+model_fasttext_path = 'wiki.fr.bin'
 model_fasttext = fasttext.load_model(model_fasttext_path)
 
 print("Importing responses")
