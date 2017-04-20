@@ -1,5 +1,6 @@
 # coding=utf-8
 
+from datetime import timedelta, date
 import subprocess, csv, socket
 
 class query(object):
@@ -47,7 +48,38 @@ class query(object):
 		jointure1 = table1.alias + "." + table1.prefix + join1
 		jointure2 = table2.alias + "." + table2.prefix + join2
 		self.request += "JOIN " + table2.name + " AS " + table2.alias + " ON "  + jointure1 + " = " + jointure2 + "\n"
+		
+	def join_custom(self, table1, request_table, original_table, join1, join2):
+		assert join1 in table1.columns, "La table " + table1.name + " ne contient pas d'attribut " + table1.prefix + join1
+		
+		self.joints.append(original_table)
+		jointure1 = table1.alias + "." + table1.prefix + join1
+		jointure2 = original_table.alias + "." + original_table.prefix + join2
+		self.request += "JOIN (\n" + request_table + ") AS " + original_table.alias + " ON "  + jointure1 + " = " + jointure2 + "\n"
 
+	# à faire pour une vraie BDD : mettre end = time.strftime("%Y%m%d") pour avoir le current_date
+	def wheredate(self, table, column, duration = "week", end="20170304"):
+		assert table in self.joints, "Vous faites appel à la table " + table.name + " absente de la requête, utilisez JOIN pour l'ajouter"
+		assert column in table.columns, "La table " + table.name + " ne possède pas d'attribut " + table.prefix + column
+		
+		end_time = date(int(end[0:4]), int(end[4:6]), int(end[6:8]))
+		if duration == "week":
+			duration_time = timedelta(weeks=1)
+		elif duration == "month":
+			duration_time = timedelta(months=1)
+		elif duration == "day":
+			duration_time = timedelta(days=1)
+		
+		start_time = end_time - duration_time
+		start = str(start_time.year) + '0'*(2-len(str(start_time.month))) + str(start_time.month) + '0'*(2-len(str(start_time.day))) + str(start_time.day)
+		
+		table_date = table.alias + '.' + table.prefix + column
+		where = "WHERE " if len(self.wcount) == 0 else "AND "
+		self.wcount.append(table.alias + column)
+		
+		self.request += where + table_date + ' >= ' + start + '\nAND ' + table_date + ' <= ' + end + '\n'
+		
+		
 	def where(self, table, column, description):
 		assert table in self.joints, "Vous faites appel à la table " + table.name + " absente de la requête, utilisez JOIN pour l'ajouter"
 		assert column in table.columns, "La table " + table.name + " ne possède pas d'attribut " + table.prefix + column
@@ -69,6 +101,11 @@ class query(object):
 		assert column in table.columns, "La table " + table.name + " ne possède pas d'attribut " + table.prefix + column
 
 		self.request += "GROUP BY " + table.alias + '.' + table.prefix + column + "\n"
+	
+	def orderby(self, column, desc=""):
+		
+		self.request += "ORDER BY " + column + desc + '\n'
+		
 
 	def write(self):
 		sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)

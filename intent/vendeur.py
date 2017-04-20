@@ -39,7 +39,11 @@ class Vendeur(object):
 		seller_query = query(staff, ['Name', 'count(*)'], 10)
 		
 		# Par défaut, on joint les sales parce que ça nous intéresse
-		seller_query.join(staff, sale, "Code", "Staff") # jointure sur STAFF_Code = SALE_Staff
+		# Mais attention il faut joindre avec un set de date parce que sinon la reuqête timeout
+		sale_table = query(sale, ['*'])
+		sale_table.wheredate(sale, 'DateNumYYYYMMDD') # par défaut sur les 7 derniers jours
+		
+		seller_query.join_custom(staff, sale_table.request, sale, "Code", "Staff") # jointure sur STAFF_Code = SALE_Staff
 		
 		# S'il y a une ville, on fait JOIN sur la table des boutiques
 			# On n'a pas moyen de savoir où travaille un vendeur donc on cherche dans SALE
@@ -67,6 +71,7 @@ class Vendeur(object):
 		
 		# On n'oublie pas le GROUP BY, nécessaire ici vu qu'on prend à la fois une colonne et un count(*)
 		seller_query.groupby(staff, 'Name')
+		seller_query.orderby('count(*)', " DESC")
 		
 		# La requête est terminée, on l'écrit
 		seller_query.write()
@@ -95,8 +100,10 @@ class Vendeur(object):
 			resp += ");;"
 		return resp
 
+
+# Pour tester
 data = {
-		'cities' : [],
+		'cities' : ['Montaigne'],
 		'countries' : [],
 		'nationalities' : [],
 		'dates' : [],
