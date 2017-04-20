@@ -79,9 +79,10 @@ class Vendeur(object):
 		reponse = "Voici les 10 meilleurs vendeurs "
 		start_date = self.numerical_date[0] if len(self.numerical_date) > 0 else '20170225'
 		reponse += "du " + start_date + " au " + "20170304 " 
-		reponse += "pour le produit " + ', '.join([i for i in self.items]) if len(self.items) > 0 else ''
-		reponse += "de la boutique de " + ', '.join([b for b in self.cities]) if len(self.cities) > 0 else ''
-		reponse += "dans le pays " + ", ".join([p for p in self.countries]) if len(self.cities) == 0 and len(self.countries) > 0 else ''
+		reponse += "pour le produit " + ', '.join([i for i in self.items]) + " " if len(self.items) > 0 else ''
+		reponse += "de la boutique de " + ', '.join([b for b in self.cities]) + " " if len(self.cities) > 0 else ''
+		reponse += "dans le pays " + ", ".join([p for p in self.countries]) + " " if len(self.cities) == 0 and len(self.countries) > 0 else ''
+		reponse += " :\n"
 		return reponse
 
 	def append_details(self, text):
