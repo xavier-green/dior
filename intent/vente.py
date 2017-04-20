@@ -36,7 +36,7 @@ class Vente(object):
 		product_query = query(sale, ['count(*)'])
 
 		if 'couleur' in self.sentence:
-			product_query = query(sale, ['Color','count(*)'], top_distinct='DISTINCT')
+			product_query = query(sale, ['Color','count(*)'], top_distinct='DISTINCT TOP 5')
 
 
 		# Initialisation de la query : par défaut pour l'instant on sélectionne count(*)
@@ -69,16 +69,20 @@ class Vente(object):
 
 		if 'couleur' in self.sentence:
 			product_query.groupby(sale, 'Color')
+			product_query.orderby('count(*)', " DESC")
+			result = [w for w in product_query.write().split('\n') if 'SALE_Color' not in w]
 			if 'le plus' in self.sentence or 'la plus' in self.sentence:
-				product_query.orderby('count(*)', " DESC")
-			
-		print(product_query.request)
-		# La requête est terminée, on l'écrit
-		# product_query.write()
-		result = product_query.write()
-		print("***************")
-		print(result)
-		return result
+				split_res = result.split("|")
+				return "La couleur la plus vendue est "+split_res[0]+" ( "+split_res[1]+" vendus )"
+			else:
+				return result.join(";;")
+
+		else:			
+			# La requête est terminée, on l'écrit
+			# product_query.write()
+			result = product_query.write()
+			print("***************")
+			return result
 
 	def append_details(self, text):
 		resp = text[:]+";;"
