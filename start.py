@@ -29,8 +29,8 @@ print("Importing responses")
 from response import Response
 resp = Response()
 
-# print("Importing produit")
-# from intent.produit import Produit
+print("Importing produit")
+from intent.produit import Produit
 
 print("Importing treetagger")
 
@@ -63,11 +63,11 @@ def vector_get(sentence):
     geo_extracted['intent'] = intent_extracted
     geo_extracted['items'] = items_extracted
 
-    # if intent_extracted == 'produit':
-    #     produit = Produit(geo_extracted)
-    #     return produit.build_answer()
+    if intent_extracted == 'produit':
+        produit = Produit(geo_extracted)
+        return (produit.build_answer())
 
-    return resp.make(geo_extracted)#, ans.make(geo_extracted)
+#, ans.make(geo_extracted)
     # return str(geo_extracted) # returns the vector of the first word just to check that the model was used
 
 @app.route('/', methods=["POST"]) # same but getting the sentence via POST
@@ -77,7 +77,7 @@ def vector_post():
         return "incorrect request (no json attached)"
 
     sentence = request.json.get("sentence", None)
-    
+
     if sentence is None:
         return "incorrect request (no sentence field)"
     return str(model_fasttext[sentence.split()[0]])

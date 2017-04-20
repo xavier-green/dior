@@ -1,12 +1,12 @@
 # coding=utf-8
 
-import subprocess, csv
 from datetime import timedelta, date
+import subprocess, csv, socket
 
 class query(object):
 
 	def __init__ (self, table, columns, number=0):
-		
+
 		self.used_tables = [table]
 		# Vérifie que toutes les colonnes demandées appartiennent à la table indiquée
 		objectif = []
@@ -31,10 +31,10 @@ class query(object):
 
 		# Met en forme un éventuel TOP i éléments
 		top = '' if number == 0 else 'TOP %i ' % (number)
-		
+
 		# Ecrit le début de la requête
 		self.request = "SELECT " + top + ', '.join(objectif) + " FROM " + table.name + " AS " + table.alias + "\n"
-		
+
 		# Stock les tables utilisées dans la requête, et le nombre de where
 		self.joints = [table]
 		self.wcount = []
@@ -93,13 +93,13 @@ class query(object):
 			self.wcount.append(table.alias + column)
 		else:
 			where_and_or = "OR "
-		
+
 		self.request += where_and_or + table.alias + '.' + table.prefix + column + " LIKE '%" + description + "%'\n"
 
 	def groupby(self, table, column):
 		assert table in self.joints,  "Vous faites appel à la table " + table.name + " absente de la requête, utilisez JOIN pour l'ajouter"
 		assert column in table.columns, "La table " + table.name + " ne possède pas d'attribut " + table.prefix + column
-		
+
 		self.request += "GROUP BY " + table.alias + '.' + table.prefix + column + "\n"
 	
 	def orderby(self, column, desc=""):
@@ -108,16 +108,9 @@ class query(object):
 		
 
 	def write(self):
-		# On vérifie que toutes les tables demandées sont bien join
-		used = set(self.used_tables)
-		joined = set(self.joints)
-		assert used.issubset(joined), "Some of the tables asked are not joined"
-		
-		# On termine la requête
-		self.request += "GO\n"
-		# Database call
-		#p = subprocess.run('docker exec  mssql /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P D10R_password! -d Reporting -W -w 999 -s | -Q'.split() + [self.request], stdout=subprocess.PIPE, universal_newlines=True)
-		# Delete last line '(n rows affected)'
-		#out = p.stdout.splitlines()[:-1]
-		#out.pop(1)
-		#return(csv.DictReader(out, delimiter='|'))
+		sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+		sock.connect('/tmp/request.sock')
+		sock.sendall(bytes(self.request, 'utf-8'))
+		out = sock.recv(8192).decode('utf-8').splitlines()[:-2]
+		out.pop(1)
+		return("\n".join(out))

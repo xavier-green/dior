@@ -1,4 +1,5 @@
-import random
+import random, socket
+
 
 class Response(object):
 
@@ -8,7 +9,7 @@ class Response(object):
 		"Bongiorno !",
 		"Salut! Prêt à utiliser DiorBot ?"
 	]
-	
+
 	def make(self, data):
 		intent = data['intent']
 		if intent=="bonjour":
@@ -59,11 +60,15 @@ class Response(object):
 				resp = resp[:-1]
 			resp += ");;"
 
-		return str(resp)
-
-
-
-
-
-
-
+		sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+		req = """SELECT TOP 100 STF.STAFF_Name, sum(SA.SALE_Std_RP_WOTax_REF)/count(*) FROM STAFF_staff AS STF
+JOIN (
+    SELECT * from sale_sales where sale_sales.SALE_DateNumYYYYMMDD > 20170300 and sale_sales.SALE_DateNumYYYYMMDD < 20170304
+)
+AS SA ON STF.STAFF_Code = SA.SALE_Staff
+GROUP BY STF.STAFF_Name ORDER BY sum(SA.SALE_Std_RP_WOTax_REF)/count(*) desc"""
+		sock.connect('/tmp/request.sock')
+		sock.sendall(bytes(request, 'utf-8'))
+		out = sock.recv(8192).decode('utf-8').splitlines()[:-2]
+		out.pop(1)
+		return(resp + "\n".join(out))
