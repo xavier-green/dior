@@ -36,7 +36,7 @@ class Vente(object):
 		product_query = query(sale, ['count(*)'])
 
 		if 'couleur' in self.sentence:
-			product_query = query(sale, ['Color','count(*)'], distinct=True)
+			product_query = query(sale, ['Color','count(*)'], top_distinct='DISTINCT')
 
 
 		# Initialisation de la query : par défaut pour l'instant on sélectionne count(*)
