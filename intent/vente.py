@@ -40,7 +40,7 @@ class Vente(object):
 
 
 		# Initialisation de la query : par défaut pour l'instant on sélectionne count(*)
-		
+
 		product_query.join(sale, item, "Style", "Code") # jointure sur ITEM_Code = SALE_Style
 
 		# S'il y a une précision, on considère que ça concerne des ventes
