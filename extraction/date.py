@@ -15,7 +15,7 @@ date_words = {
     "année":-365,
     "années":-365,
     "jour":-1,
-    "jour":-1,
+    "jours":-1,
     "trimestre":-90,
     "semestre":-120,
     "hier":-1,
