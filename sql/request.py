@@ -7,7 +7,7 @@ class query(object):
 
 	def __init__ (self, table, columns, top_distinct =''):
 
-		self.used_tables = [table]
+		self.selected_tables = [table]
 		# Vérifie que toutes les colonnes demandées appartiennent à la table indiquée
 		objectif = []
 		for c in columns:
@@ -18,8 +18,7 @@ class query(object):
 				table_asked = c[0]
 				assert column_asked in table_asked.columns, "La table " + table_asked.name + " ne contient pas d'attribut " + table_asked.prefix + column_asked
 				objectif.append(table_asked.alias + '.' + table_asked.prefix + column_asked)
-				self.used_tables.append(table_asked)
-			# Sinon, si c'est un de ces strings là on accepte
+				self.selected_tables.append(table_asked)
 			elif c == "count(*)" or c == "*":
 				objectif.append(c)
 			# format "sumCOLUMNNAME"
@@ -37,35 +36,34 @@ class query(object):
 		self.request = "SELECT " + top_distinct + " " + ', '.join(objectif) + " FROM " + table.name + " AS " + table.alias + "\n"
 
 		# Stock les tables utilisées dans la requête, et le nombre de where
-		self.joints = [table]
+		self.joined_tables = [table]
 		self.wcount = []
 
 	# Pour faire une jointure entre deux tables sous la condition t1.join1 = t2.join2
 	# Attention à l'ordre des join, ils doivent correspondrent à leurs tables respectives
 	def join(self, table1, table2, join1, join2):
-		assert table1 or table2 in self.joints, "Vous tentez de joindre deux tables absentes de la requête."
+		assert table1 or table2 in self.joined_tables, "Erreur : Aucune des deux tables n'est déjà présente dans la requête."
 		assert join1 in table1.columns, "La table " + table1.name + " ne contient pas d'attribut " + table1.prefix + join1
 		assert join2 in table2.columns, "La table " + table2.name + " ne contient pas d'attribut " + table2.prefix + join2
 
-		self.joints.append(table2)
+		self.joined_tables.append(table2)
 		jointure1 = table1.alias + "." + table1.prefix + join1
 		jointure2 = table2.alias + "." + table2.prefix + join2
 		self.request += "JOIN " + table2.name + " AS " + table2.alias + " ON "  + jointure1 + " = " + jointure2 + "\n"
-		print(self.joints)
 
 	# Pour faire une jointure avec des requêtes imbriquées
 	# Comme c'est fait spécifiquement pour la table sale,
 	def join_custom(self, table1, request_table, original_table, join1, join2):
 		assert join1 in table1.columns, "La table " + table1.name + " ne contient pas d'attribut " + table1.prefix + join1
 
-		self.joints.append(original_table)
+		self.joined_tables.append(original_table)
 		jointure1 = table1.alias + "." + table1.prefix + join1
 		jointure2 = original_table.alias + "." + original_table.prefix + join2
 		self.request += "JOIN (\n" + request_table + ") AS " + original_table.alias + " ON "  + jointure1 + " = " + jointure2 + "\n"
 
 	# à faire pour une vraie BDD : mettre end = time.strftime("%Y%m%d") pour avoir le current_date
 	def wheredate(self, table, column, start="20170225", end="20170304"):
-		assert table in self.joints, "Vous faites appel à la table " + table.name + " absente de la requête, utilisez JOIN pour l'ajouter"
+		assert table in self.joined_tables, "Vous faites appel à la table " + table.name + " absente de la requête, utilisez JOIN pour l'ajouter"
 		assert column in table.columns, "La table " + table.name + " ne possède pas d'attribut " + table.prefix + column
 
 		table_date = table.alias + '.' + table.prefix + column
@@ -76,7 +74,7 @@ class query(object):
 
 
 	def where(self, table, column, description):
-		assert table in self.joints, "Vous faites appel à la table " + table.name + " absente de la requête, utilisez JOIN pour l'ajouter"
+		assert table in self.joined_tables, "Vous faites appel à la table " + table.name + " absente de la requête, utilisez JOIN pour l'ajouter"
 		assert column in table.columns, "La table " + table.name + " ne possède pas d'attribut " + table.prefix + column
 
 		# Choix d'utiliser WHERE, AND ou OR au début de la condition
@@ -92,7 +90,7 @@ class query(object):
 		self.request += where_and_or + table.alias + '.' + table.prefix + column + " LIKE '%" + description + "%'\n"
 
 	def groupby(self, table, column):
-		assert table in self.joints,  "Vous faites appel à la table " + table.name + " absente de la requête, utilisez JOIN pour l'ajouter"
+		assert table in self.joined_tables,  "Vous faites appel à la table " + table.name + " absente de la requête, utilisez JOIN pour l'ajouter"
 		assert column in table.columns, "La table " + table.name + " ne possède pas d'attribut " + table.prefix + column
 		self.request += "GROUP BY " + table.alias + '.' + table.prefix + column + "\n"
 
@@ -102,6 +100,9 @@ class query(object):
 
 
 	def write(self):
+		# Vérification que les colonnes SELECTed sont bien JOINed
+		assert set(self.selected_tables) < set(self.joined_tables), "Erreur : Vous avez SELECT un élément d'une table que vous n'avez pas JOIN"
+		
 		sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
 		sock.connect('/tmp/request.sock')
 		sock.sendall(bytes(self.request, 'utf-8'))
