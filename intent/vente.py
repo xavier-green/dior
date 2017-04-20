@@ -72,10 +72,10 @@ class Vente(object):
 			product_query.orderby('count(*)', " DESC")
 			result = [w for w in product_query.write().split('\n') if 'SALE_Color' not in w]
 			if 'le plus' in self.sentence or 'la plus' in self.sentence:
-				split_res = result.split("|")
+				split_res = result[0].split("|")
 				return "La couleur la plus vendue est "+split_res[0]+" ( "+split_res[1]+" vendus )"
 			else:
-				return result.join(";;")
+				return ";;".join(result)
 
 		else:			
 			# La requête est terminée, on l'écrit
