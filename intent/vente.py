@@ -46,7 +46,7 @@ class Vente(object):
 		product_query.join(sale, boutique, "Location", "Code") # jointure sur SALE_Location = LOCA_Code
 
 		# S'il n'y a pas de ville, on s'intéresse au pays
-		elif len(self.countries) > 0:
+		if len(self.countries) > 0:
 			product_query.join(sale, country, "Country", "Code") # jointyre sur SALE_Country = COUN_Code
 
 		# Maintenant que toutes les jointures sont faites, on passe aux conditions
