@@ -10,7 +10,7 @@ from sql.request import query
 # Import de toutes les tables utilisées
 from sql.tables import item, sale, boutique, country
 
-class Produit(object):
+class Vente(object):
 
 	def __init__(self, data):
 		self.cities = data['cities']
@@ -27,25 +27,17 @@ class Produit(object):
 
 
 	def build_query(self):
-		# bdd = item_item
-		# geo ou date -> vente (sales_sales) / (stock)
-		# select COUNT
-		# nationalites -> vente
-		# item obligatoire
-
-		# IN PROGRESS
-
 
 		if len(self.items) == 0:
 			return "Veuillez préciser un produit svp"
 
 		# Initialisation de la query : par défaut pour l'instant on sélectionne count(*)
-		product_query = query(item, ['count(*)'])
+		product_query = query(sale, ['count(*)'])
 
 		# S'il y a une précision, on considère que ça concerne des ventes
 		# On fait les jointures en fonction
 		if len(self.cities)+len(self.countries)+len(self.nationalities)+len(self.dates) > 0:
-			product_query.join(item, sale, "Code", "Style") # jointure sur ITEM_Code = SALE_Style
+			product_query.join(sale, item, "Style", "Code") # jointure sur ITEM_Code = SALE_Style
 
 			# S'il y a une ville, on fait JOIN sur la table des boutiques
 			if len(self.cities) > 0:
@@ -68,15 +60,10 @@ class Produit(object):
 		print(product_query.request)
 		# La requête est terminée, on l'écrit
 		# product_query.write()
-		return product_query.write()
-
-		# Test de Rémi
-		# else:
-		# 	demande = query(item, ['Description'], 50)
-		# 	for search_item in self.items:
-		# 		demande.where(item, 'Description', search_item)
-		# 	demande.groupby(item, 'Description')
-		# 	return demande.write()
+		result = product_query.write()
+		print("***************")
+		print(result)
+		return result
 
 	def append_details(self, text):
 		resp = text[:]+";;"
