@@ -70,7 +70,7 @@ class Vente(object):
 		if 'couleur' in self.sentence:
 			product_query.groupby(sale, 'Color')
 			product_query.orderby('count(*)', " DESC")
-			result = [w.split("|")[0]+" ( "+.split("|")[1]+" vendus )" for w in product_query.write().split('\n') if 'SALE_Color' not in w]
+			result = [w.split("|")[0]+" ( "+w.split("|")[1]+" vendus )" for w in product_query.write().split('\n') if 'SALE_Color' not in w]
 			if 'le plus' in self.sentence or 'la plus' in self.sentence:
 				result_string = "La couleur la plus vendue est "+result[0]+" pour "+",".join(self.items)
 				if result_string[-1] == ",":
