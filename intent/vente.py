@@ -37,6 +37,8 @@ class Vente(object):
 
 		if 'couleur' in self.sentence:
 			product_query = query(sale, ['Color','count(*)'], top_distinct='DISTINCT TOP 5')
+		elif ('Où' in self.sentence) or ('où' in self.sentence):
+			product_query = query(sale, ['Location','count(*)'], top_distinct='DISTINCT TOP 5')
 
 
 		# Initialisation de la query : par défaut pour l'instant on sélectionne count(*)
@@ -84,7 +86,12 @@ class Vente(object):
 					return ";;".join(result)
 			else:
 				return "Aucune couleur enregistrée pour "+",".join(self.items)
-
+		elif ('Où' in self.sentence) or ('où' in self.sentence):
+			product_query.groupby(sale, 'Location')
+			product_query.orderby('count(*)', " DESC")
+			query_result = product_query.write().split('\n')
+			print(query_result)
+			return ";;".join(query_result)
 		else:			
 			# La requête est terminée, on l'écrit
 			# product_query.write()
