@@ -80,7 +80,7 @@ def vector_get(sentence):
 		vendeur = Vendeur(geo_extracted)
 		return (vendeur.build_answer())
 	else:
-		return "Hello"
+		return "Bonjour, malheureusement je n'ai pas saisi votre requête. Pouvez-vous reformuler ?"
 
 #, ans.make(geo_extracted)
     # return str(geo_extracted) # returns the vector of the first word just to check that the model was used
