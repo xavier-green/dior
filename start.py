@@ -85,7 +85,7 @@ def vector_get(sentence):
 		my_stock = Stock(geo_extracted)
 		return (my_stock.build_answer())
 	else:
-		return "Hello"
+		return "Bonjour, malheureusement je n'ai pas saisi votre requête. Pouvez-vous reformuler ?"
 
 #, ans.make(geo_extracted)
     # return str(geo_extracted) # returns the vector of the first word just to check that the model was used
