@@ -31,6 +31,7 @@ resp = Response()
 
 print("Importing produit")
 from intent.vente import Vente
+from intent.vendeur import Vendeur
 
 print("Importing treetagger")
 
@@ -48,44 +49,48 @@ word = ProductExtractor('data/products.csv')
 
 @app.route('/params/<string:sentence>', methods=["GET"])
 def vector_get(sentence):
-    print("new connection from: "+request.remote_addr)
-    print(request.environ['REMOTE_ADDR'])
-    global model_fasttext
-    if model_fasttext is None:
-        model_fasttext = fasttext.load_model(model_fasttext_path)
-    intent_extracted = intent_model.predict(sentence)
-    geo_extracted = world.find_similar_words(sentence)
-    dates_extracted = datex.extract(sentence)
-    numerical_dates_extracted = datex.extract_numerical(sentence)
-    items_extracted = word.extract(sentence)
-    geo_extracted['dates'] = dates_extracted
-    geo_extracted['numerical_dates'] = numerical_dates_extracted
-    geo_extracted['intent'] = intent_extracted
-    geo_extracted['items'] = items_extracted
-
-    print('data extracted:')
-    print(geo_extracted)
-
-    if intent_extracted == 'vente':
-        print("Detected it's a sale")
-        produit = Vente(geo_extracted)
-        return (produit.build_answer())
-    else:
-        return "Hello"
+	print("new connection from: "+request.remote_addr)
+	print(request.environ['REMOTE_ADDR'])
+	global model_fasttext
+	if model_fasttext is None:
+		model_fasttext = fasttext.load_model(model_fasttext_path)
+	intent_extracted = intent_model.predict(sentence)
+	geo_extracted = world.find_similar_words(sentence)
+	dates_extracted = datex.extract(sentence)
+	numerical_dates_extracted = datex.extract_numerical(sentence)
+	items_extracted = word.extract(sentence)
+	geo_extracted['dates'] = dates_extracted
+	geo_extracted['numerical_dates'] = numerical_dates_extracted
+	geo_extracted['intent'] = intent_extracted
+	geo_extracted['items'] = items_extracted
+	
+	print('data extracted:')
+	print(geo_extracted)
+	
+	if intent_extracted == 'vente':
+		print("Detected it's a sale")
+		produit = Vente(geo_extracted)
+		return (produit.build_answer())
+	elif intent_extracted == 'vendeur':
+		print("Vous avez demandé des informations au sujet du staff \n")
+		vendeur = Vendeur(geo_extracted)
+		return (vendeur.build_answer())
+	else:
+		return "Hello"
 
 #, ans.make(geo_extracted)
     # return str(geo_extracted) # returns the vector of the first word just to check that the model was used
 
 @app.route('/', methods=["POST"]) # same but getting the sentence via POST
 def vector_post():
-    global model_fasttext
-    if request.json is None:
-        return "incorrect request (no json attached)"
-
-    sentence = request.json.get("sentence", None)
-
-    if sentence is None:
-        return "incorrect request (no sentence field)"
-    return str(model_fasttext[sentence.split()[0]])
+	global model_fasttext
+	if request.json is None:
+		return "incorrect request (no json attached)"
+	
+	sentence = request.json.get("sentence", None)
+	
+	if sentence is None:
+		return "incorrect request (no sentence field)"
+	return str(model_fasttext[sentence.split()[0]])
 
 app.run(host="0.0.0.0")

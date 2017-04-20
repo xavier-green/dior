@@ -38,8 +38,10 @@ class query(object):
 		self.joints = [table]
 		self.wcount = []
 
+	# Pour faire une jointure entre deux tables sous la condition t1.join1 = t2.join2
+	# Attention à l'ordre des join, ils doivent correspondrent à leurs tables respectives
 	def join(self, table1, table2, join1, join2):
-		assert table1 in self.joints, "Vous tentez de joindre deux tables absentes de la requête."
+		assert table1 or table2 in self.joints, "Vous tentez de joindre deux tables absentes de la requête."
 		assert join1 in table1.columns, "La table " + table1.name + " ne contient pas d'attribut " + table1.prefix + join1
 		assert join2 in table2.columns, "La table " + table2.name + " ne contient pas d'attribut " + table2.prefix + join2
 
@@ -47,7 +49,9 @@ class query(object):
 		jointure1 = table1.alias + "." + table1.prefix + join1
 		jointure2 = table2.alias + "." + table2.prefix + join2
 		self.request += "JOIN " + table2.name + " AS " + table2.alias + " ON "  + jointure1 + " = " + jointure2 + "\n"
-		
+	
+	# Pour faire une jointure avec des requêtes imbriquées
+	# Comme c'est fait spécifiquement pour la table sale, 
 	def join_custom(self, table1, request_table, original_table, join1, join2):
 		assert join1 in table1.columns, "La table " + table1.name + " ne contient pas d'attribut " + table1.prefix + join1
 		
