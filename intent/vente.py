@@ -38,8 +38,7 @@ class Vente(object):
 		if 'couleur' in self.sentence:
 			product_query = query(sale, ['Color','count(*)'], top_distinct='DISTINCT TOP 5')
 		elif ('Où' in self.sentence) or ('où' in self.sentence):
-			product_query = query(sale, ['Location','count(*)'], top_distinct='DISTINCT TOP 5')
-
+			product_query = query(sale, [(boutique, 'Description'),'count(*)'], top_distinct='DISTINCT TOP 5')
 
 		# Initialisation de la query : par défaut pour l'instant on sélectionne count(*)
 
