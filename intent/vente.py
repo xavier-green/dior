@@ -36,7 +36,7 @@ class Vente(object):
 		query_element = 'count(*)'
 
 		if 'couleur' in self.sentence:
-			query_element = 'color'
+			query_element = 'Color'
 
 		# Initialisation de la query : par défaut pour l'instant on sélectionne count(*)
 		product_query = query(sale, [query_element])
