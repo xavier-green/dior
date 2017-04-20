@@ -70,15 +70,20 @@ class Vente(object):
 		if 'couleur' in self.sentence:
 			product_query.groupby(sale, 'Color')
 			product_query.orderby('count(*)', " DESC")
-			result = [w.split("|")[0]+" ( "+w.split("|")[1]+" vendus )" for w in product_query.write().split('\n') if 'SALE_Color' not in w]
-			if 'le plus' in self.sentence or 'la plus' in self.sentence:
-				result_string = "La couleur la plus vendue est "+result[0]+" pour "+",".join(self.items)
-				print("retourne: "+result_string)
-				if result_string[-1] == ",":
-					result_string = result_string[:-1]
-				return result_string
+			query_result = product_query.write().split('\n')
+			print(query_result)
+			result = [w.split("|")[0]+" ( "+w.split("|")[1]+" vendus )" for w in query_result if 'SALE_Color' not in w]
+			if len(result) > 0:
+				if 'le plus' in self.sentence or 'la plus' in self.sentence:
+					result_string = "La couleur la plus vendue est "+result[0]+" pour "+",".join(self.items)
+					print("retourne: "+result_string)
+					if result_string[-1] == ",":
+						result_string = result_string[:-1]
+					return result_string
+				else:
+					return ";;".join(result)
 			else:
-				return ";;".join(result)
+				return "Aucune couleur enregistrée pour "+",".join(self.items)
 
 		else:			
 			# La requête est terminée, on l'écrit
