@@ -9,6 +9,8 @@ print("Importing date class")
 from extraction.date import DateExtractor
 print("Importing item class")
 from extraction.product import ProductExtractor
+print("Importing boutique class")
+from extraction.boutique import extract_boutique
 
 print("Importing sql files")
 from sql.answer import answer
@@ -46,6 +48,7 @@ app = Flask("test")
 world = WordClassification(model_fasttext)
 datex = DateExtractor()
 word = ProductExtractor('data/products.csv')
+bouti = extract_boutique('data/Boutiques.csv')
 
 @app.route('/params/<string:sentence>', methods=["GET"])
 def vector_get(sentence):
