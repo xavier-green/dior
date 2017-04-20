@@ -17,6 +17,7 @@ class Vente(object):
 		self.countries = data['countries']
 		self.nationalities = data['nationalities']
 		self.dates = data['dates']
+		self.numerical_dates = data['numerical_dates']
 		self.items = data['items']
 
 	def build_answer(self):
