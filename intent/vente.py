@@ -35,9 +35,6 @@ class Vente(object):
 		# Initialisation de la query : par défaut pour l'instant on sélectionne count(*)
 		product_query = query(sale, ['count(*)'])
 
-		if len(self.numerical_dates)>0:
-			product_query.wheredate(sale, 'DateNumYYYYMMDD', self.numerical_dates[0])
-
 		# S'il y a une précision, on considère que ça concerne des ventes
 		# On fait les jointures en fonction
 		if len(self.cities)+len(self.countries)+len(self.nationalities)+len(self.dates) > 0:
@@ -61,6 +58,10 @@ class Vente(object):
 		if len(self.cities) == 0:
 			for pays in self.countries :
 				product_query.where(country, "Description_FR", pays)
+
+		if len(self.numerical_dates)>0:
+			product_query.wheredate(sale, 'DateNumYYYYMMDD', self.numerical_dates[0])
+			
 		print(product_query.request)
 		# La requête est terminée, on l'écrit
 		# product_query.write()
