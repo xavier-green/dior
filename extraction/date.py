@@ -57,7 +57,7 @@ class DateExtractor(object):
             previous_word = sentence[current_index-1]
             if (previous_word in previous_words):
                 return self.getPreviousWord(current_index-1,sentence)+[previous_word]
-            else if previous_word in chiffres:
+            elif previous_word in chiffres:
                 return [chiffres[previous_word]]
             elif previous_word.isdigit():
                 return [previous_word]
