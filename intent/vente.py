@@ -73,6 +73,7 @@ class Vente(object):
 			result = [w.split("|")[0]+" ( "+w.split("|")[1]+" vendus )" for w in product_query.write().split('\n') if 'SALE_Color' not in w]
 			if 'le plus' in self.sentence or 'la plus' in self.sentence:
 				result_string = "La couleur la plus vendue est "+result[0]+" pour "+",".join(self.items)
+				print("retourne: "+result_string)
 				if result_string[-1] == ",":
 					result_string = result_string[:-1]
 				return result_string
