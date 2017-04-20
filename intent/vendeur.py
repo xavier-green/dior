@@ -16,6 +16,7 @@ class Vendeur(object):
 		self.cities = data['cities']
 		self.countries = data['countries']
 		self.nationalities = data['nationalities']
+		self.numerical_dates = data['numerical_dates']
 		self.dates = data['dates']
 		self.items = data['items']
 	
@@ -41,7 +42,11 @@ class Vendeur(object):
 		# Par défaut, on joint les sales parce que ça nous intéresse
 		# Mais attention il faut joindre avec un set de date parce que sinon la reuqête timeout
 		sale_table = query(sale, ['*'])
-		sale_table.wheredate(sale, 'DateNumYYYYMMDD') # par défaut sur les 7 derniers jours
+		
+		if len(self.numerical_dates) > 0:
+			sale_table.wheredate(sale, 'DateNumYYYYMMDD', self.numerical_dates[0])
+		else:
+			sale_table.wheredate(sale, 'DateNumYYYYMMDD') # par défaut sur les 7 derniers jours
 		
 		seller_query.join_custom(staff, sale_table.request, sale, "Code", "Staff") # jointure sur STAFF_Code = SALE_Staff
 		
@@ -107,6 +112,7 @@ data = {
 		'countries' : [],
 		'nationalities' : [],
 		'dates' : [],
+		'numerical_dates' : ['20170226'],
 		'items' : []
 		}
 
