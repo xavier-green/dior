@@ -22,6 +22,10 @@ class query(object):
 			# Sinon, si c'est un de ces strings là on accepte
 			elif c == "count(*)" or c == "*":
 				objectif.append(c)
+			# format "sumCOLUMNNAME"
+			elif "sum" in c:
+				column_asked = c[3:]
+				objectif.append("SUM("+table.alias+'.'+table.prefix+c[3:]+")")
 			# Sinon, on vérifie que c'est une colonne de la première table
 			elif c in table.columns:
 				objectif.append(table.alias + '.' + table.prefix + c)
@@ -47,12 +51,13 @@ class query(object):
 		jointure1 = table1.alias + "." + table1.prefix + join1
 		jointure2 = table2.alias + "." + table2.prefix + join2
 		self.request += "JOIN " + table2.name + " AS " + table2.alias + " ON "  + jointure1 + " = " + jointure2 + "\n"
-	
+		print(self.joints)
+
 	# Pour faire une jointure avec des requêtes imbriquées
-	# Comme c'est fait spécifiquement pour la table sale, 
+	# Comme c'est fait spécifiquement pour la table sale,
 	def join_custom(self, table1, request_table, original_table, join1, join2):
 		assert join1 in table1.columns, "La table " + table1.name + " ne contient pas d'attribut " + table1.prefix + join1
-		
+
 		self.joints.append(original_table)
 		jointure1 = table1.alias + "." + table1.prefix + join1
 		jointure2 = original_table.alias + "." + original_table.prefix + join2
@@ -62,14 +67,14 @@ class query(object):
 	def wheredate(self, table, column, start="20170225", end="20170304"):
 		assert table in self.joints, "Vous faites appel à la table " + table.name + " absente de la requête, utilisez JOIN pour l'ajouter"
 		assert column in table.columns, "La table " + table.name + " ne possède pas d'attribut " + table.prefix + column
-		
+
 		table_date = table.alias + '.' + table.prefix + column
 		where = "WHERE " if len(self.wcount) == 0 else "AND "
 		self.wcount.append(table.alias + column)
-		
+
 		self.request += where + table_date + ' >= ' + start + '\nAND ' + table_date + ' <= ' + end + '\n'
-		
-		
+
+
 	def where(self, table, column, description):
 		assert table in self.joints, "Vous faites appel à la table " + table.name + " absente de la requête, utilisez JOIN pour l'ajouter"
 		assert column in table.columns, "La table " + table.name + " ne possède pas d'attribut " + table.prefix + column
@@ -89,13 +94,12 @@ class query(object):
 	def groupby(self, table, column):
 		assert table in self.joints,  "Vous faites appel à la table " + table.name + " absente de la requête, utilisez JOIN pour l'ajouter"
 		assert column in table.columns, "La table " + table.name + " ne possède pas d'attribut " + table.prefix + column
-
 		self.request += "GROUP BY " + table.alias + '.' + table.prefix + column + "\n"
-	
+
 	def orderby(self, column, desc=""):
-		
+
 		self.request += "ORDER BY " + column + desc + '\n'
-		
+
 
 	def write(self):
 		sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)

@@ -8,9 +8,9 @@
 from sql.request import query
 
 # Import de toutes les tables utilisées
-from sql.tables import item, stock, boutique, country
+from sql.tables import item, stock_daily, boutique, country
 
-class Produit(object):
+class Stock(object):
 
 	def __init__(self, data):
 		self.cities = data['cities']
@@ -25,33 +25,22 @@ class Produit(object):
 
 
 	def build_query(self):
-		# bdd = item_item
-		# geo ou date -> vente (sales_sales) / (stock)
-		# select COUNT
-		# nationalites -> vente
-		# item obligatoire
-
 		# IN PROGRESS
-
-
-		if len(self.items) == 0:
-			return "Veuillez préciser un produit svp"
-
 		# Initialisation de la query : par défaut pour l'instant on sélectionne count(*)vj
-		product_query = query(item, ['count(*)'])
+		product_query = query(stock_daily, ['sumQuantity'])
 
 		# S'il y a une précision, on considère que ça concerne des ventes
 		# On fait les jointures en fonction
-		if len(self.cities)+len(self.countries)+len(self.nationalities)+len(self.dates) > 0:
-			product_query.join(item, stock, "Code", "Style") # jointure sur ITEM_Code = SALE_Style
+		if len(self.items) > 0:
+			product_query.join(stock_daily,item, "Style", "Code") # jselointure sur ITEM_Code = STOC_Style
 
-			# S'il y a une ville, on fait JOIN sur la table des boutiques
-			if len(self.cities) > 0:
-				product_query.join(stock, boutique, "Location", "Code") # jointure sur SALE_Location = LOCA_Code
+		# S'il y a une ville, on fait JOIN sur la table des boutiques
+		if len(self.cities) > 0:
+			product_query.join(stock_daily, boutique, "Location", "Code") # jointure sur STOC_Location = LOCA_Code
 
-			# S'il n'y a pas de ville, on s'intéresse au pays
-			elif len(self.countries) > 0:
-				product_query.join(stock, country, "Country", "Code") # jointyre sur SALE_Country = COUN_Code
+		# S'il n'y a pas de ville, on s'intéresse au pays
+		elif len(self.countries) > 0:
+			product_query.join(stock_daily, country, "Country", "Code") # jointure sur STOC_Country = COUN_Code
 
 		# Maintenant que toutes les jointures sont faites, on passe aux conditions
 		for produit in self.items :
@@ -76,16 +65,6 @@ class Produit(object):
 				resp += ",".join(self.cities)+","
 			if len(self.countries)>0:
 				resp += ",".join(self.countries)+","
-			if resp[-1]==",":
-				resp = resp[:-1]
-			resp += ");;"
-		if len(self.nationalities)>0:
-			resp += "Avec un critère de nationalité ("+",".join(self.nationalities)
-			if resp[-1]==",":
-				resp = resp[:-1]
-			resp += ");;"
-		if len(self.dates)>0:
-			resp += "Avec un critère de date ("+",".join(self.dates)
 			if resp[-1]==",":
 				resp = resp[:-1]
 			resp += ");;"

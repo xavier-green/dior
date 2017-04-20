@@ -31,9 +31,10 @@ print("Importing responses")
 from response import Response
 resp = Response()
 
-print("Importing produit")
+print("Importing intents")
 from intent.vente import Vente
 from intent.vendeur import Vendeur
+from intent.stock import Stock
 
 print("Importing treetagger")
 
@@ -66,11 +67,15 @@ def vector_get(sentence):
 	geo_extracted['numerical_dates'] = numerical_dates_extracted
 	geo_extracted['intent'] = intent_extracted
 	geo_extracted['items'] = items_extracted
+<<<<<<< HEAD
+
+=======
 	geo_extracted['sentence'] = sentence
 	
+>>>>>>> 1c3ac2221290e3ff1fc0cf1c55cb580246c2573f
 	print('data extracted:')
 	print(geo_extracted)
-	
+
 	if intent_extracted == 'vente':
 		print("Detected it's a sale")
 		produit = Vente(geo_extracted)
@@ -79,6 +84,10 @@ def vector_get(sentence):
 		print("Vous avez demandé des informations au sujet du staff \n")
 		vendeur = Vendeur(geo_extracted)
 		return (vendeur.build_answer())
+	elif intent_extracted == 'stock':
+		print("Vous avez demandé des informations au sujet du stock \n")
+		my_stock = Stock(geo_extracted)
+		return (my_stock.build_answer())
 	else:
 		return "Hello"
 
@@ -90,9 +99,9 @@ def vector_post():
 	global model_fasttext
 	if request.json is None:
 		return "incorrect request (no json attached)"
-	
+
 	sentence = request.json.get("sentence", None)
-	
+
 	if sentence is None:
 		return "incorrect request (no sentence field)"
 	return str(model_fasttext[sentence.split()[0]])
