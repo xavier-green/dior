@@ -82,7 +82,7 @@ class Vendeur(object):
 		reponse += "pour le produit " + ', '.join([i for i in self.items]) + " " if len(self.items) > 0 else ''
 		reponse += "de la boutique de " + ', '.join([b for b in self.cities]) + " " if len(self.cities) > 0 else ''
 		reponse += "dans le pays " + ", ".join([p for p in self.countries]) + " " if len(self.cities) == 0 and len(self.countries) > 0 else ''
-		reponse += " :\n"
+		reponse += " :\n" + result
 		return reponse
 
 	def append_details(self, text):
