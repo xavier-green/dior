@@ -37,7 +37,7 @@ class Vente(object):
 		# S'il y a une précision, on considère que ça concerne des ventes
 		# On fait les jointures en fonction
 		if len(self.cities)+len(self.countries)+len(self.nationalities)+len(self.dates) > 0:
-			product_query.join(sale, item, "Code", "Style") # jointure sur ITEM_Code = SALE_Style
+			product_query.join(sale, item, "Style", "Code") # jointure sur ITEM_Code = SALE_Style
 
 			# S'il y a une ville, on fait JOIN sur la table des boutiques
 			if len(self.cities) > 0:
