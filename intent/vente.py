@@ -34,6 +34,9 @@ class Vente(object):
 		# Initialisation de la query : par défaut pour l'instant on sélectionne count(*)
 		product_query = query(sale, ['count(*)'])
 
+		if len(self.dates)>0:
+			product_query.wheredate(sale, 'DateNumYYYYMMDD', self.dates[0])
+
 		# S'il y a une précision, on considère que ça concerne des ventes
 		# On fait les jointures en fonction
 		if len(self.cities)+len(self.countries)+len(self.nationalities)+len(self.dates) > 0:

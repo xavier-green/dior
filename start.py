@@ -63,7 +63,8 @@ def vector_get(sentence):
     geo_extracted['intent'] = intent_extracted
     geo_extracted['items'] = items_extracted
 
-    print('intent = '+intent_extracted)
+    print('data extracted:')
+    print(geo_extracted)
 
     if intent_extracted == 'vente':
         print("Detected it's a sale")

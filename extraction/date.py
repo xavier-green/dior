@@ -63,7 +63,7 @@ class DateExtractor(object):
         return 1
 
     def get_new_date(self,dateFormat="%Y%m%d", addDays=0):
-        timeNow = datetime.datetime.now()
+        timeNow = datetime.datetime(2017, 3, 4, 12, 00)
         if (addDays!=0):
             anotherTime = timeNow + datetime.timedelta(days=addDays)
         else:
