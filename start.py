@@ -30,7 +30,7 @@ from response import Response
 resp = Response()
 
 print("Importing produit")
-from intent.produit import Produit
+from intent.vente import Vente
 
 print("Importing treetagger")
 
@@ -63,8 +63,9 @@ def vector_get(sentence):
     geo_extracted['intent'] = intent_extracted
     geo_extracted['items'] = items_extracted
 
-    if intent_extracted == 'produit':
-        produit = Produit(geo_extracted)
+    if intent_extracted == 'vente':
+        print("Detected it's a sale")
+        produit = Vente(geo_extracted)
         return (produit.build_answer())
 
 #, ans.make(geo_extracted)

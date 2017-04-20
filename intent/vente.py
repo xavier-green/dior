@@ -10,7 +10,7 @@ from sql.request import query
 # Import de toutes les tables utilisées
 from sql.tables import item, sale, boutique, country
 
-class Produit(object):
+class Vente(object):
 
 	def __init__(self, data):
 		self.cities = data['cities']
@@ -27,14 +27,6 @@ class Produit(object):
 
 
 	def build_query(self):
-		# bdd = item_item
-		# geo ou date -> vente (sales_sales) / (stock)
-		# select COUNT
-		# nationalites -> vente
-		# item obligatoire
-
-		# IN PROGRESS
-
 
 		if len(self.items) == 0:
 			return "Veuillez préciser un produit svp"
@@ -68,15 +60,10 @@ class Produit(object):
 		print(product_query.request)
 		# La requête est terminée, on l'écrit
 		# product_query.write()
-		return product_query.write()
-
-		# Test de Rémi
-		# else:
-		# 	demande = query(item, ['Description'], 50)
-		# 	for search_item in self.items:
-		# 		demande.where(item, 'Description', search_item)
-		# 	demande.groupby(item, 'Description')
-		# 	return demande.write()
+		result = product_query.write()
+		print("***************")
+		print(result)
+		return result
 
 	def append_details(self, text):
 		resp = text[:]+";;"
