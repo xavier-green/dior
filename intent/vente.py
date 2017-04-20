@@ -33,15 +33,14 @@ class Vente(object):
 		if len(self.items) == 0:
 			return "Veuillez préciser un produit svp"
 
-		query_element = 'count(*)'
-		distinct = False
+		product_query = query(sale, ['count(*)'])
 
 		if 'couleur' in self.sentence:
-			query_element = 'Color'
-			distinct = True
+			product_query = query(sale, ['Color','count(*)'], distinct=True)
+
 
 		# Initialisation de la query : par défaut pour l'instant on sélectionne count(*)
-		product_query = query(sale, [query_element], distinct=distinct)
+		
 		product_query.join(sale, item, "Style", "Code") # jointure sur ITEM_Code = SALE_Style
 
 		# S'il y a une précision, on considère que ça concerne des ventes
@@ -67,6 +66,11 @@ class Vente(object):
 
 		if len(self.numerical_dates)>0:
 			product_query.wheredate(sale, 'DateNumYYYYMMDD', self.numerical_dates[0])
+
+		if 'couleur' in self.sentence:
+			product_query.groupby(sale, 'Color')
+			if 'le plus' in self.sentence or 'la plus' in self.sentence:
+				product_query.orderby('count(*)', " DESC")
 			
 		print(product_query.request)
 		# La requête est terminée, on l'écrit
