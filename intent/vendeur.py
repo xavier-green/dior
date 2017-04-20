@@ -77,7 +77,7 @@ class Vendeur(object):
 		print("***************")
 		print(result)
 		reponse = "Voici les 10 meilleurs vendeurs "
-		start_date = self.numerical_date[0] if len(self.numerical_date) > 0 else '20170225'
+		start_date = self.numerical_dates[0] if len(self.numerical_dates) > 0 else '20170225'
 		reponse += "du " + start_date + " au " + "20170304 " 
 		reponse += "pour le produit " + ', '.join([i for i in self.items]) + " " if len(self.items) > 0 else ''
 		reponse += "de la boutique de " + ', '.join([b for b in self.cities]) + " " if len(self.cities) > 0 else ''
