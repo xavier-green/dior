@@ -34,19 +34,17 @@ class Vente(object):
 
 		# Initialisation de la query : par défaut pour l'instant on sélectionne count(*)
 		product_query = query(sale, ['count(*)'])
+		product_query.join(sale, item, "Style", "Code") # jointure sur ITEM_Code = SALE_Style
 
 		# S'il y a une précision, on considère que ça concerne des ventes
 		# On fait les jointures en fonction
-		if len(self.cities)+len(self.countries)+len(self.nationalities)+len(self.dates) > 0:
-			product_query.join(sale, item, "Style", "Code") # jointure sur ITEM_Code = SALE_Style
+		# S'il y a une ville, on fait JOIN sur la table des boutiques
+		if len(self.cities) > 0:
+			product_query.join(sale, boutique, "Location", "Code") # jointure sur SALE_Location = LOCA_Code
 
-			# S'il y a une ville, on fait JOIN sur la table des boutiques
-			if len(self.cities) > 0:
-				product_query.join(sale, boutique, "Location", "Code") # jointure sur SALE_Location = LOCA_Code
-
-			# S'il n'y a pas de ville, on s'intéresse au pays
-			elif len(self.countries) > 0:
-				product_query.join(sale, country, "Country", "Code") # jointyre sur SALE_Country = COUN_Code
+		# S'il n'y a pas de ville, on s'intéresse au pays
+		elif len(self.countries) > 0:
+			product_query.join(sale, country, "Country", "Code") # jointyre sur SALE_Country = COUN_Code
 
 		# Maintenant que toutes les jointures sont faites, on passe aux conditions
 		for produit in self.items :
