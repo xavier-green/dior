@@ -66,6 +66,7 @@ def vector_get(sentence):
 	geo_extracted['numerical_dates'] = numerical_dates_extracted
 	geo_extracted['intent'] = intent_extracted
 	geo_extracted['items'] = items_extracted
+	geo_extracted['sentence'] = sentence
 	
 	print('data extracted:')
 	print(geo_extracted)

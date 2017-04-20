@@ -19,6 +19,7 @@ class Vente(object):
 		self.dates = data['dates']
 		self.numerical_dates = data['numerical_dates']
 		self.items = data['items']
+		self.sentence = data['sentence']
 
 	def build_answer(self):
 		response_base = self.build_query()
@@ -32,8 +33,13 @@ class Vente(object):
 		if len(self.items) == 0:
 			return "Veuillez préciser un produit svp"
 
+		query_element = 'count(*)'
+
+		if 'couleur' in self.sentence:
+			query_element = 'color'
+
 		# Initialisation de la query : par défaut pour l'instant on sélectionne count(*)
-		product_query = query(sale, ['count(*)'])
+		product_query = query(sale, [query_element])
 		product_query.join(sale, item, "Style", "Code") # jointure sur ITEM_Code = SALE_Style
 
 		# S'il y a une précision, on considère que ça concerne des ventes
