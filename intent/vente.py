@@ -19,6 +19,7 @@ class Vente(object):
 		self.dates = data['dates']
 		self.numerical_dates = data['numerical_dates']
 		self.items = data['items']
+		self.sentence = data['sentence']
 
 	def build_answer(self):
 		response_base = self.build_query()
@@ -32,8 +33,14 @@ class Vente(object):
 		if len(self.items) == 0:
 			return "Veuillez préciser un produit svp"
 
-		# Initialisation de la query : par défaut pour l'instant on sélectionne count(*)
 		product_query = query(sale, ['count(*)'])
+
+		if 'couleur' in self.sentence:
+			product_query = query(sale, ['Color','count(*)'], top_distinct='DISTINCT TOP 5')
+
+
+		# Initialisation de la query : par défaut pour l'instant on sélectionne count(*)
+
 		product_query.join(sale, item, "Style", "Code") # jointure sur ITEM_Code = SALE_Style
 
 		# S'il y a une précision, on considère que ça concerne des ventes
@@ -59,14 +66,23 @@ class Vente(object):
 
 		if len(self.numerical_dates)>0:
 			product_query.wheredate(sale, 'DateNumYYYYMMDD', self.numerical_dates[0])
-			
-		print(product_query.request)
-		# La requête est terminée, on l'écrit
-		# product_query.write()
-		result = product_query.write()
-		print("***************")
-		print(result)
-		return result
+
+		if 'couleur' in self.sentence:
+			product_query.groupby(sale, 'Color')
+			product_query.orderby('count(*)', " DESC")
+			result = [w for w in product_query.write().split('\n') if 'SALE_Color' not in w]
+			if 'le plus' in self.sentence or 'la plus' in self.sentence:
+				split_res = result[0].split("|")
+				return "La couleur la plus vendue est "+split_res[0]+" ( "+split_res[1]+" vendus )"
+			else:
+				return ";;".join(result)
+
+		else:			
+			# La requête est terminée, on l'écrit
+			# product_query.write()
+			result = product_query.write()
+			print("***************")
+			return result
 
 	def append_details(self, text):
 		resp = text[:]+";;"

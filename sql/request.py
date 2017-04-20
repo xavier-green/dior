@@ -4,7 +4,8 @@ import subprocess, csv, socket
 
 class query(object):
 
-	def __init__ (self, table, columns, number=0):
+
+	def __init__ (self, table, columns, top_distinct =''):
 
 		self.used_tables = [table]
 		# Vérifie que toutes les colonnes demandées appartiennent à la table indiquée
@@ -32,11 +33,8 @@ class query(object):
 			else:
 				assert False, "Il semblerait que les colonnes demandées n'appartiennent à aucune table"
 
-		# Met en forme un éventuel TOP i éléments
-		top = '' if number == 0 else 'TOP %i ' % (number)
-
 		# Ecrit le début de la requête
-		self.request = "SELECT " + top + ', '.join(objectif) + " FROM " + table.name + " AS " + table.alias + "\n"
+		self.request = "SELECT " + top_distinct + " " + ', '.join(objectif) + " FROM " + table.name + " AS " + table.alias + "\n"
 
 		# Stock les tables utilisées dans la requête, et le nombre de where
 		self.joints = [table]

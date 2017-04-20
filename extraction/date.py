@@ -25,6 +25,21 @@ date_words = {
 previous_words = ["il y a","depuis","ce","cette","dernier","derniers","derniere","dernieres"]
 post_words = ["dernier","derniers","derniere","dernière"]
 
+chiffres = {
+    "un":1,
+    "deux":2,
+    "trois":3,
+    "quatre":4,
+    "cinq":5,
+    "six":6,
+    "sept":7,
+    "huit":8,
+    "neuf":9,
+    "dix":10,
+    "quinze":15,
+    "vingt":20
+}
+
 class DateExtractor(object):
 
     def clean(self,text):
@@ -42,8 +57,11 @@ class DateExtractor(object):
             previous_word = sentence[current_index-1]
             if (previous_word in previous_words):
                 return self.getPreviousWord(current_index-1,sentence)+[previous_word]
+            elif previous_word in chiffres:
+                return [chiffres[previous_word]]
             elif previous_word.isdigit():
                 return [previous_word]
+
         return []
 
     def getPostWord(self,current_index,sentence_length,sentence):
