@@ -25,7 +25,7 @@ date_words = {
 previous_words = ["il y a","depuis","ce","cette","dernier","derniers","derniere","dernieres"]
 post_words = ["dernier","derniers","derniere","dernière"]
 
-chiffres = [
+chiffres = {
     "un":1,
     "deux":2,
     "trois":3,
@@ -38,7 +38,7 @@ chiffres = [
     "dix":10,
     "quinze":15,
     "vingt":20
-]
+}
 
 class DateExtractor(object):
 
