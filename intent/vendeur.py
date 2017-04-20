@@ -111,5 +111,5 @@ data = {
 		'items' : []
 		}
 
-test = Vendeur(data)
-print(test.build_query())
+# test = Vendeur(data)
+# print(test.build_query())
