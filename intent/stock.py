@@ -8,51 +8,50 @@
 from sql.request import query
 
 # Import de toutes les tables utilisées
-from sql.tables import item, sale, boutique, country
+from sql.tables import item, stock, boutique, country
 
-class Vente(object):
+class Produit(object):
 
 	def __init__(self, data):
 		self.cities = data['cities']
 		self.countries = data['countries']
-		self.nationalities = data['nationalities']
-		self.dates = data['dates']
-		self.numerical_dates = data['numerical_dates']
 		self.items = data['items']
-		self.sentence = data['sentence']
 
 	def build_answer(self):
 		response_base = self.build_query()
 		print(response_base)
 		response_complete = self.append_details(response_base)
-		return response_complete 
+		return response_complete
 
 
 	def build_query(self):
+		# bdd = item_item
+		# geo ou date -> vente (sales_sales) / (stock)
+		# select COUNT
+		# nationalites -> vente
+		# item obligatoire
+
+		# IN PROGRESS
+
 
 		if len(self.items) == 0:
 			return "Veuillez préciser un produit svp"
 
-		query_element = 'count(*)'
-		distinct = ''
-
-		if 'couleur' in self.sentence:
-			query_element = 'Color'
-			distinct = "DISTINCT"
-
-		# Initialisation de la query : par défaut pour l'instant on sélectionne count(*)
-		product_query = query(sale, [query_element], distinct)
-		product_query.join(sale, item, "Style", "Code") # jointure sur ITEM_Code = SALE_Style
+		# Initialisation de la query : par défaut pour l'instant on sélectionne count(*)vj
+		product_query = query(item, ['count(*)'])
 
 		# S'il y a une précision, on considère que ça concerne des ventes
 		# On fait les jointures en fonction
-		# S'il y a une ville, on fait JOIN sur la table des boutiques
-		if len(self.cities) > 0:
-			product_query.join(sale, boutique, "Location", "Code") # jointure sur SALE_Location = LOCA_Code
+		if len(self.cities)+len(self.countries)+len(self.nationalities)+len(self.dates) > 0:
+			product_query.join(item, stock, "Code", "Style") # jointure sur ITEM_Code = SALE_Style
 
-		# S'il n'y a pas de ville, on s'intéresse au pays
-		elif len(self.countries) > 0:
-			product_query.join(sale, country, "Country", "Code") # jointyre sur SALE_Country = COUN_Code
+			# S'il y a une ville, on fait JOIN sur la table des boutiques
+			if len(self.cities) > 0:
+				product_query.join(stock, boutique, "Location", "Code") # jointure sur SALE_Location = LOCA_Code
+
+			# S'il n'y a pas de ville, on s'intéresse au pays
+			elif len(self.countries) > 0:
+				product_query.join(stock, country, "Country", "Code") # jointyre sur SALE_Country = COUN_Code
 
 		# Maintenant que toutes les jointures sont faites, on passe aux conditions
 		for produit in self.items :
@@ -64,17 +63,10 @@ class Vente(object):
 		if len(self.cities) == 0:
 			for pays in self.countries :
 				product_query.where(country, "Description_FR", pays)
-
-		if len(self.numerical_dates)>0:
-			product_query.wheredate(sale, 'DateNumYYYYMMDD', self.numerical_dates[0])
-			
 		print(product_query.request)
 		# La requête est terminée, on l'écrit
 		# product_query.write()
-		result = product_query.write()
-		print("***************")
-		print(result)
-		return result
+		return product_query.write()
 
 	def append_details(self, text):
 		resp = text[:]+";;"
@@ -98,14 +90,3 @@ class Vente(object):
 				resp = resp[:-1]
 			resp += ");;"
 		return resp
-#
-# data = {
-# 		'cities' : ['Paris', 'Madrid'],
-# 		'countries' : [],
-# 		'nationalities' : [],
-# 		'dates' : [],
-# 		'items' : ['robe']
-# 		}
-#
-# test = Produit(data)
-# print(test.build_query())

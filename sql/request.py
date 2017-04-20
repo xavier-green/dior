@@ -4,6 +4,7 @@ import subprocess, csv, socket
 
 class query(object):
 
+
 	def __init__ (self, table, columns, top_distinct =''):
 
 		self.used_tables = [table]
