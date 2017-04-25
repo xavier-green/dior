@@ -102,9 +102,8 @@ class ProductExtractor(object):
     def aggressive_tokenize(self, text):
         min_length = 3
         words = map(lambda word: word.lower(), text.split(" "));
-        tokens =(list(map(lambda token: FrenchStemmer().stem(token),words)));
         p = re.compile('^[a-zA-Z\' ]+$');
-        filtered_tokens = list(filter(lambda token:p.match(token) and len(token)>=min_length,tokens));
+        filtered_tokens = list(filter(lambda token:p.match(token) and len(token)>=min_length,words));
         return filtered_tokens
 
     def tag_dict(self, sentence):
