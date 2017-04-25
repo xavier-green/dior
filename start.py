@@ -2,6 +2,8 @@ from flask import Flask
 from flask import request, jsonify
 import datetime
 
+app = Flask(__name__)
+
 print("Importing intent class")
 from intent.intent import intentModel
 print("Importing geo class")
@@ -130,4 +132,5 @@ def vector_post():
 		return "incorrect request (no sentence field)"
 	return str(model_fasttext[sentence.split()[0]])
 
-app.run(host="0.0.0.0")
+if __name__ == "__main__":
+    app.run(host="0.0.0.0")
