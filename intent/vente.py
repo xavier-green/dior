@@ -53,16 +53,16 @@ class Vente(object):
 		for produit in self.items :
 			for produit_key in produit:
 				if produit_key == "division":
-					product_query.join(sale, division,"Code","Division")
+					product_query.join(sale, division,"Division","Code")
 					product_query.where(division, "Description", produit[produit_key])
 				elif produit_key == "departement":
-					product_query.join(sale, department,"Code","Department")
+					product_query.join(sale, department,"Department","Code")
 					product_query.where(department, "Description", produit[produit_key])
 				elif produit_key == "groupe":
-					product_query.join(sale, retail,"Code","Group")
+					product_query.join(sale, retail,"Group","Code")
 					product_query.where(retail, "Description", produit[produit_key])
 				elif produit_key == "theme":
-					product_query.join(sale, theme,"Code","Theme")
+					product_query.join(sale, theme,"Theme","Code")
 					product_query.where(theme, "Description", produit[produit_key])
 				elif produit_key == "produit":
 					product_query.where(item, "Description", produit)
