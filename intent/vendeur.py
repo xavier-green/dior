@@ -16,8 +16,8 @@ class Vendeur(object):
 	
 	def build_answer(self):
 		response_base = self.build_query()
-		response_complete = self.append_details(response_base)
-		return response_complete
+		response_complete = self.append_details(response_base[1])
+		return [response_base[0],response_complete]
 	
 	
 	def build_query(self):
@@ -83,7 +83,7 @@ class Vendeur(object):
 		reponse += "de la boutique de " + ', '.join([b for b in self.cities]) + " " if len(self.cities) > 0 else ''
 		reponse += "dans le pays " + ", ".join([p for p in self.countries]) + " " if len(self.cities) == 0 and len(self.countries) > 0 else ''
 		reponse += " :\n" + result
-		return reponse
+		return [seller_query.request,reponse]
 
 	def append_details(self, text):
 		resp = text[:]+";;"

@@ -88,11 +88,11 @@ def vector_get(sentence):
 		my_stock = Stock(geo_extracted)
 		answer = my_stock.build_answer()
 	else:
-		answer = "Bonjour, malheureusement je n'ai pas saisi votre requête. Pouvez-vous reformuler ?"
+		answer = ["","Bonjour, malheureusement je n'ai pas saisi votre requête. Pouvez-vous reformuler ?"]
 
 	with open("logs.txt", "a") as myfile:
 		now = datetime.datetime.now()
-		myfile.write(now.strftime("%Y-%m-%d %H:%M")+"||"+sentence+"||"+answer[0]+"||"+answer[1])
+		myfile.write(now.strftime("%Y-%m-%d %H:%M")+"||"+sentence+"||"+answer[0]+"||"+answer[1]+"\n")
 
 	return answer[1]
 

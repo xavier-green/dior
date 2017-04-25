@@ -20,8 +20,8 @@ class Stock(object):
 	def build_answer(self):
 		response_base = self.build_query()
 		print(response_base)
-		response_complete = self.append_details(response_base)
-		return response_complete
+		response_complete = self.append_details(response_base[1])
+		return [response_base[0],response_complete]
 
 
 	def build_query(self):
@@ -55,7 +55,7 @@ class Stock(object):
 		print(product_query.request)
 		# La requête est terminée, on l'écrit
 		# product_query.write()
-		return product_query.write()
+		return [product_query.request,product_query.write()]
 
 	def append_details(self, text):
 		resp = text[:]+";;"
