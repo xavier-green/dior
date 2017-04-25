@@ -51,7 +51,7 @@ app = Flask("test")
 
 world = WordClassification(model_fasttext)
 datex = DateExtractor()
-word = ProductExtractor('data/products.csv')
+word = ProductExtractor()
 bouti = extract_boutique('data/Boutiques.csv')
 
 @app.route('/params/<string:sentence>', methods=["GET"])

@@ -55,7 +55,7 @@ class intentModel(object):
         self.trained_model = None
         self.world = WordClassification(self.word2vec_model)
         self.datex = DateExtractor()
-        self.itm = ProductExtractor('data/products.csv')
+        self.itm = ProductExtractor()
         self.boutique = extract_boutique('data/Boutiques.csv')
 
     def remove_variables(self, text):

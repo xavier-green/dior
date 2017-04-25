@@ -51,7 +51,21 @@ class Vente(object):
 
 		# Maintenant que toutes les jointures sont faites, on passe aux conditions
 		for produit in self.items :
-			product_query.where(item, "Description", produit)
+			for produit_key in produit:
+				if produit_key == "division":
+					product_query.join(sale, division,"Code","Division")
+					product_query.where(division, "Description", produit[produit_key])
+				elif produit_key == "departement":
+					product_query.join(sale, department,"Code","Department")
+					product_query.where(department, "Description", produit[produit_key])
+				elif produit_key == "groupe":
+					product_query.join(sale, retail,"Code","Group")
+					product_query.where(retail, "Description", produit[produit_key])
+				elif produit_key == "theme":
+					product_query.join(sale, theme,"Code","Theme")
+					product_query.where(theme, "Description", produit[produit_key])
+				elif produit_key == "produit":
+					product_query.where(item, "Description", produit)
 
 		for ville in self.cities :
 			product_query.where(boutique, "Description", ville)
