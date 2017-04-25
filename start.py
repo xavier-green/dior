@@ -109,7 +109,7 @@ def get_logs():
 		content = [x for x in content]
 		print(content)
 		center = ""
-		for entry in entries:
+		for entry in content:
 			center += "<tr>"
 			words = entry.split("||")
 			for word in words:
