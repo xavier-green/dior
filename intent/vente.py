@@ -77,21 +77,21 @@ class Vente(object):
 						result_string = result_string[:-1]
 					return result_string
 				else:
-					return ";;".join(result)
+					return [product_query.request,";;".join(result)]
 			else:
-				return "Aucune couleur enregistrée pour "+",".join(self.items)
+				return [product_query.request,"Aucune couleur enregistrée pour "+",".join(self.items)]
 		elif ('Où' in self.sentence) or ('où' in self.sentence):
 			product_query.groupby(sale, 'Location')
 			product_query.orderby('count(*)', " DESC")
 			query_result = product_query.write().split('\n')
 			print(query_result)
-			return ";;".join(query_result)
+			return [product_query.request,";;".join(query_result)]
 		else:			
 			# La requête est terminée, on l'écrit
 			# product_query.write()
 			result = product_query.write()
 			print("***************")
-			return result
+			return [product_query.request,result]
 
 	def append_details(self, text):
 		resp = text[:]+";;"

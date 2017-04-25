@@ -1,5 +1,6 @@
 from flask import Flask
 from flask import request, jsonify
+import datetime
 
 print("Importing intent class")
 from intent.intent import intentModel
@@ -72,20 +73,28 @@ def vector_get(sentence):
 	print('data extracted:')
 	print(geo_extracted)
 
+	anwser = ""
+
 	if intent_extracted == 'vente':
-		print("Detected it's a sale")
+		print("Detected it's a sale \n")
 		produit = Vente(geo_extracted)
-		return (produit.build_answer())
+		answer = produit.build_answer()
 	elif intent_extracted == 'vendeur':
 		print("Vous avez demandé des informations au sujet du staff \n")
 		vendeur = Vendeur(geo_extracted)
-		return (vendeur.build_answer())
+		answer = vendeur.build_answer()
 	elif intent_extracted == 'stock':
 		print("Vous avez demandé des informations au sujet du stock \n")
 		my_stock = Stock(geo_extracted)
-		return (my_stock.build_answer())
+		answer = my_stock.build_answer()
 	else:
-		return "Bonjour, malheureusement je n'ai pas saisi votre requête. Pouvez-vous reformuler ?"
+		answer = "Bonjour, malheureusement je n'ai pas saisi votre requête. Pouvez-vous reformuler ?"
+
+	with open("logs.txt", "a") as myfile:
+		now = datetime.datetime.now()
+    	myfile.write(now.strftime("%Y-%m-%d %H:%M")+"||"+sentence+"||"+answer[0]+"||"+answer[1])
+
+	return answer[0]
 
 #, ans.make(geo_extracted)
     # return str(geo_extracted) # returns the vector of the first word just to check that the model was used
