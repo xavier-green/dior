@@ -99,6 +99,12 @@ def vector_get(sentence):
 #, ans.make(geo_extracted)
     # return str(geo_extracted) # returns the vector of the first word just to check that the model was used
 
+@app/route('/logs',methods=["GET"])
+def get_logs():
+	with open("logs.txt") as f:
+		content = f.readlines()
+		return content
+
 @app.route('/', methods=["POST"]) # same but getting the sentence via POST
 def vector_post():
 	global model_fasttext
