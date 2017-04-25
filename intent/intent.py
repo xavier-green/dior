@@ -20,6 +20,7 @@ stop_words = [x for x in stop_words_old if x not in not_stop_words]
 from sklearn import neighbors
 from sklearn.externals import joblib
 from sklearn.feature_extraction.text import TfidfTransformer
+from sklearn.svm import SVC
 
 def tokenize(text):
     stripped_punctuation = re.sub(r'[-_;,.?!]',' ',text.lower())
@@ -76,7 +77,8 @@ class intentModel(object):
         word2vec = Pipeline([
             ("word2vec vectorizer", Word2VecVectorizer(self.word2vec_model)),
             ('tfidf', TfidfTransformer(use_idf=False)),
-            ("knn neighbours", neighbors.KNeighborsClassifier(15, weights='distance'))])
+            ('SVM',SVC(kernel="linear"))])
+            # ("knn neighbours", neighbors.KNeighborsClassifier(15, weights='distance'))])
         word2vec.fit(X,y)
         self.trained_model = word2vec
         print("Done fitting the model")

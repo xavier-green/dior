@@ -55,7 +55,7 @@ bouti = extract_boutique('data/Boutiques.csv')
 @app.route('/params/<string:sentence>', methods=["GET"])
 def vector_get(sentence):
 	print("new connection from: "+request.remote_addr)
-	print(request.environ['REMOTE_ADDR'])
+	sentence = sentence.lower()
 	global model_fasttext
 	if model_fasttext is None:
 		model_fasttext = fasttext.load_model(model_fasttext_path)
