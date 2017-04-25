@@ -66,7 +66,7 @@ class Vente(object):
 		if 'couleur' in self.sentence:
 			product_query.groupby(sale, 'Color')
 			product_query.orderby('count(*)', " DESC")
-			query_result = product_query.write().split('\n')
+			query_result = ' '.join(product_query.write().split('\n'))
 			print(query_result)
 			result = [w.split("|")[0]+" ( "+w.split("|")[1]+" vendus )" for w in query_result if 'SALE_Color' not in w]
 			if len(result) > 0:
@@ -83,13 +83,13 @@ class Vente(object):
 		elif ('Où' in self.sentence) or ('où' in self.sentence):
 			product_query.groupby(sale, 'Location')
 			product_query.orderby('count(*)', " DESC")
-			query_result = product_query.write().split('\n')
+			query_result = ' '.join(product_query.write().split('\n'))
 			print(query_result)
 			return [product_query.request,";;".join(query_result)]
 		else:			
 			# La requête est terminée, on l'écrit
 			# product_query.write()
-			result = product_query.write()
+			result = ' '.join(product_query.write().split('\n'))
 			print("***************")
 			return [product_query.request,result]
 
