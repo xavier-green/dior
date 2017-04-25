@@ -92,9 +92,9 @@ def vector_get(sentence):
 
 	with open("logs.txt", "a") as myfile:
 		now = datetime.datetime.now()
-    	myfile.write(now.strftime("%Y-%m-%d %H:%M")+"||"+sentence+"||"+answer[0]+"||"+answer[1])
+		myfile.write(now.strftime("%Y-%m-%d %H:%M")+"||"+sentence+"||"+answer[0]+"||"+answer[1])
 
-	return answer[0]
+	return answer[1]
 
 #, ans.make(geo_extracted)
     # return str(geo_extracted) # returns the vector of the first word just to check that the model was used
