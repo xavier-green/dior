@@ -99,11 +99,32 @@ def vector_get(sentence):
 #, ans.make(geo_extracted)
     # return str(geo_extracted) # returns the vector of the first word just to check that the model was used
 
-@app/route('/logs',methods=["GET"])
+@app.route('/logs',methods=["GET"])
 def get_logs():
 	with open("logs.txt") as f:
 		content = f.readlines()
-		return content
+		entries = content.split("\n")
+		center = ""
+		for entry in entries:
+			center += "<tr>"
+			words = entry.split("||")
+			for word in words:
+				center += "<td>"+word+"</td>"
+			center += "</tr>"
+
+		return """<!DOCTYPE html>
+        <html>
+            <head>
+                <meta charset="utf-8" />
+                <title>Logs</title>
+            </head>
+        
+            <body>
+            	<table><th><td>Date</td><td>Requete</td><td>SQL</td><td>Reponse</td></th>
+            	{center}
+            	</table>
+            </body>
+        </html>""".format(center=center)
 
 @app.route('/', methods=["POST"]) # same but getting the sentence via POST
 def vector_post():
