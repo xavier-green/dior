@@ -103,7 +103,7 @@ def vector_get(sentence):
 def get_logs():
 	with open("logs.txt") as f:
 		content = f.readlines()
-		content = [x.strip() for x in content]
+		content = [x for x in content]
 		print(content)
 		entries = content.split("\n")
 		center = ""
