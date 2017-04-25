@@ -113,7 +113,7 @@ def get_logs():
 			center += "<tr>"
 			words = entry.split("||")
 			for word in words:
-				center += "<td>"+word+"</td>"
+				center += "<td style='border: 1px solid #dddddd;'>"+word+"</td>"
 			center += "</tr>"
 
 		return """<!DOCTYPE html>
@@ -124,7 +124,9 @@ def get_logs():
             </head>
         
             <body>
-            	<table><th><td>Date</td><td>Requete</td><td>SQL</td><td>Reponse</td></th>
+            	<table style="font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 100%;"><tr><th>Date</th><th>Requete</th><th>SQL</th><th>Reponse</th></tr>
             	{center}
             	</table>
             </body>
