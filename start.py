@@ -84,7 +84,7 @@ def vector_get(sentence):
 	if model_fasttext is None:
 		model_fasttext = fasttext.load_model(model_fasttext_path)
 	intent_extracted = intent_model.predict(sentence)
-	geo_extracted = world.find_similar_words(sentence)
+	geo_extracted,sentence = world.find_similar_words(sentence)
 	dates_extracted = datex.extract(sentence)
 	numerical_dates_extracted = datex.extract_numerical(sentence)
 	items_extracted = word.extract(sentence)

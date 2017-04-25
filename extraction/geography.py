@@ -84,7 +84,10 @@ class WordClassification(object):
             "countries": self.find_similar_country(text),
             "nationalities": self.find_similar_nationality(text)
         }
-        return json
+        for key in json:
+            for word in json[key]:
+                text = text.replace(word,'')
+        return (json,text)
 
 
 # world = WordClassification(model_fasttext)
