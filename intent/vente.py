@@ -65,7 +65,7 @@ class Vente(object):
 					product_query.join(sale, theme,"Theme","Code")
 					product_query.where(theme, "Description", produit[produit_key])
 				elif produit_key == "produit":
-					product_query.where(item, "Description", produit)
+					product_query.where(item, "Description", produit[produit_key])
 
 		for ville in self.cities :
 			product_query.where(boutique, "Description", ville)
