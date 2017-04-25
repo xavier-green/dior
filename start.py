@@ -92,7 +92,10 @@ def vector_get(sentence):
 
 	with open("logs.txt", "a") as myfile:
 		now = datetime.datetime.now()
-		myfile.write(now.strftime("%Y-%m-%d %H:%M")+"||"+sentence+"||"+answer[0]+"||"+answer[1]+"\n")
+		mainString = now.strftime("%Y-%m-%d %H:%M")+"||"+sentence+"||"+answer[0]+"||"+answer[1]
+		mainString = mainString.replace('\n','')
+		print("logged: "+mainString)
+		myfile.write(mainString+"\n")
 
 	return answer[1]
 
@@ -105,7 +108,6 @@ def get_logs():
 		content = f.readlines()
 		content = [x for x in content]
 		print(content)
-		entries = content.split("\n")
 		center = ""
 		for entry in entries:
 			center += "<tr>"
