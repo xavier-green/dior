@@ -1,5 +1,7 @@
 from flask import Flask, render_template
 from flask import request, jsonify
+
+import flask_admin as admin
 import datetime
 
 app = Flask(__name__)
@@ -47,7 +49,27 @@ intent_model = intentModel(model_fasttext)
 intent_model.train(data)
 #intent_model.predict("prix ht de la rose des vents")
 
-app = Flask("test")
+class Logs(admin.BaseView):
+	@admin.expose('/')
+	def index(self):
+		with open("logs.txt") as f:
+			content = f.readlines()
+			content = [x for x in content]
+			print(content)
+			# center = ""
+			data = []
+			for entry in content:
+				# center += "<tr>"
+				words = entry.split("||")
+				data.append(words)
+				# for word in words:
+				# 	center += "<td style='border: 1px solid #dddddd;'>"+word+"</td>"
+				# center += "</tr>"
+
+		return self.render('logs.html', data=data)
+
+
+app = Flask("test", template_folder='templates')
 
 world = WordClassification(model_fasttext)
 datex = DateExtractor()
@@ -71,7 +93,7 @@ def vector_get(sentence):
 	geo_extracted['intent'] = intent_extracted
 	geo_extracted['items'] = items_extracted
 	geo_extracted['sentence'] = sentence
-	
+
 	print('data extracted:')
 	print(geo_extracted)
 
@@ -104,7 +126,7 @@ def vector_get(sentence):
 #, ans.make(geo_extracted)
     # return str(geo_extracted) # returns the vector of the first word just to check that the model was used
 
-@app.route('/logs',methods=["GET"])
+"""@app.route('/logs',methods=["GET"])
 def get_logs():
 	with open("logs.txt") as f:
 		content = f.readlines()
@@ -120,7 +142,7 @@ def get_logs():
 			# 	center += "<td style='border: 1px solid #dddddd;'>"+word+"</td>"
 			# center += "</tr>"
 
-		return render_template('logs.html', data=data)
+		return render_template('logs.html', data=data)"""
 
 @app.route('/', methods=["POST"]) # same but getting the sentence via POST
 def vector_post():
@@ -134,5 +156,10 @@ def vector_post():
 		return "incorrect request (no sentence field)"
 	return str(model_fasttext[sentence.split()[0]])
 
+# Create admin navbar
+admin = admin.Admin(name="Dior Admin Page", template_mode='bootstrap3')
+admin.add_view(Logs(name="Logs"))
+admin.init_app(app)
+
 if __name__ == "__main__":
-    app.run(host="0.0.0.0")
+	app.run(host="0.0.0.0")
