@@ -25,7 +25,13 @@
 <body>
    <table>
    <tr><th>Date</th><th>Requete</th><th>SQL</th><th>Reponse</th></tr>
-       {{data}}
+        {% for line in data %}
+            <tr>
+            {% for word in line %}
+                <td>{{word}}</td>
+            {% endfor %}
+            </tr>
+        {% endfor %}
    </table>
 </body>
 </html>

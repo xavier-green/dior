@@ -110,15 +110,17 @@ def get_logs():
 		content = f.readlines()
 		content = [x for x in content]
 		print(content)
-		center = ""
+		# center = ""
+		data = []
 		for entry in content:
-			center += "<tr>"
+			# center += "<tr>"
 			words = entry.split("||")
-			for word in words:
-				center += "<td style='border: 1px solid #dddddd;'>"+word+"</td>"
-			center += "</tr>"
+			data.append(words)
+			# for word in words:
+			# 	center += "<td style='border: 1px solid #dddddd;'>"+word+"</td>"
+			# center += "</tr>"
 
-		return render_template('logs.html', data=center)
+		return render_template('logs.html', data=data)
 
 @app.route('/', methods=["POST"]) # same but getting the sentence via POST
 def vector_post():
