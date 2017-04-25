@@ -116,21 +116,7 @@ def get_logs():
 				center += "<td style='border: 1px solid #dddddd;'>"+word+"</td>"
 			center += "</tr>"
 
-		return """<!DOCTYPE html>
-        <html>
-            <head>
-                <meta charset="utf-8" />
-                <title>Logs</title>
-            </head>
-        
-            <body>
-            	<table style="font-family: arial, sans-serif;
-    border-collapse: collapse;
-    width: 100%;"><tr><th>Date</th><th>Requete</th><th>SQL</th><th>Reponse</th></tr>
-            	{center}
-            	</table>
-            </body>
-        </html>""".format(center=center)
+		return render_template('logs.html', data=center)
 
 @app.route('/', methods=["POST"]) # same but getting the sentence via POST
 def vector_post():
