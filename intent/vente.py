@@ -47,7 +47,7 @@ class Vente(object):
 		else:
 			sale_table.wheredate(sale, 'DateNumYYYYMMDD') # par défaut sur les 7 derniers jours
 
-		seller_query.join_custom(item, sale_table.request, sale, "Code", "Style") # jointure sur ITEM_Code = SALE_Style
+		product_query.join_custom(item, sale_table.request, sale, "Code", "Style") # jointure sur ITEM_Code = SALE_Style
 
 		# Initialisation de la query : par défaut pour l'instant on sélectionne count(*)
 
