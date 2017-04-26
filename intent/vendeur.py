@@ -72,18 +72,23 @@ class Vendeur(object):
 		# Maintenant que toutes les jointures sont faites, on passe aux conditions
 		if len(self.items['division']) > 0:
 			for produit in self.items['division'] :
+				print(produit)
 				seller_query.where(division, "Description", produit)
 		elif len(self.items['departement']) > 0:
 			for produit in self.items['departement'] :
+				print(produit)
 				seller_query.where(department, "Description", produit)
 		elif len(self.items['groupe']) > 0:
 			for produit in self.items['groupe'] :
+				print(produit)
 				seller_query.where(retail, "Description", produit)
 		elif len(self.items['theme']) > 0:
 			for produit in self.items['theme'] :
+				print(produit)
 				seller_query.where(theme, "Description", produit)
 		elif len(self.items['produit']) > 0:
 			for produit in self.items['produit'] :
+				print(produit)
 				seller_query.where(item, "Description", produit)
 		
 		
