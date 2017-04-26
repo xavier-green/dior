@@ -71,6 +71,13 @@ class query(object):
 		self.wcount.append(table.alias + column)
 
 		self.request += where + table_date + ' >= ' + start + '\nAND ' + table_date + ' <= ' + end + '\n'
+		
+	def whereNotJDAandOTH(self):
+		
+		where = "WHERE " if len(self.wcount) == 0 else "AND "
+		self.wcount.append("ZO.ZONE_Code")
+		
+		self.request += where + "ZO.ZONE_Code NOT IN ('JDA', 'OTH')\n"
 
 
 	def where(self, table, column, description):

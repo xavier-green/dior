@@ -1,7 +1,8 @@
+
 from sql.request import query
 
 # Import de toutes les tables utilisées
-from sql.tables import staff, sale, boutique, country, item
+from sql.tables import staff, sale, boutique, country, item, zone, division, department, theme, retail
 
 class Vendeur(object):
 
@@ -37,6 +38,10 @@ class Vendeur(object):
 		# Mais attention il faut joindre avec un set de date parce que sinon la reuqête timeout
 		sale_table = query(sale, ['*'])
 		
+		# Retirer les éléments de JDA et OTH
+		sale_table.join(sale, zone, 'Zone', 'Code')
+		sale_table.whereNotJDAandOTH()
+		
 		if len(self.numerical_dates) > 0:
 			sale_table.wheredate(sale, 'DateNumYYYYMMDD', self.numerical_dates[0])
 		else:
@@ -49,17 +54,38 @@ class Vendeur(object):
 		if len(self.cities) > 0:
 			seller_query.join(sale, boutique, "Location", "Code") # jointure sur SALE_Location = LOCA_Code
 		
-		# S'il n'y a pas de ville, on s'intéresse au pays
 		elif len(self.countries) > 0:
 			seller_query.join(sale, country, "Country", "Code") # jointure sur SALE_Country = COUN_Code
 		
 		# S'il y a un produit, on join avec item aussi
-		if len(self.items) > 0:
-			seller_query.join(sale, item, "Style", "Code") # jointure sur SALE_Style = ITEM_Code
+		if len(self.items['division']) > 0:
+			seller_query.join(sale, division, 'Division', 'Code')
+		elif len(self.items['departement']) > 0:
+			seller_query.join(sale, department, 'Department', 'Code')
+		elif len(self.items['groupe']) > 0:
+			seller_query.join(sale, retail, 'Group', 'Code')
+		elif len(self.items['theme']) > 0:
+			seller_query.join(sale, theme, 'Theme', 'Code')
+		elif len(self.items['produit']) > 0:
+			seller_query.join(sale, item, 'Style', 'Code')
 		
 		# Maintenant que toutes les jointures sont faites, on passe aux conditions
-		for produit in self.items :
-			seller_query.where(item, "Description", produit)
+		if len(self.items['division']) > 0:
+			for produit in self.items['division'] :
+				seller_query.where(division, "Description", produit)
+		elif len(self.items['departement']) > 0:
+			for produit in self.items['departement'] :
+				seller_query.where(department, "Description", produit)
+		elif len(self.items['groupe']) > 0:
+			for produit in self.items['groupe'] :
+				seller_query.where(retail, "Description", produit)
+		elif len(self.items['theme']) > 0:
+			for produit in self.items['theme'] :
+				seller_query.where(theme, "Description", produit)
+		elif len(self.items['produit']) > 0:
+			for produit in self.items['produit'] :
+				seller_query.where(item, "Description", produit)
+		
 		
 		for ville in self.cities :
 			seller_query.where(boutique, "Description", ville)
@@ -116,8 +142,14 @@ data = {
 		'nationalities' : [],
 		'dates' : [],
 		'numerical_dates' : ['20170226'],
-		'items' : []
+		'items' : {
+			"division": [],
+			"departement": [],
+			"groupe": [],
+			"theme": [],
+			"produit":[]
+			}
 		}
 
-# test = Vendeur(data)
-# print(test.build_query())
+test = Vendeur(data)
+print(test.build_query())
