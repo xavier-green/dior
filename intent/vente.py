@@ -19,6 +19,7 @@ class Vente(object):
 		self.dates = data['dates']
 		self.numerical_dates = data['numerical_dates']
 		self.items = data['items']
+		self.boutiques = data['boutiques']
 		self.sentence = data['sentence']
 
 	def build_answer(self):
@@ -115,6 +116,10 @@ class Vente(object):
 			for pays in self.countries :
 				product_query.where(country, "Description_FR", pays)
 
+		if len(self.boutiques) == 0:
+			for _boutique in self.boutiques :
+				product_query.where(boutique, "Description", _boutique)
+
 		if len(self.numerical_dates) > 0:
 			product_query.wheredate(sale, 'DateNumYYYYMMDD', self.numerical_dates[0])
 		else:
@@ -143,6 +148,12 @@ class Vente(object):
 			query_result = product_query.write().split('\n')
 			print(query_result)
 			result = [w.split("|")[0]+" ( "+w.split("|")[1]+" vendus )" for w in query_result if 'LOCA_Description' not in w and '------' not in w]
+			print(result)
+			return [product_query.request,";;".join(result)]
+		elif price_query:
+			query_result = product_query.write().split('\n')
+			print(query_result)
+			result = [w+"€" for w in query_result if 'SALE_Std_RP_WOTax_REF' not in w and '------' not in w]
 			print(result)
 			return [product_query.request,";;".join(result)]
 		else:			

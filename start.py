@@ -88,11 +88,13 @@ def vector_get(sentence):
 	geo_extracted,sentence = world.find_similar_words(sentence)
 	dates_extracted,sentence = datex.extract(sentence)
 	numerical_dates_extracted = datex.extract_numerical(sentence)
+	boutiques_extracted,sentence = bouti.extract(sentence)
 	items_extracted = word.extract(sentence)
 	geo_extracted['dates'] = dates_extracted
 	geo_extracted['numerical_dates'] = numerical_dates_extracted
 	geo_extracted['intent'] = intent_extracted
 	geo_extracted['items'] = items_extracted
+	geo_extracted['boutiques'] = boutiques_extracted
 	geo_extracted['sentence'] = sentence
 
 	print('data extracted:')
