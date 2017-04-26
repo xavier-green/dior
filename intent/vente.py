@@ -82,9 +82,9 @@ class Vente(object):
 		if 'couleur' in self.sentence:
 			product_query.groupby(sale, 'Color')
 			product_query.orderby('count(*)', " DESC")
-			query_result = ' '.join(product_query.write().split('\n'))
+			query_result = product_query.write().split('\n')
 			print(query_result)
-			result = [w.split("|")[0]+" ( "+w.split("|")[1]+" vendus )" for w in query_result if 'SALE_Color' not in w]
+			result = [w.split("|")[0]+" ( "+w.split("|")[1]+" vendus )" for w in query_result if 'SALE_Color' not in w and '------' not in w]
 			if len(result) > 0:
 				if 'le plus' in self.sentence or 'la plus' in self.sentence:
 					result_string = "La couleur la plus vendue est "+result[0]+" pour "+",".join(self.items)
@@ -99,13 +99,14 @@ class Vente(object):
 		elif ('Où' in self.sentence) or ('où' in self.sentence):
 			product_query.groupby(boutique, 'Description')
 			product_query.orderby('count(*)', " DESC")
-			query_result = ' '.join(product_query.write().split('\n'))
+			query_result = product_query.write().split('\n')
 			print(query_result)
+			result = [w for w in product_query if 'LOCA_Description' not in w and '------' not in w]
 			return [product_query.request,";;".join(query_result)]
 		else:			
 			# La requête est terminée, on l'écrit
 			# product_query.write()
-			result = ' '.join(product_query.write().split('\n'))
+			result = product_query.write().split('\n')
 			print("***************")
 			return [product_query.request,result]
 
