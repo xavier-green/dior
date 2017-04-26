@@ -1,7 +1,13 @@
-from sql.request import query
+#from sql.request import query
 
 # Import de toutes les tables utilisées
-from sql.tables import staff, sale, boutique, country, item, zone, division, department, theme, retail
+#from sql.tables import staff, sale, boutique, country, item, zone, division, department, theme, retail
+
+# Pour pouvoir importer les fichiers sql
+from importlib.machinery import SourceFileLoader
+
+foo = SourceFileLoader("sql.request", "../sql/request.py").load_module()
+foo = SourceFileLoader("sql.tables", "../sql/tables.py").load_module()
 
 class Vendeur(object):
 
@@ -62,29 +68,37 @@ class Vendeur(object):
 			for produit_key in produit:
 				if produit_key == "division":
 					seller_query.join(sale, division,"Division","Code")
-					seller_query.where(division, "Description", produit[produit_key])
 					categorie_produit = "la division "
 					produit_selected.append(produit[produit_key])
 				elif produit_key == "departement":
 					seller_query.join(sale, department,"Department","Code")
-					seller_query.where(department, "Description", produit[produit_key])
 					categorie_produit = "le departement "
 					produit_selected.append(produit[produit_key])
 				elif produit_key == "groupe":
 					seller_query.join(sale, retail,"Group","Code")
-					seller_query.where(retail, "Description", produit[produit_key])
 					categorie_produit = "le groupe retail "
 					produit_selected.append(produit[produit_key])
 				elif produit_key == "theme":
 					seller_query.join(sale, theme,"Theme","Code")
-					seller_query.where(theme, "Description", produit[produit_key])
 					categorie_produit = "le theme "
 					produit_selected.append(produit[produit_key])
 				elif produit_key == "produit":
 					seller_query.join(sale, item,"Style","Code")
-					seller_query.where(item, "Description", produit[produit_key])
 					categorie_produit = "le produit "
 					produit_selected.append(produit[produit_key])
+		
+		for produit in self.items :
+			for produit_key in produit:
+				if produit_key == "division":
+					seller_query.where(division, "Description", produit[produit_key])
+				elif produit_key == "departement":
+					seller_query.where(department, "Description", produit[produit_key])
+				elif produit_key == "groupe":
+					seller_query.where(retail, "Description", produit[produit_key])
+				elif produit_key == "theme":
+					seller_query.where(theme, "Description", produit[produit_key])
+				elif produit_key == "produit":
+					seller_query.where(item, "Description", produit[produit_key])
 		
 		for ville in self.cities :
 			seller_query.where(boutique, "Description", ville)
@@ -95,7 +109,7 @@ class Vendeur(object):
 		
 		# On n'oublie pas le GROUP BY, nécessaire ici vu qu'on prend à la fois une colonne et un count(*)
 		seller_query.groupby(staff, 'Name')
-		seller_query.orderby('count(*)', " DESC")
+		seller_query.orderby('sum(SA.SALE_Std_RP_WOTax_REF)', " DESC")
 		
 		# La requête est terminée, on utilise le résultat
 		result = seller_query.write()
@@ -146,3 +160,16 @@ class Vendeur(object):
 				resp = resp[:-1]
 			resp += ");;"
 		return resp
+	
+data = {
+		'cities': [],
+		'countries': [],
+		'nationalities': [],
+		'numerical_dates': [],
+		'dates': [],
+		'items': {},
+		'sentence': []
+		}
+
+test = Vendeur(data)
+print(test.build_answer())
