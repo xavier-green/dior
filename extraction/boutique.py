@@ -76,7 +76,7 @@ class extract_boutique(object):
         for i in range(1,self.n_max+1):
             results = self.extract_N(sentence, tags_dict, results, i)
         for w in results:
-            copy = copy.replace(w, "")
+            sentence = sentence.replace(w, "")
         print('Boutique extracted: ')
         print(results)
         return (results,sentence)
