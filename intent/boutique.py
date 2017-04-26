@@ -1,7 +1,7 @@
 from sql.request import query
 
 # Import de toutes les tables utilisées
-from sql.tables import item, sale, boutique, country, division, retail, theme, department
+from sql.tables import item, sale, boutique, country, division, retail, theme, department, zone
 
 class Boutique(object):
 
@@ -23,76 +23,97 @@ class Boutique(object):
 
 	def build_query(self):
 
-		boutique_query = query(boutique, ['Description'])
+		boutique_query = query(boutique, ['Description', 'count(*)', (sale, "sumStd_RP_WOTax_REF"), 'TOP 3'])
 
-		product_query.join(sale, item, "Style", "Code") # jointure sur ITEM_Code = SALE_Style
-		product_query.join(sale, boutique, "Location", "Code") # jointure sur SALE_Location = LOCA_Code
+		sale_table = query(sale, ['*'])
+		sale_table.join(sale, zone, 'Zone', 'Code')
+		sale_table.whereNotJDAandOTH()
+		
+		if len(self.numerical_dates) > 0:
+			sale_table.wheredate(sale, 'DateNumYYYYMMDD', self.numerical_dates[0])
+		else:
+			sale_table.wheredate(sale, 'DateNumYYYYMMDD') # par défaut sur les 7 derniers jours
+		
+		boutique_query.join_custom(boutique, sale_table.request, sale, "Code", "Location")
 
-		# S'il n'y a pas de ville, on s'intéresse au pays
 		if len(self.countries) > 0:
-			product_query.join(sale, country, "Country", "Code") # jointyre sur SALE_Country = COUN_Code
-
-		# Maintenant que toutes les jointures sont faites, on passe aux conditions
+			boutique_query.join(sale, country, "Country", "Code")
+		
+		categorie_produit = ''
+		produit_selected = []
 		for produit in self.items :
 			for produit_key in produit:
 				if produit_key == "division":
-					product_query.join(sale, division,"Division","Code")
-					product_query.where(division, "Description", produit[produit_key])
+					boutique_query.join(sale, division,"Division","Code")
+					categorie_produit = "la division "
+					produit_selected.append(produit[produit_key])
 				elif produit_key == "departement":
-					product_query.join(sale, department,"Department","Code")
-					product_query.where(department, "Description", produit[produit_key])
+					boutique_query.join(sale, department,"Department","Code")
+					categorie_produit = "le departement "
+					produit_selected.append(produit[produit_key])
 				elif produit_key == "groupe":
-					product_query.join(sale, retail,"Group","Code")
-					product_query.where(retail, "Description", produit[produit_key])
+					boutique_query.join(sale, retail,"Group","Code")
+					categorie_produit = "le groupe retail "
+					produit_selected.append(produit[produit_key])
 				elif produit_key == "theme":
-					product_query.join(sale, theme,"Theme","Code")
-					product_query.where(theme, "Description", produit[produit_key])
+					boutique_query.join(sale, theme,"Theme","Code")
+					categorie_produit = "le theme "
+					produit_selected.append(produit[produit_key])
 				elif produit_key == "produit":
-					product_query.where(item, "Description", produit[produit_key])
+					boutique_query.join(sale, item,"Style","Code")
+					categorie_produit = "le produit "
+					produit_selected.append(produit[produit_key])
+
+		for produit in self.items :
+			for produit_key in produit:
+				if produit_key == "division":
+					boutique_query.where(division, "Description", produit[produit_key])
+				elif produit_key == "departement":
+					boutique_query.where(department, "Description", produit[produit_key])
+				elif produit_key == "groupe":
+					boutique_query.where(retail, "Description", produit[produit_key])
+				elif produit_key == "theme":
+					boutique_query.where(theme, "Description", produit[produit_key])
+				elif produit_key == "produit":
+					boutique_query.where(item, "Description", produit[produit_key])
 
 		for ville in self.cities :
-			product_query.where(boutique, "Description", ville)
+			boutique_query.where(boutique, "Description", ville)
 
 		if len(self.cities) == 0:
 			for pays in self.countries :
-				product_query.where(country, "Description_FR", pays)
+				boutique_query.where(country, "Description_FR", pays)
 
-		if len(self.numerical_dates) > 0:
-			product_query.wheredate(sale, 'DateNumYYYYMMDD', self.numerical_dates[0])
-		else:
-			product_query.wheredate(sale, 'DateNumYYYYMMDD') # par défaut sur les 7 derniers jours
-
-		if colour_query:
-			product_query.groupby(sale, 'Color')
-			product_query.orderby('count(*)', " DESC")
-			query_result = product_query.write().split('\n')
-			print(query_result)
-			result = [w.split("|")[0]+" ( "+w.split("|")[1]+" vendus )" for w in query_result if 'SALE_Color' not in w and '------' not in w]
-			if len(result) > 0:
-				if 'le plus' in self.sentence or 'la plus' in self.sentence:
-					result_string = "La couleur la plus vendue est "+result[0]+" pour "+",".join(self.items)
-					print("retourne: "+result_string)
-					if result_string[-1] == ",":
-						result_string = result_string[:-1]
-					return result_string
-				else:
-					return [product_query.request,";;".join(result)]
+		# On n'oublie pas le GROUP BY, nécessaire ici vu qu'on prend à la fois une colonne et un count(*)
+		boutique_query.groupby(boutique, 'Description')
+		boutique_query.orderby('sum(SA.SALE_Std_RP_WOTax_REF)', " DESC")
+		
+		# La requête est terminée, on utilise le résultat
+		result = boutique_query.write()
+		print("***************")
+		print(result)
+		reponse = "Voici les 3 meilleures boutiques "
+		start_date = self.numerical_dates[0] if len(self.numerical_dates) > 0 else '20170225'
+		reponse += "du " + start_date + " au " + "20170304 " 
+		reponse += "pour " + categorie_produit + ', '.join(produit_selected) + " " if len(produit_selected) > 0 else ''
+		reponse += "de la boutique de " + ', '.join([b for b in self.cities]) + " " if len(self.cities) > 0 else ''
+		reponse += "dans le pays " + ", ".join([p for p in self.countries]) + " " if len(self.cities) == 0 and len(self.countries) > 0 else ''
+		reponse += " :\n"
+		
+		liste_resultat = result.split("\n")
+		n = 0
+		for ligne in liste_resultat:
+			if n == 0:
+				pass
 			else:
-				return [product_query.request,"Aucune couleur enregistrée pour "+",".join(self.items)]
-		elif location_query:
-			product_query.groupby(boutique, 'Description')
-			product_query.orderby('count(*)', " DESC")
-			query_result = product_query.write().split('\n')
-			print(query_result)
-			result = [w.split("|")[0]+" ( "+w.split("|")[1]+" vendus )" for w in query_result if 'LOCA_Description' not in w and '------' not in w]
-			print(result)
-			return [product_query.request,";;".join(result)]
-		else:			
-			# La requête est terminée, on l'écrit
-			# product_query.write()
-			result = product_query.write().split('\n')
-			print("***************")
-			return [product_query.request,";;".join(result)]
+				colonnes = ligne.split('|')
+				nom = colonnes[0]
+				nombre_ventes = colonnes[1]
+				montant_ventes = colonnes[2]
+				reponse += str(n) + ". " + nom + " avec " + nombre_ventes + " ventes pour un montant de " + montant_ventes + " euros HT"
+			n += 1
+			
+		return [boutique_query.request,reponse]
 
 	def append_details(self, text):
 		resp = text[:]+";;"
