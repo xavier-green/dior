@@ -21,7 +21,7 @@ class ProductExtractor(object):
     not_replace = [
         "geo", "nat", "date", "prix", "vente", "stock", "boutique","part", "couleur", "matière", "francais", "moyen", 
         "jours", "couverture", "article", "new", "mix", "type", "cruise", "zone", "clients", "gros", "grands", "top", 
-        "nom", "collection"
+        "nom", "collection", "endroit"
     ]
     
     def __init__(self, produit_path='data/products.csv', division_path='data/Divisions.csv', departement_path='data/Departements.csv', groupe_path='data/Groupe.csv', theme_path='data/Themes.csv', n_max=3):
@@ -119,6 +119,7 @@ class ProductExtractor(object):
         pattern = re.compile('^[a-zA-Z0-9 ]')
         sentence = sentence.lower()
         sentence = re.sub(r'[^\w\s]','',sentence)
+        sentence = " ".join([w for w in sentence.split(" ") if len(w)>=2])
         print("Entry:"+sentence)
         tags_dict = self.tag_dict(sentence)
         #print(tags_dict)
