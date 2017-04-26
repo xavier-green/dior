@@ -165,5 +165,5 @@ class ProductExtractor(object):
                 copy = copy.replace(w[key], "ITEM")
         return copy
     
-# itm = ProductExtractor('data/products.csv')
+# itm = ProductExtractor()
 # print(itm.extract("Combien de rose des vents et de souliers avons-nous vendu la semaine derniere"))
