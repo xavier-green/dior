@@ -145,6 +145,12 @@ class Vente(object):
 			result = [w.split("|")[0]+" ( "+w.split("|")[1]+" vendus )" for w in query_result if 'LOCA_Description' not in w and '------' not in w]
 			print(result)
 			return [product_query.request,";;".join(result)]
+		elif price_query:
+			query_result = product_query.write().split('\n')
+			print(query_result)
+			result = [w+"€" for w in query_result if 'SALE_Std_RP_WOTax_REF' not in w and '------' not in w]
+			print(result)
+			return [product_query.request,";;".join(result)]
 		else:			
 			# La requête est terminée, on l'écrit
 			# product_query.write()
