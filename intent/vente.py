@@ -101,7 +101,8 @@ class Vente(object):
 			product_query.orderby('count(*)', " DESC")
 			query_result = product_query.write().split('\n')
 			print(query_result)
-			result = [w for w in product_query if 'LOCA_Description' not in w and '------' not in w]
+			result = [w.split("|")[0]+" ( "+w.split("|")[1]+" vendus )" for w in query_result if 'LOCA_Description' not in w and '------' not in w]
+			print(result)
 			return [product_query.request,";;".join(query_result)]
 		else:			
 			# La requête est terminée, on l'écrit
