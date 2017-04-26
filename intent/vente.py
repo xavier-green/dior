@@ -74,8 +74,10 @@ class Vente(object):
 			for pays in self.countries :
 				product_query.where(country, "Description_FR", pays)
 
-		if len(self.numerical_dates)>0:
+		if len(self.numerical_dates) > 0:
 			product_query.wheredate(sale, 'DateNumYYYYMMDD', self.numerical_dates[0])
+		else:
+			product_query.wheredate(sale, 'DateNumYYYYMMDD') # par défaut sur les 7 derniers jours
 
 		if 'couleur' in self.sentence:
 			product_query.groupby(sale, 'Color')
@@ -95,7 +97,7 @@ class Vente(object):
 			else:
 				return [product_query.request,"Aucune couleur enregistrée pour "+",".join(self.items)]
 		elif ('Où' in self.sentence) or ('où' in self.sentence):
-			product_query.groupby(sale, 'Location')
+			product_query.groupby(boutique, 'Description')
 			product_query.orderby('count(*)', " DESC")
 			query_result = ' '.join(product_query.write().split('\n'))
 			print(query_result)

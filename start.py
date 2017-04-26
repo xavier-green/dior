@@ -79,6 +79,7 @@ bouti = extract_boutique('data/Boutiques.csv')
 @app.route('/params/<string:sentence>', methods=["GET"])
 def vector_get(sentence):
 	print("new connection from: "+request.remote_addr)
+	copy = sentence[:]
 	sentence = sentence.lower()
 	global model_fasttext
 	if model_fasttext is None:
@@ -116,7 +117,7 @@ def vector_get(sentence):
 
 	with open("logs.txt", "a") as myfile:
 		now = datetime.datetime.now()
-		mainString = now.strftime("%Y-%m-%d %H:%M")+"||"+sentence+"||"+answer[0]+"||"+answer[1]
+		mainString = now.strftime("%Y-%m-%d %H:%M")+"||"+copy+"||"+answer[0]+"||"+answer[1]
 		mainString = mainString.replace('\n','')
 		print("logged: "+mainString)
 		myfile.write(mainString+"\n")
