@@ -31,7 +31,7 @@ class Vendeur(object):
 		# IN PROGRESS
 
 		# Initialisation de la query : par défaut pour l'instant on sélectionne le nom
-		seller_query = query(staff, ['Name', 'count(*)', (sale, "sumStd_RP_WOTax_REF")], 'TOP 10')
+		seller_query = query(staff, ['Name', 'count(*)', (sale, "sumStd_RP_WOTax_REF")], 'TOP 3')
 		
 		# Par défaut, on joint les sales parce que ça nous intéresse
 		# Mais attention il faut joindre avec un set de date parce que sinon la reuqête timeout
@@ -101,13 +101,27 @@ class Vendeur(object):
 		result = seller_query.write()
 		print("***************")
 		print(result)
-		reponse = "Voici les 10 meilleurs vendeurs "
+		reponse = "Voici les 3 meilleurs vendeurs "
 		start_date = self.numerical_dates[0] if len(self.numerical_dates) > 0 else '20170225'
 		reponse += "du " + start_date + " au " + "20170304 " 
 		reponse += "pour " + categorie_produit + ', '.join(produit_selected) + " " if len(produit_selected) > 0 else ''
 		reponse += "de la boutique de " + ', '.join([b for b in self.cities]) + " " if len(self.cities) > 0 else ''
 		reponse += "dans le pays " + ", ".join([p for p in self.countries]) + " " if len(self.cities) == 0 and len(self.countries) > 0 else ''
-		reponse += " :\n" + result
+		reponse += " :\n"
+		
+		liste_resultat = result.split("\n")
+		n = 0
+		for ligne in liste_resultat:
+			if n == 0:
+				pass
+			else:
+				colonnes = ligne.split('|')
+				prenom = colonnes[0]
+				nombre_ventes = colonnes[1]
+				montant_ventes = colonnes[2]
+				reponse += str(n) + ". " + prenom + " avec " + nombre_ventes + " ventes pour un montant de " + montant_ventes + " euros HT"
+			n += 1
+			
 		return [seller_query.request,reponse]
 
 	def append_details(self, text):
