@@ -1,4 +1,3 @@
-
 from sql.request import query
 
 # Import de toutes les tables utilisées
