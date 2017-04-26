@@ -97,7 +97,7 @@ class Vente(object):
 			else:
 				return [product_query.request,"Aucune couleur enregistrée pour "+",".join(self.items)]
 		elif ('Où' in self.sentence) or ('où' in self.sentence):
-			product_query.groupby(sale, 'Location')
+			product_query.groupby(boutique, 'Description')
 			product_query.orderby('count(*)', " DESC")
 			query_result = ' '.join(product_query.write().split('\n'))
 			print(query_result)
