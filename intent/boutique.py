@@ -3,7 +3,7 @@ from sql.request import query
 # Import de toutes les tables utilisées
 from sql.tables import item, sale, boutique, country, division, retail, theme, department
 
-class Vente(object):
+class Boutique(object):
 
 	def __init__(self, data):
 		self.cities = data['cities']
@@ -23,30 +23,7 @@ class Vente(object):
 
 	def build_query(self):
 
-		location_query = False
-		colour_query = False
-
-		first_word = self.sentence.split(" ")[0]
-
-		if ('Où' in self.sentence) or ('où' in self.sentence) or ('ou' in first_word) or ('Ou' in first_word) or ('dans quel pays' in self.sentence.lower()) or ('a quel endroit' in self.sentence.lower()):
-			print("Sale specific to a location")
-			location_query = True
-
-		if ('couleur' in self.sentence):
-			print("Sale specific to a colour")
-			colour_query = True
-
-		if len(self.items) == 0:
-			return "Veuillez préciser un produit svp"
-
-		product_query = query(sale, ['count(*)'])
-
-		if colour_query:
-			product_query = query(sale, ['Color','count(*)'], top_distinct='DISTINCT TOP 5')
-		elif location_query:
-			product_query = query(sale, [(boutique, 'Description'),'count(*)'], top_distinct='DISTINCT TOP 5')
-
-		# Initialisation de la query : par défaut pour l'instant on sélectionne count(*)
+		boutique_query = query(boutique, ['Description'])
 
 		product_query.join(sale, item, "Style", "Code") # jointure sur ITEM_Code = SALE_Style
 		product_query.join(sale, boutique, "Location", "Code") # jointure sur SALE_Location = LOCA_Code
