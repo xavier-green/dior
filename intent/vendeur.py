@@ -138,23 +138,3 @@ class Vendeur(object):
 				resp = resp[:-1]
 			resp += ");;"
 		return resp
-
-
-# Pour tester
-data = {
-		'cities' : ['Montaigne'],
-		'countries' : [],
-		'nationalities' : [],
-		'dates' : [],
-		'numerical_dates' : ['20170226'],
-		'items' : {
-			"division": [],
-			"departement": [],
-			"groupe": [],
-			"theme": [],
-			"produit":[]
-			}
-		}
-
-test = Vendeur(data)
-print(test.build_query())
