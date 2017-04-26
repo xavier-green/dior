@@ -30,6 +30,13 @@ class Vente(object):
 
 	def build_query(self):
 
+		location_query = False
+
+		first_word = self.sentence.split(" ")[0]
+
+		if ('Où' in self.sentence) or ('où' in self.sentence) or ('ou' in first_word) or ('Ou' in first_word):
+			location_query = True
+
 		if len(self.items) == 0:
 			return "Veuillez préciser un produit svp"
 
@@ -37,7 +44,7 @@ class Vente(object):
 
 		if 'couleur' in self.sentence:
 			product_query = query(sale, ['Color','count(*)'], top_distinct='DISTINCT TOP 5')
-		elif ('Où' in self.sentence) or ('où' in self.sentence):
+		elif location_query:
 			product_query = query(sale, [(boutique, 'Description'),'count(*)'], top_distinct='DISTINCT TOP 5')
 
 		# Initialisation de la query : par défaut pour l'instant on sélectionne count(*)
@@ -96,7 +103,7 @@ class Vente(object):
 					return [product_query.request,";;".join(result)]
 			else:
 				return [product_query.request,"Aucune couleur enregistrée pour "+",".join(self.items)]
-		elif ('Où' in self.sentence) or ('où' in self.sentence):
+		elif location_query:
 			product_query.groupby(boutique, 'Description')
 			product_query.orderby('count(*)', " DESC")
 			query_result = product_query.write().split('\n')
