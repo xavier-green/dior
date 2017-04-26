@@ -113,7 +113,7 @@ class query(object):
 
 	def write(self):
 		# Vérification que les colonnes SELECTed sont bien JOINed
-		assert set(self.selected_tables) < set(self.joined_tables), "Erreur : Vous avez SELECT un élément d'une table que vous n'avez pas JOIN"
+		#assert set(self.selected_tables) < set(self.joined_tables), "Erreur : Vous avez SELECT un élément d'une table que vous n'avez pas JOIN"
 		
 		sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
 		sock.connect('/tmp/request.sock')
