@@ -18,7 +18,7 @@ class query(object):
 				if "sum" in c[1]:
 					column_asked = c[1][3:]
 					assert column_asked in table_asked.columns, "La table " + table_asked.name + " ne contient pas d'attribut " + table_asked.prefix + column_asked
-					objectif.append("SUM("+table_asked.alias+'.'+table_asked.prefix+c[3:]+")")
+					objectif.append("SUM("+table_asked.alias+'.'+table_asked.prefix+c[1][3:]+")")
 				else:
 					column_asked = c[1]
 					assert column_asked in table_asked.columns, "La table " + table_asked.name + " ne contient pas d'attribut " + table_asked.prefix + column_asked
@@ -113,7 +113,7 @@ class query(object):
 
 	def write(self):
 		# Vérification que les colonnes SELECTed sont bien JOINed
-		assert set(self.selected_tables) < set(self.joined_tables), "Erreur : Vous avez SELECT un élément d'une table que vous n'avez pas JOIN"
+		#assert set(self.selected_tables) < set(self.joined_tables), "Erreur : Vous avez SELECT un élément d'une table que vous n'avez pas JOIN"
 		
 		sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
 		sock.connect('/tmp/request.sock')
