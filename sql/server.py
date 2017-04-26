@@ -28,7 +28,7 @@ while True:
             print(data)
             if data:
                 print('Sending the request to the MSSQL Server')
-                p = subprocess.run('docker exec  mssql /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P D10R_password! -d Reporting -W -w 999 -s | -Q'.split() + [data], stdout=subprocess.PIPE, universal_newlines=True)
+                p = subprocess.run('docker exec  mssql /opt/mssql-tools/bin/sqlcmd -l 300 -S localhost -U sa -P D10R_password! -d Reporting -W -w 999 -s | -Q'.split() + [data], stdout=subprocess.PIPE, universal_newlines=True)
                 print(p.stdout)
                 con.sendall(bytes(p.stdout, 'utf-8'))
             else:
