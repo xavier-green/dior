@@ -1,13 +1,15 @@
-#from sql.request import query
+from sql.request import query
 
 # Import de toutes les tables utilisées
-#from sql.tables import staff, sale, boutique, country, item, zone, division, department, theme, retail
+from sql.tables import staff, sale, boutique, country, item, zone, division, department, theme, retail
 
+"""
 # Pour pouvoir importer les fichiers sql
 from importlib.machinery import SourceFileLoader
 
 foo = SourceFileLoader("sql.request", "../sql/request.py").load_module()
 foo = SourceFileLoader("sql.tables", "../sql/tables.py").load_module()
+"""
 
 class Vendeur(object):
 
@@ -161,6 +163,7 @@ class Vendeur(object):
 			resp += ");;"
 		return resp
 	
+"""
 data = {
 		'cities': [],
 		'countries': [],
@@ -172,4 +175,4 @@ data = {
 		}
 
 test = Vendeur(data)
-print(test.build_answer())
+print(test.build_answer())"""
