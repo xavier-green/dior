@@ -32,6 +32,7 @@ class Vente(object):
 
 		location_query = False
 		colour_query = False
+		price_query = False
 
 		first_word = self.sentence.split(" ")[0]
 
@@ -39,9 +40,13 @@ class Vente(object):
 			print("Sale specific to a location")
 			location_query = True
 
-		if ('couleur' in self.sentence):
+		if ('couleur' in self.sentence.lower()):
 			print("Sale specific to a colour")
 			colour_query = True
+
+		if ('prix' in self.sentence.lower()):
+			print("Sale specific to a price")
+			price_query = True
 
 		if len(self.items) == 0:
 			return "Veuillez préciser un produit svp"
@@ -52,6 +57,8 @@ class Vente(object):
 			product_query = query(sale, ['Color','count(*)'], top_distinct='DISTINCT TOP 5')
 		elif location_query:
 			product_query = query(sale, [(boutique, 'Description'),'count(*)'], top_distinct='DISTINCT TOP 5')
+		elif price_query:
+			product_query = query(sale, ['Std_RP_WOTax_REF'], top_distinct='DISTINCT TOP 1')
 
 		# Initialisation de la query : par défaut pour l'instant on sélectionne count(*)
 
@@ -75,21 +82,28 @@ class Vente(object):
 					if not produit_seen:
 						product_query.join(sale, division,"Division","Code")
 						produit_seen = True
-					product_query.where(division, "Description", produit[produit_key])
 				elif produit_key == "departement":
 					if not department_seen:
 						product_query.join(sale, department,"Department","Code")
 						department_seen = True
-					product_query.where(department, "Description", produit[produit_key])
 				elif produit_key == "groupe":
 					if not retail_seen:
 						product_query.join(sale, retail,"Group","Code")
 						retail_seen = True
-					product_query.where(retail, "Description", produit[produit_key])
 				elif produit_key == "theme":
 					if not theme_seen:
 						product_query.join(sale, theme,"Theme","Code")
 						theme_seen = True
+
+		for produit in self.items :
+			for produit_key in produit:
+				if produit_key == "division":
+					product_query.where(division, "Description", produit[produit_key])
+				elif produit_key == "departement":
+					product_query.where(department, "Description", produit[produit_key])
+				elif produit_key == "groupe":
+					product_query.where(retail, "Description", produit[produit_key])
+				elif produit_key == "theme":
 					product_query.where(theme, "Description", produit[produit_key])
 				elif produit_key == "produit":
 					product_query.where(item, "Description", produit[produit_key])

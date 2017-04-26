@@ -15,7 +15,7 @@ from nltk.util import ngrams
 class ProductExtractor(object):
     
     authorized = [
-        "JJ","NN","NNS","NN-JJ","JJ-NN","NN-NN","NNS-NNS","NNS-NN","NN-NNS","NNS-JJ","JJ-NNS","NNS-IN-NNS","NN-IN-NN","JJ-IN-NNS","NNS-IN-JJ","JJ-IN-NN","NN-IN-JJ","NN-NN-NN"
+        "JJ","NN","NNS","NN-JJ","JJ-NN","NN-NN","NNS-NNS","NNS-NN","NN-NNS","NNS-JJ","JJ-NNS","NNS-IN-NNS","NN-IN-NN","NN-IN-NNS","JJ-IN-NNS","NNS-IN-JJ","JJ-IN-NN","NN-IN-JJ","NN-NN-NN"
     ]
     
     not_replace = [
@@ -165,5 +165,5 @@ class ProductExtractor(object):
                 copy = copy.replace(w[key], "ITEM")
         return copy
     
-# itm = ProductExtractor('data/products.csv')
+# itm = ProductExtractor()
 # print(itm.extract("Combien de rose des vents et de souliers avons-nous vendu la semaine derniere"))
