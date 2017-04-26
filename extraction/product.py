@@ -119,6 +119,7 @@ class ProductExtractor(object):
         pattern = re.compile('^[a-zA-Z0-9 ]')
         sentence = sentence.lower()
         sentence = re.sub(r'[^\w\s]','',sentence)
+        sentence = " ".join([w for w in sentence.split(" ") if len(w)>=2])
         print("Entry:"+sentence)
         tags_dict = self.tag_dict(sentence)
         #print(tags_dict)

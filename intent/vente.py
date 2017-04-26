@@ -63,19 +63,33 @@ class Vente(object):
 			product_query.join(sale, country, "Country", "Code") # jointyre sur SALE_Country = COUN_Code
 
 		# Maintenant que toutes les jointures sont faites, on passe aux conditions
+		produit_seen = False
+		division_seen = False
+		department_seen = False
+		retail_seen = False
+		theme_seen = False
+
 		for produit in self.items :
 			for produit_key in produit:
 				if produit_key == "division":
-					product_query.join(sale, division,"Division","Code")
+					if not produit_seen:
+						product_query.join(sale, division,"Division","Code")
+						produit_seen = True
 					product_query.where(division, "Description", produit[produit_key])
 				elif produit_key == "departement":
-					product_query.join(sale, department,"Department","Code")
+					if not department_seen:
+						product_query.join(sale, department,"Department","Code")
+						department_seen = True
 					product_query.where(department, "Description", produit[produit_key])
 				elif produit_key == "groupe":
-					product_query.join(sale, retail,"Group","Code")
+					if not retail_seen:
+						product_query.join(sale, retail,"Group","Code")
+						retail_seen = True
 					product_query.where(retail, "Description", produit[produit_key])
 				elif produit_key == "theme":
-					product_query.join(sale, theme,"Theme","Code")
+					if not theme_seen:
+						product_query.join(sale, theme,"Theme","Code")
+						theme_seen = True
 					product_query.where(theme, "Description", produit[produit_key])
 				elif produit_key == "produit":
 					product_query.where(item, "Description", produit[produit_key])
