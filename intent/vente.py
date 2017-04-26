@@ -35,14 +35,23 @@ class Vente(object):
 
 		product_query = query(sale, ['count(*)'])
 
+		sale_table = query(sale, ['*'])
+
 		if 'couleur' in self.sentence:
 			product_query = query(sale, ['Color','count(*)'], top_distinct='DISTINCT TOP 5')
 		elif ('Où' in self.sentence) or ('où' in self.sentence):
 			product_query = query(sale, [(boutique, 'Description'),'count(*)'], top_distinct='DISTINCT TOP 5')
 
+		if len(self.numerical_dates) > 0:
+			sale_table.wheredate(sale, 'DateNumYYYYMMDD', self.numerical_dates[0])
+		else:
+			sale_table.wheredate(sale, 'DateNumYYYYMMDD') # par défaut sur les 7 derniers jours
+
+		seller_query.join_custom(item, sale_table.request, sale, "Code", "Style") # jointure sur ITEM_Code = SALE_Style
+
 		# Initialisation de la query : par défaut pour l'instant on sélectionne count(*)
 
-		product_query.join(sale, item, "Style", "Code") # jointure sur ITEM_Code = SALE_Style
+		#product_query.join(sale, item, "Style", "Code") # jointure sur ITEM_Code = SALE_Style
 		product_query.join(sale, boutique, "Location", "Code") # jointure sur SALE_Location = LOCA_Code
 
 		# S'il n'y a pas de ville, on s'intéresse au pays
