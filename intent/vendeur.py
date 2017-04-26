@@ -57,40 +57,35 @@ class Vendeur(object):
 		elif len(self.countries) > 0:
 			seller_query.join(sale, country, "Country", "Code") # jointure sur SALE_Country = COUN_Code
 		
-		# S'il y a un produit, on join avec item aussi
-		if len(self.items['division']) > 0:
-			seller_query.join(sale, division, 'Division', 'Code')
-		elif len(self.items['departement']) > 0:
-			seller_query.join(sale, department, 'Department', 'Code')
-		elif len(self.items['groupe']) > 0:
-			seller_query.join(sale, retail, 'Group', 'Code')
-		elif len(self.items['theme']) > 0:
-			seller_query.join(sale, theme, 'Theme', 'Code')
-		elif len(self.items['produit']) > 0:
-			seller_query.join(sale, item, 'Style', 'Code')
-		
-		# Maintenant que toutes les jointures sont faites, on passe aux conditions
-		if len(self.items['division']) > 0:
-			for produit in self.items['division'] :
-				print(produit)
-				seller_query.where(division, "Description", produit)
-		elif len(self.items['departement']) > 0:
-			for produit in self.items['departement'] :
-				print(produit)
-				seller_query.where(department, "Description", produit)
-		elif len(self.items['groupe']) > 0:
-			for produit in self.items['groupe'] :
-				print(produit)
-				seller_query.where(retail, "Description", produit)
-		elif len(self.items['theme']) > 0:
-			for produit in self.items['theme'] :
-				print(produit)
-				seller_query.where(theme, "Description", produit)
-		elif len(self.items['produit']) > 0:
-			for produit in self.items['produit'] :
-				print(produit)
-				seller_query.where(item, "Description", produit)
-		
+		categorie_produit = ''
+		produit_selected = []
+		for produit in self.items :
+			for produit_key in produit:
+				if produit_key == "division":
+					seller_query.join(sale, division,"Division","Code")
+					seller_query.where(division, "Description", produit[produit_key])
+					categorie_produit = "la division "
+					produit_selected.append(produit[produit_key])
+				elif produit_key == "departement":
+					seller_query.join(sale, department,"Department","Code")
+					seller_query.where(department, "Description", produit[produit_key])
+					categorie_produit = "le departement "
+					produit_selected.append(produit[produit_key])
+				elif produit_key == "groupe":
+					seller_query.join(sale, retail,"Group","Code")
+					seller_query.where(retail, "Description", produit[produit_key])
+					categorie_produit = "le groupe retail "
+					produit_selected.append(produit[produit_key])
+				elif produit_key == "theme":
+					seller_query.join(sale, theme,"Theme","Code")
+					seller_query.where(theme, "Description", produit[produit_key])
+					categorie_produit = "le theme "
+					produit_selected.append(produit[produit_key])
+				elif produit_key == "produit":
+					seller_query.join(sale, item,"Style","Code")
+					seller_query.where(item, "Description", produit[produit_key])
+					categorie_produit = "le produit "
+					produit_selected.append(produit[produit_key])
 		
 		for ville in self.cities :
 			seller_query.where(boutique, "Description", ville)
@@ -110,7 +105,7 @@ class Vendeur(object):
 		reponse = "Voici les 10 meilleurs vendeurs "
 		start_date = self.numerical_dates[0] if len(self.numerical_dates) > 0 else '20170225'
 		reponse += "du " + start_date + " au " + "20170304 " 
-		reponse += "pour le produit " + ', '.join([i for i in self.items]) + " " if len(self.items) > 0 else ''
+		reponse += "pour " + categorie_produit + ', '.join(produit_selected) + " " if len(produit_selected) > 0 else ''
 		reponse += "de la boutique de " + ', '.join([b for b in self.cities]) + " " if len(self.cities) > 0 else ''
 		reponse += "dans le pays " + ", ".join([p for p in self.countries]) + " " if len(self.cities) == 0 and len(self.countries) > 0 else ''
 		reponse += " :\n" + result
