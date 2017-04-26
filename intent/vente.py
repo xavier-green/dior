@@ -116,7 +116,7 @@ class Vente(object):
 			for pays in self.countries :
 				product_query.where(country, "Description_FR", pays)
 
-		if len(self.boutiques) == 0:
+		if len(self.boutiques) > 0:
 			for _boutique in self.boutiques :
 				product_query.where(boutique, "Description", _boutique)
 
