@@ -75,7 +75,10 @@ class extract_boutique(object):
         #print(tags_dict)
         for i in range(1,self.n_max+1):
             results = self.extract_N(sentence, tags_dict, results, i)
-        return results
+        for w in results:
+            copy = copy.replace(w, "")
+        print('Boutique extracted: '+results)
+        return (results,sentence)
         
     def extract_N(self, sentence, tags_dict, prev_results, n):
         prev_results_copy = prev_results[:]
@@ -105,7 +108,7 @@ class extract_boutique(object):
     
     def clean_text(self, text):
         copy = text[:].lower()
-        to_replace = self.extract(text)
+        to_replace,nothing = self.extract(text)
         for w in to_replace:
             print("SHOP replacing: "+w)
             copy = copy.replace(w, "SHOP")
