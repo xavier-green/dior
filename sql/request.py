@@ -14,12 +14,17 @@ class query(object):
 			# Si c'est un couple (table, colonne), vérifier que la colonne existe dans la table
 			# Puis vérifier plus tard (au write) qu'on va bien join cette table
 			if isinstance(c, tuple) and len(c) == 2:
-				column_asked = c[1]
 				table_asked = c[0]
-				assert column_asked in table_asked.columns, "La table " + table_asked.name + " ne contient pas d'attribut " + table_asked.prefix + column_asked
-				objectif.append(table_asked.alias + '.' + table_asked.prefix + column_asked)
+				if "sum" in c:
+					column_asked = c[1][3:]
+					assert column_asked in table_asked.columns, "La table " + table_asked.name + " ne contient pas d'attribut " + table_asked.prefix + column_asked
+					objectif.append("SUM("+table_asked.alias+'.'+table_asked.prefix+c[3:]+")")
+				else:
+					column_asked = c[1]
+					assert column_asked in table_asked.columns, "La table " + table_asked.name + " ne contient pas d'attribut " + table_asked.prefix + column_asked
+					objectif.append(table_asked.alias + '.' + table_asked.prefix + column_asked)
 				self.selected_tables.append(table_asked)
-			elif c == "count(*)" or c == "*":
+			elif c == "count(*)" or c == "*" :
 				objectif.append(c)
 			# format "sumCOLUMNNAME"
 			elif "sum" in c:
