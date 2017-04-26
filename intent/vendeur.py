@@ -32,7 +32,7 @@ class Vendeur(object):
 		# IN PROGRESS
 
 		# Initialisation de la query : par défaut pour l'instant on sélectionne le nom
-		seller_query = query(staff, ['Name', 'count(*)', (sale, "sumQuantity")], 'TOP 10')
+		seller_query = query(staff, ['Name', 'count(*)', "sumStd_RP_WOTax_REF")], 'TOP 10')
 		
 		# Par défaut, on joint les sales parce que ça nous intéresse
 		# Mais attention il faut joindre avec un set de date parce que sinon la reuqête timeout
