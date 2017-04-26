@@ -31,18 +31,24 @@ class Vente(object):
 	def build_query(self):
 
 		location_query = False
+		colour_query = False
 
 		first_word = self.sentence.split(" ")[0]
 
-		if ('Où' in self.sentence) or ('où' in self.sentence) or ('ou' in first_word) or ('Ou' in first_word):
+		if ('Où' in self.sentence) or ('où' in self.sentence) or ('ou' in first_word) or ('Ou' in first_word) or ('dans quel pays' in self.sentence.lower()) or ('a quel endroit' in self.sentence.lower()):
+			print("Sale specific to a location")
 			location_query = True
+
+		if ('couleur' in self.sentence):
+			print("Sale specific to a colour")
+			colour_query = True
 
 		if len(self.items) == 0:
 			return "Veuillez préciser un produit svp"
 
 		product_query = query(sale, ['count(*)'])
 
-		if 'couleur' in self.sentence:
+		if colour_query:
 			product_query = query(sale, ['Color','count(*)'], top_distinct='DISTINCT TOP 5')
 		elif location_query:
 			product_query = query(sale, [(boutique, 'Description'),'count(*)'], top_distinct='DISTINCT TOP 5')
@@ -86,7 +92,7 @@ class Vente(object):
 		else:
 			product_query.wheredate(sale, 'DateNumYYYYMMDD') # par défaut sur les 7 derniers jours
 
-		if 'couleur' in self.sentence:
+		if colour_query:
 			product_query.groupby(sale, 'Color')
 			product_query.orderby('count(*)', " DESC")
 			query_result = product_query.write().split('\n')
@@ -116,7 +122,7 @@ class Vente(object):
 			# product_query.write()
 			result = product_query.write().split('\n')
 			print("***************")
-			return [product_query.request,result]
+			return [product_query.request,";;".join(result)]
 
 	def append_details(self, text):
 		resp = text[:]+";;"
