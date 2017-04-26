@@ -14,6 +14,7 @@ date_words = {
     "semaines":-7,
     "année":-365,
     "années":-365,
+    "an":-365,
     "jour":-1,
     "jours":-1,
     "trimestre":-90,
@@ -127,7 +128,7 @@ class DateExtractor(object):
                 pass
         if text:
             return " ".join(sentence_split).replace(date_string,"DATE").rstrip()
-        return allDates
+        return (allDates, " ".join(sentence_split).replace(date_string,"").rstrip())
 
 
 # datex = DateExtractor()
