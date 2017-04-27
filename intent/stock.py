@@ -58,6 +58,7 @@ class Stock(object):
 		print(stock_query.request)
 		# La requête est terminée, on l'écrit
 		res_stock = stock_query.write()
+		print('Stock:', res_stock)
 		if 'sellthru' in self.sentence:
 			#Calculate sales for sellthru
 			product_query = query(sale, ['count(*)'])
@@ -105,11 +106,10 @@ class Stock(object):
 				product_query.wheredate(sale, 'DateNumYYYYMMDD') # par défaut sur les 7 derniers jours
 				# La requête est terminée, on l'écrit
 				# product_query.write()
-				res_sales = ' '.join(product_query.write().split('\n'))
-				print("***************")
-				res_product = [product_query.request,result]
-				sellthru = 100 * res_sales / (res_product  + res_stock)
-		return [stock_query.request + '\n' + res_product[0],res_product[2] ]
+				res_sales = product_query.write()
+				print("Sales:", res_sales)
+				sellthru = 100 * res_sales / (res_sales  + res_stock)
+		return [stock_query.request + '\n' + product_query.request,sellthru ]
 
 	def append_details(self, text):
 		resp = text[:]+";;"
