@@ -95,9 +95,12 @@ class Vente(object):
 		# Retirer Jardin D'avron et Others
 		product_query.join(sale, zone, 'Zone', 'Code')
 		product_query.whereNotJDAandOTH()
+
+		front_products = []
 		
 		for produit in self.items :
 			for produit_key in produit:
+				front_products.append(produit[produit_key])
 				if produit_key == "division":
 					product_query.where(division, "Description", produit[produit_key])
 					produit_selected.append("à la division" + produit[produit_key])
@@ -140,7 +143,7 @@ class Vente(object):
 				if 'le plus' in self.sentence or 'la plus' in self.sentence:
 					print("Wanting the top one from: ")
 					print(result)
-					result_string = "La couleur la plus vendue est "+result[0]+" pour "+",".join(self.items)
+					result_string = "La couleur la plus vendue est "+result[0]+" pour "+",".join(front_products)
 					print("retourne: "+result_string)
 					if result_string[-1] == ",":
 						result_string = result_string[:-1]
