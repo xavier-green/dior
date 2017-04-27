@@ -17,6 +17,8 @@ class Stock(object):
 		self.countries = data['countries']
 		self.items = data['items']
 		self.sentence = data['sentence']
+		self.numerical_dates = data['numerical_dates']
+
 
 	def build_answer(self):
 		response_base = self.build_query()
