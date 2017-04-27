@@ -59,7 +59,7 @@ class Stock(object):
 				stock_query.where(country, "Description_FR", pays)
 		# La requête est terminée, on l'écrit
 		res_stock = stock_query.write()
-		if res_stock = 'NULL':
+		if res_stock == 'NULL':
 			res_stock = 0
 		else:
 			res_stock = int(res_stock)
@@ -114,7 +114,7 @@ class Stock(object):
 				# La requête est terminée, on l'écrit
 				# product_query.write()
 			res_sales = product_query.write()
-			if res_stock = 'NULL':
+			if res_stock == 'NULL':
 				res_stock = 0
 			else:
 				res_stock = int(res_stock)
