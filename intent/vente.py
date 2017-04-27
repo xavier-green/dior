@@ -71,9 +71,9 @@ class Vente(object):
 			MDorFP = "en Mark Down "
 
 		if colour_query:
-			product_query = query(sale, ['Color', Quantity], top_distinct='DISTINCT TOP 5')
+			product_query = query(sale, ['Color', 'count(*)'], top_distinct='DISTINCT TOP 5')
 		elif location_query:
-			product_query = query(sale, [(boutique, 'Description'), Quantity], top_distinct='DISTINCT TOP 5')
+			product_query = query(sale, [(boutique, 'Description'), 'count(*)'], top_distinct='DISTINCT TOP 5')
 		elif price_query:
 			product_query = query(sale, [(item, 'Description'), 'Std_RP_WOTax_REF'], top_distinct='DISTINCT TOP 1')
 		else:
