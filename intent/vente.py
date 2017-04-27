@@ -62,10 +62,13 @@ class Vente(object):
 		
 		if len(Quantity_requested) == 0 or len(Quantity_requested) == 2:
 			Quantity = '&sum(SA.SALE_RG_Quantity + SA.SALE_MD_Quantity)'
+			MDorFP = ""
 		elif Quantity_requested[0] == 'fp':
 			Quantity = '&sum(SA.SALE_RG_Quantity)'
+			MDorFP = " en Full Price"
 		else:
 			Quantity = '&sum(SA.SALE_MD_Quantity)'
+			MDorFP = " en Mark Down"
 
 		if colour_query:
 			product_query = query(sale, ['Color', Quantity], top_distinct='DISTINCT TOP 5')
@@ -193,6 +196,7 @@ class Vente(object):
 			start_date = self.numerical_dates[0] if len(self.numerical_dates) > 0 else '20170225'
 			
 			result = "Il y a eu " + query_result[1] + " ventes en lien avec " + " ou ".join(produit_selected) + " "
+			result += MDorFP
 			result += "du " + start_date + " au " + "20170304 " 
 			result += "de la boutique de " + ', '.join([b for b in self.cities]) + " " if len(self.cities) > 0 else ''
 			result += "dans le pays " + ", ".join([p for p in self.countries]) + " " if len(self.cities) == 0 and len(self.countries) > 0 else ''
