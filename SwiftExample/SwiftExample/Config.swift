@@ -10,7 +10,7 @@ import Foundation
 
 struct Config {
     // Backend server settings
-    static var serverURL: String = "http://6b64d5d2.ngrok.io"
+    static var serverURL: String = "http://vps397505.ovh.net:5000"
     static var serverUsername: String = "youyoun"
     static var serverPassword: String = "password"
 }

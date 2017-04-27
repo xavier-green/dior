@@ -11,12 +11,18 @@ import JSQMessagesViewController
 
 class ChatViewController: JSQMessagesViewController {
     var messages = [JSQMessage]()
+    
+    var favorits = [String]()
+    var favourites = Favourites()
+    
     var incomingBubble: JSQMessagesBubbleImage!
     var outgoingBubble: JSQMessagesBubbleImage!
     fileprivate var displayName: String!
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        favorits = favourites.read_file()
         
         // Setup navigation
         setupFavButton()
@@ -36,6 +42,21 @@ class ChatViewController: JSQMessagesViewController {
         self.collectionView?.reloadData()
         self.collectionView?.layoutIfNeeded()
         
+        let button: UIButton = UIButton(type: .custom)
+        button.setImage(UIImage(named: "settings"), for: UIControlState.normal)
+        button.addTarget(self, action: #selector(self.addTapped), for: UIControlEvents.touchUpInside)
+        button.frame = CGRect(x: 0, y: 0, width: 30, height: 30)
+        
+        let barButton = UIBarButtonItem(customView: button)
+        navigationItem.rightBarButtonItem = barButton
+        
+    }
+    
+    @objc func addTapped() {
+        print("tapped")
+        let storyboard = UIStoryboard(name: "Settings", bundle: nil)
+        let controller = storyboard.instantiateViewController(withIdentifier: "SettingsControl") as! UINavigationController
+        self.present(controller, animated: true, completion: nil)
     }
     
     func setupFavButton() {
@@ -127,23 +148,13 @@ class ChatViewController: JSQMessagesViewController {
         
         let sheet = UIAlertController(title: "Vos questions favorites", message: nil, preferredStyle: .actionSheet)
         
-        let fav1 = UIAlertAction(title: "La semaine dernière, qui a conclu le plus de ventes à madrid", style: .default) { (action) in
-            self.send_message(text: "La semaine dernière, qui a conclu le plus de ventes à madrid", senderId: self.senderId(), senderDisplayName: self.senderId(), date: Date())
-        }
-        
-        let fav2 = UIAlertAction(title: "Les américains achètent-ils plus que les japonais", style: .default) { (action) in
-            self.send_message(text: "Les américains achètent-ils plus que les japonais", senderId: self.senderId(), senderDisplayName: self.senderId(), date: Date())
-        }
-        
-        let fav3 = UIAlertAction(title: "Quelle part de russes dans les achats de Lady Dior", style: .default) { (action) in
-            self.send_message(text: "Quelle part de russes dans les achats de Lady Dior", senderId: self.senderId(), senderDisplayName: self.senderId(), date: Date())
+        for question in self.favorits {
+            sheet.addAction(UIAlertAction(title: question, style: .default) { (action) in
+                self.send_message(text: question, senderId: self.senderId(), senderDisplayName: self.senderId(), date: Date())
+            })
         }
         
         let cancelAction = UIAlertAction(title: "Annuler", style: .cancel, handler: nil)
-        
-        sheet.addAction(fav1)
-        sheet.addAction(fav2)
-        sheet.addAction(fav3)
         sheet.addAction(cancelAction)
         
         self.present(sheet, animated: true, completion: nil)
@@ -274,6 +285,36 @@ class ChatViewController: JSQMessagesViewController {
         }
         
         return kJSQMessagesCollectionViewCellLabelHeightDefault;
+    }
+    
+    override func collectionView(_ collectionView: UICollectionView, didHighlightItemAt indexPath: IndexPath) {
+        let currentMessage = self.messages[indexPath.item]
+        print("Selected: "+currentMessage.text)
+    }
+    override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let currentMessage = self.messages[indexPath.item]
+        print("Selected: "+currentMessage.text)
+    }
+    override func collectionView(_ collectionView: JSQMessagesCollectionView, didTapMessageBubbleAt indexPath: IndexPath) {
+        let message = self.messages[indexPath.item]
+        if (message.senderDisplayName == "Question") {
+            self.add_to_fav_popup(question: message.text)
+        }
+    }
+    
+    func add_to_fav_popup(question: String) {
+        let alert = UIAlertController(title: "Ajouter aux favorits", message: "Voulez vous ajouter la question {"+question+"} à vos favorits ?", preferredStyle: UIAlertControllerStyle.alert)
+        alert.addAction(UIAlertAction(title: "Oui", style: UIAlertActionStyle.default, handler: {
+            action in self.add_to_fav(question: question)
+        }))
+        alert.addAction(UIAlertAction(title: "Non", style: UIAlertActionStyle.cancel, handler: nil))
+        self.present(alert, animated: true, completion: nil)
+    }
+    
+    func add_to_fav(question: String) {
+        let all_questions = favorits+[question]
+        favourites.write_to_file(questions: all_questions)
+        favorits = favourites.read_file()
     }
     
 }

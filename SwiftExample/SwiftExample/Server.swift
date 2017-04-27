@@ -141,7 +141,7 @@ class Server {
         
         if let error = errors {
             print("ERROR *************")
-//            print(error)
+            print(error)
             return "Malheureusement il y a eu un problème avec le serveur 😭"
         }
         
@@ -194,7 +194,7 @@ class Server {
     func parseMessage(sentence: String) -> String {
         print("Getting user attribute")
         
-        let url: String = "/"+sentence
+        let url: String = "/params/"+sentence
         let params: [[String]] = [[]]
         
         return connectToServer(url: url, params: params, method: "GET", notificationString: "PARSED_MSG")
