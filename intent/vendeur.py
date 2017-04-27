@@ -135,7 +135,7 @@ class Vendeur(object):
 				prenom = colonnes[0]
 				nombre_ventes = colonnes[1]
 				montant_ventes = colonnes[2]
-				reponse += prenom + " avec " + nombre_ventes + " ventes pour un montant de " + montant_ventes + " euros HT \n"
+				reponse += prenom + " avec " + nombre_ventes + " ventes pour un montant de " + montant_ventes + " euros HT ; \n"
 			n += 1
 			
 		return [seller_query.request,reponse]
