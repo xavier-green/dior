@@ -61,7 +61,7 @@ class Vente(object):
 		elif price_query:
 			product_query = query(sale, [(item, 'Description'), 'Std_RP_WOTax_REF'], top_distinct='DISTINCT TOP 1')
 		else:
-			product_query = query(sale, ['count(*)'])
+			product_query = query(sale, ['&sum(SA.SALE_RG_Quantity + SA.SALE_MD_Quantity)'])
 
 		product_query.join(sale, item, "Style", "Code")
 		product_query.join(sale, boutique, "Location", "Code")

@@ -26,6 +26,9 @@ class query(object):
 				self.selected_tables.append(table_asked)
 			elif c == "count(*)" or c == "*" :
 				objectif.append(c)
+				
+			elif c[0] == '&' :
+				objectif.append(c[1:])
 			# format "sumCOLUMNNAME"
 			elif "sum" in c:
 				column_asked = c[3:]
