@@ -65,10 +65,10 @@ class Vente(object):
 			MDorFP = ""
 		elif Quantity_requested[0] == 'fp':
 			Quantity = '&sum(SA.SALE_RG_Quantity)'
-			MDorFP = " en Full Price"
+			MDorFP = "en Full Price "
 		else:
 			Quantity = '&sum(SA.SALE_MD_Quantity)'
-			MDorFP = " en Mark Down"
+			MDorFP = "en Mark Down "
 
 		if colour_query:
 			product_query = query(sale, ['Color', Quantity], top_distinct='DISTINCT TOP 5')
