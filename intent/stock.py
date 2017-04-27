@@ -106,10 +106,10 @@ class Stock(object):
 				product_query.wheredate(sale, 'DateNumYYYYMMDD') # par défaut sur les 7 derniers jours
 				# La requête est terminée, on l'écrit
 				# product_query.write()
-				res_sales = int(product_query.write())
-				print("Sales:", res_sales)
-				sellthru = str(100 * res_sales / (res_sales  + res_stock))
-				return [stock_query.request + '\n' + product_query.request,sellthru ]
+			res_sales = int(product_query.write())
+			print("Sales:", res_sales)
+			sellthru = str(100 * res_sales / (res_sales  + res_stock))
+			return [stock_query.request + '\n' + product_query.request,sellthru ]
 		return(stock_query.request, str(res_stock))
 
 	def append_details(self, text):
