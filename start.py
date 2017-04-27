@@ -129,6 +129,11 @@ def vector_get(sentence):
 		print("logged: "+mainString)
 		myfile.write(mainString+"\n")
 
+	print("This is what is being returned to the App")
+	print("+++++++++++++++++++")
+	print(answer[1])
+	print("+++++++++++++++++++")
+
 	return answer[1]
 
 #, ans.make(geo_extracted)
