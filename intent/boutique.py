@@ -60,28 +60,24 @@ class Boutique(object):
 		if len(self.countries) > 0 and scale_cible != "pays":
 			boutique_query.join(sale, country, "Country", "Code")
 		
+		produit_selected = []
 		for produit in self.items :
 			for produit_key in produit:
 				if produit_key == "division":
 					boutique_query.join(sale, division,"Division","Code")
-					categorie_produit = "la division "
-					produit_selected.append(produit[produit_key])
+					produit_selected.append("la division " + produit[produit_key])
 				elif produit_key == "departement":
 					boutique_query.join(sale, department,"Department","Code")
-					categorie_produit = "le departement "
-					produit_selected.append(produit[produit_key])
+					produit_selected.append("le departement " + produit[produit_key])
 				elif produit_key == "groupe":
 					boutique_query.join(sale, retail,"Group","Code")
-					categorie_produit = "le groupe retail "
-					produit_selected.append(produit[produit_key])
+					produit_selected.append("le groupe retail " + produit[produit_key])
 				elif produit_key == "theme":
 					boutique_query.join(sale, theme,"Theme","Code")
-					categorie_produit = "le theme "
-					produit_selected.append(produit[produit_key])
+					produit_selected.append("le theme " + produit[produit_key])
 				elif produit_key == "produit":
 					boutique_query.join(sale, item,"Style","Code")
-					categorie_produit = "le produit "
-					produit_selected.append(produit[produit_key])
+					produit_selected.append("le produit " + produit[produit_key])
 
 		for produit in self.items :
 			for produit_key in produit:
@@ -116,7 +112,7 @@ class Boutique(object):
 		reponse = "Voici les " + scale_zone + " ayant eu les meilleures ventes "
 		start_date = self.numerical_dates[0] if len(self.numerical_dates) > 0 else '20170225'
 		reponse += "du " + start_date + " au " + "20170304 " 
-		reponse += "pour " + categorie_produit + ', '.join(produit_selected) + " " if len(produit_selected) > 0 else ''
+		reponse += "pour " + ', '.join(produit_selected) + " " if len(produit_selected) > 0 else ''
 		reponse += "dans le pays " + ", ".join([p for p in self.countries]) + " " if len(self.cities) == 0 and len(self.countries) > 0 else ''
 		reponse += " : \n"
 		
