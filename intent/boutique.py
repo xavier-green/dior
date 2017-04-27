@@ -1,7 +1,16 @@
+"""
+from importlib.machinery import SourceFileLoader
+
+foo = SourceFileLoader("sql.request", "../sql/request.py").load_module()
+foo = SourceFileLoader("sql.tables", "../sql/tables.py").load_module()
+
+"""
+
 from sql.request import query
 
 # Import de toutes les tables utilisées
 from sql.tables import item, sale, boutique, country, division, retail, theme, department, zone
+
 
 class Boutique(object):
 
@@ -23,7 +32,7 @@ class Boutique(object):
 
 	def build_query(self):
 
-		boutique_query = query(boutique, ['Description', 'count(*)', (sale, "sumStd_RP_WOTax_REF"), 'TOP 3'])
+		boutique_query = query(boutique, ['Description', 'count(*)', (sale, "sumStd_RP_WOTax_REF")], 'TOP 3')
 
 		sale_table = query(sale, ['*'])
 		sale_table.join(sale, zone, 'Zone', 'Code')
@@ -98,7 +107,7 @@ class Boutique(object):
 		reponse += "pour " + categorie_produit + ', '.join(produit_selected) + " " if len(produit_selected) > 0 else ''
 		reponse += "de la boutique de " + ', '.join([b for b in self.cities]) + " " if len(self.cities) > 0 else ''
 		reponse += "dans le pays " + ", ".join([p for p in self.countries]) + " " if len(self.cities) == 0 and len(self.countries) > 0 else ''
-		reponse += " :\n"
+		reponse += " : \n"
 		
 		liste_resultat = result.split("\n")
 		n = 0
@@ -110,7 +119,7 @@ class Boutique(object):
 				nom = colonnes[0]
 				nombre_ventes = colonnes[1]
 				montant_ventes = colonnes[2]
-				reponse += str(n) + ". " + nom + " avec " + nombre_ventes + " ventes pour un montant de " + montant_ventes + " euros HT"
+				reponse += nom + " avec " + nombre_ventes + " ventes pour un montant de " + montant_ventes + " euros HT ; \n"
 			n += 1
 			
 		return [boutique_query.request,reponse]
@@ -137,14 +146,18 @@ class Boutique(object):
 				resp = resp[:-1]
 			resp += ");;"
 		return resp
-#
-# data = {
-# 		'cities' : ['Paris', 'Madrid'],
-# 		'countries' : [],
-# 		'nationalities' : [],
-# 		'dates' : [],
-# 		'items' : ['robe']
-# 		}
-#
-# test = Produit(data)
-# print(test.build_query())
+
+"""
+data = {
+		'cities' : ['Paris', 'Madrid'],
+		'countries' : [],
+		'nationalities' : [],
+		'dates' : [],
+		'numerical_dates' : [],
+		'sentence': '',
+		'items' : {'produit':['robe']}
+		}
+
+test = Boutique(data)
+print(test.build_query())
+"""
