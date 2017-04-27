@@ -189,7 +189,6 @@ class Vente(object):
 			return [product_query.request,result]
 
 		else:
-			product_query.groupby(item, 'Description')
 			query_result = product_query.write().split('\n')
 			start_date = self.numerical_dates[0] if len(self.numerical_dates) > 0 else '20170225'
 			
