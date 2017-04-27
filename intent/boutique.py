@@ -48,7 +48,7 @@ class Boutique(object):
 			scale_cible = "zones"
 			boutique_query.join_custom(zone, sale_table.request, sale, "Code", "Zone")
 		elif "pays" in self.sentence.lower():
-			boutique_query = query(zone, ['Description', 'count(*)', (sale, "sumStd_RP_WOTax_REF")], 'TOP 7')
+			boutique_query = query(country, ['Description', 'count(*)', (sale, "sumStd_RP_WOTax_REF")], 'TOP 7')
 			scale_cible = "pays"
 			boutique_query.join_custom(country, sale_table.request, sale, "Code", "Country")
 		else:
@@ -60,28 +60,24 @@ class Boutique(object):
 		if len(self.countries) > 0 and scale_cible != "pays":
 			boutique_query.join(sale, country, "Country", "Code")
 		
+		produit_selected = []
 		for produit in self.items :
 			for produit_key in produit:
 				if produit_key == "division":
 					boutique_query.join(sale, division,"Division","Code")
-					categorie_produit = "la division "
-					produit_selected.append(produit[produit_key])
+					produit_selected.append("la division " + produit[produit_key])
 				elif produit_key == "departement":
 					boutique_query.join(sale, department,"Department","Code")
-					categorie_produit = "le departement "
-					produit_selected.append(produit[produit_key])
+					produit_selected.append("le departement " + produit[produit_key])
 				elif produit_key == "groupe":
 					boutique_query.join(sale, retail,"Group","Code")
-					categorie_produit = "le groupe retail "
-					produit_selected.append(produit[produit_key])
+					produit_selected.append("le groupe retail " + produit[produit_key])
 				elif produit_key == "theme":
 					boutique_query.join(sale, theme,"Theme","Code")
-					categorie_produit = "le theme "
-					produit_selected.append(produit[produit_key])
+					produit_selected.append("le theme " + produit[produit_key])
 				elif produit_key == "produit":
 					boutique_query.join(sale, item,"Style","Code")
-					categorie_produit = "le produit "
-					produit_selected.append(produit[produit_key])
+					produit_selected.append("le produit " + produit[produit_key])
 
 		for produit in self.items :
 			for produit_key in produit:
@@ -100,12 +96,12 @@ class Boutique(object):
 			boutique_query.where(country, "Description_FR", pays)
 
 		# On n'oublie pas le GROUP BY, nécessaire ici vu qu'on prend à la fois une colonne et un count(*)
-		if scale_cible == 'boutiques':
-			boutique_query.groupby(boutique, 'Description')
+		if scale_cible == 'pays':
+			boutique_query.groupby(country, 'Description')
 		elif scale_cible == 'zones':
 			boutique_query.groupby(zone, 'Description')
 		else:
-			boutique_query.groupby(country, 'description_FR')
+			boutique_query.groupby(boutique, 'Description')
 
 		boutique_query.orderby('sum(SA.SALE_Std_RP_WOTax_REF)', " DESC")
 		
@@ -113,10 +109,10 @@ class Boutique(object):
 		result = boutique_query.write()
 		print("***************")
 		print(result)
-		reponse = "Voici les " + scale_zone + " ayant eu les meilleures ventes "
+		reponse = "Voici les " + scale_cible + " ayant eu les meilleures ventes "
 		start_date = self.numerical_dates[0] if len(self.numerical_dates) > 0 else '20170225'
 		reponse += "du " + start_date + " au " + "20170304 " 
-		reponse += "pour " + categorie_produit + ', '.join(produit_selected) + " " if len(produit_selected) > 0 else ''
+		reponse += "pour " + ', '.join(produit_selected) + " " if len(produit_selected) > 0 else ''
 		reponse += "dans le pays " + ", ".join([p for p in self.countries]) + " " if len(self.cities) == 0 and len(self.countries) > 0 else ''
 		reponse += " : \n"
 		
@@ -165,7 +161,7 @@ data = {
 		'nationalities' : [],
 		'dates' : [],
 		'numerical_dates' : [],
-		'sentence': '',
+		'sentence': 'pays',
 		'items' : {'produit':['robe']}
 		}
 
