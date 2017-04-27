@@ -107,7 +107,7 @@ class Boutique(object):
 		reponse += "pour " + categorie_produit + ', '.join(produit_selected) + " " if len(produit_selected) > 0 else ''
 		reponse += "de la boutique de " + ', '.join([b for b in self.cities]) + " " if len(self.cities) > 0 else ''
 		reponse += "dans le pays " + ", ".join([p for p in self.countries]) + " " if len(self.cities) == 0 and len(self.countries) > 0 else ''
-		reponse += " :\n"
+		reponse += " : \n"
 		
 		liste_resultat = result.split("\n")
 		n = 0
@@ -119,7 +119,7 @@ class Boutique(object):
 				nom = colonnes[0]
 				nombre_ventes = colonnes[1]
 				montant_ventes = colonnes[2]
-				reponse += str(n) + ". " + nom + " avec " + nombre_ventes + " ventes pour un montant de " + montant_ventes + " euros HT"
+				reponse += nom + " avec " + nombre_ventes + " ventes pour un montant de " + montant_ventes + " euros HT \n"
 			n += 1
 			
 		return [boutique_query.request,reponse]
