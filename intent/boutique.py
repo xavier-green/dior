@@ -48,7 +48,7 @@ class Boutique(object):
 			scale_cible = "zones"
 			boutique_query.join_custom(zone, sale_table.request, sale, "Code", "Zone")
 		elif "pays" in self.sentence.lower():
-			boutique_query = query(zone, ['Description', 'count(*)', (sale, "sumStd_RP_WOTax_REF")], 'TOP 7')
+			boutique_query = query(country, ['Description', 'count(*)', (sale, "sumStd_RP_WOTax_REF")], 'TOP 7')
 			scale_cible = "pays"
 			boutique_query.join_custom(country, sale_table.request, sale, "Code", "Country")
 		else:
@@ -96,12 +96,12 @@ class Boutique(object):
 			boutique_query.where(country, "Description_FR", pays)
 
 		# On n'oublie pas le GROUP BY, nécessaire ici vu qu'on prend à la fois une colonne et un count(*)
-		if scale_cible == 'boutiques':
-			boutique_query.groupby(boutique, 'Description')
+		if scale_cible == 'pays':
+			boutique_query.groupby(country, 'description_FR')
 		elif scale_cible == 'zones':
 			boutique_query.groupby(zone, 'Description')
 		else:
-			boutique_query.groupby(country, 'description_FR')
+			boutique_query.groupby(boutique, 'Description')
 
 		boutique_query.orderby('sum(SA.SALE_Std_RP_WOTax_REF)', " DESC")
 		
@@ -161,7 +161,7 @@ data = {
 		'nationalities' : [],
 		'dates' : [],
 		'numerical_dates' : [],
-		'sentence': '',
+		'sentence': 'pays',
 		'items' : {'produit':['robe']}
 		}
 
