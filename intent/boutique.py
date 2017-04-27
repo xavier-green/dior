@@ -109,7 +109,7 @@ class Boutique(object):
 		result = boutique_query.write()
 		print("***************")
 		print(result)
-		reponse = "Voici les " + scale_zone + " ayant eu les meilleures ventes "
+		reponse = "Voici les " + scale_cible + " ayant eu les meilleures ventes "
 		start_date = self.numerical_dates[0] if len(self.numerical_dates) > 0 else '20170225'
 		reponse += "du " + start_date + " au " + "20170304 " 
 		reponse += "pour " + ', '.join(produit_selected) + " " if len(produit_selected) > 0 else ''
