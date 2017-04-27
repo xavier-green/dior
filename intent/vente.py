@@ -54,14 +54,27 @@ class Vente(object):
 		if len(self.items) == 0:
 			return "Veuillez préciser un produit svp"
 
+		Quantity_requested = []
+		if 'fp' in self.sentence.lower() or ('full' in self.sentence.lower() and 'price' in self.sentence.lower()):
+			Quantity_requested.append('fp')
+		if 'md' in self.sentence.lower() or ('mark' in self.sentence.lower() and 'down' in self.sentence.lower()):
+			Quantity_requested.append('md')
+		
+		if len(Quantity_requested) == 0 or len(Quantity_requested) == 2:
+			Quantity = '&sum(SA.SALE_RG_Quantity + SA.SALE_MD_Quantity)'
+		elif Quantity_requested[0] == 'fp':
+			Quantity = '&sum(SA.SALE_RG_Quantity)'
+		else:
+			Quantity = '&sum(SA.SALE_MD_Quantity)'
+
 		if colour_query:
-			product_query = query(sale, ['Color','count(*)'], top_distinct='DISTINCT TOP 5')
+			product_query = query(sale, ['Color', Quantity], top_distinct='DISTINCT TOP 5')
 		elif location_query:
-			product_query = query(sale, [(boutique, 'Description'),'count(*)'], top_distinct='DISTINCT TOP 5')
+			product_query = query(sale, [(boutique, 'Description'), Quantity], top_distinct='DISTINCT TOP 5')
 		elif price_query:
 			product_query = query(sale, [(item, 'Description'), 'Std_RP_WOTax_REF'], top_distinct='DISTINCT TOP 1')
 		else:
-			product_query = query(sale, ['&sum(SA.SALE_RG_Quantity + SA.SALE_MD_Quantity)'])
+			product_query = query(sale, [Quantity])
 
 		product_query.join(sale, item, "Style", "Code")
 		product_query.join(sale, boutique, "Location", "Code")
