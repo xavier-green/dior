@@ -61,7 +61,7 @@ class Vente(object):
 		elif price_query:
 			product_query = query(sale, [(item, 'Description'), 'Std_RP_WOTax_REF'], top_distinct='DISTINCT TOP 1')
 		else:
-			product_query = query(sale, [(item, 'Description'), 'count(*)'])
+			product_query = query(sale, ['count(*)'])
 
 		product_query.join(sale, item, "Style", "Code")
 		product_query.join(sale, boutique, "Location", "Code")
@@ -106,19 +106,19 @@ class Vente(object):
 				front_products.append(produit[produit_key])
 				if produit_key == "division":
 					product_query.where(division, "Description", produit[produit_key])
-					produit_selected.append("à la division " + produit[produit_key])
+					produit_selected.append("la division " + produit[produit_key])
 				elif produit_key == "departement":
 					product_query.where(department, "Description", produit[produit_key])
-					produit_selected.append("au departement " + produit[produit_key])
+					produit_selected.append("le departement " + produit[produit_key])
 				elif produit_key == "groupe":
 					product_query.where(retail, "Description", produit[produit_key])
-					produit_selected.append("au groupe retail " + produit[produit_key])
+					produit_selected.append("le groupe retail " + produit[produit_key])
 				elif produit_key == "theme":
 					product_query.where(theme, "Description", produit[produit_key])
-					produit_selected.append("au theme " + produit[produit_key])
+					produit_selected.append("le theme " + produit[produit_key])
 				elif produit_key == "produit":
 					product_query.where(item, "Description", produit[produit_key])
-					produit_selected.append("au produit " + produit[produit_key])
+					produit_selected.append("le produit " + produit[produit_key])
 
 		for ville in self.cities :
 			product_query.where(boutique, "Description", ville)
@@ -179,19 +179,12 @@ class Vente(object):
 			product_query.groupby(item, 'Description')
 			query_result = product_query.write().split('\n')
 			start_date = self.numerical_dates[0] if len(self.numerical_dates) > 0 else '20170225'
-			result = "Du " + start_date + " au " + "20170304 " 
+			
+			result = "Il y a eu " + query_result[1] + " ventes en lien avec " + " ou ".join(produit_selected)
+			result += "du " + start_date + " au " + "20170304 " 
 			result += "de la boutique de " + ', '.join([b for b in self.cities]) + " " if len(self.cities) > 0 else ''
 			result += "dans le pays " + ", ".join([p for p in self.countries]) + " " if len(self.cities) == 0 and len(self.countries) > 0 else ''
-			result += ', '
-
-			n = 0
-			for ligne in query_result:
-				if n > 0:
-					colonnes = ligne.split('|')
-					item_desc = colonnes[0]
-					item_nb = colonnes[1]
-					result += "l'item " + item_desc + " a été vendu " + item_nb +" fois ; "
-				n += 1
+			result += '.'
 			
 			print("***************")
 			return [product_query.request, result]
