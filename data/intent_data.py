@@ -32,6 +32,10 @@ class intentData():
             ]
         },"stock": {
             "examples" : ["quelle est la couverture de stock de Ginza en Lady Dior",
+                "Quel est le pourcentage du sellthru au Japon",
+                "Quel est le sellthru de Paris le mois dernier",
+                "Quel est le sellthu à paris en dior homme la semaine derniere"
+                "Combien de points de sellthru en Asie le mois dernier"
                 "couverture de stock en joaillerie à paris",
                 "quelle est ma couverture de stock à madrid pour l'article coccinnelle",
                 "vestes restantes rue lapalce",
@@ -57,9 +61,6 @@ class intentData():
             ]
         },"boutique": {
             "examples" : [
-                "Quel est le pourcentage du sellthru au Japon",
-                "Quel est le sellthru du Japon pendant la Cruise",
-                "meilleure boutique en sellthru",
                 "Qui sont les meilleures croissances du mois",
                 "Quelles sont les meilleurs boutiques du mois",
                 "J'aimerais connaître ma meilleure boutique ce mois-ci",
@@ -141,21 +142,3 @@ class intentData():
             ]
         },
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
