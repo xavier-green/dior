@@ -8,7 +8,7 @@
 from sql.request import query
 
 # Import de toutes les tables utilisées
-from sql.tables import item, sale, boutique, country, division, retail, theme, department, zone
+from sql.tables import item, sale, boutique, country, division, retail, theme, department, zone, stock_daily
 
 class Stock(object):
 
