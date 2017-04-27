@@ -180,11 +180,10 @@ class Vente(object):
 			query_result = product_query.write().split('\n')
 			start_date = self.numerical_dates[0] if len(self.numerical_dates) > 0 else '20170225'
 			
-			result = "Il y a eu " + query_result[1] + " ventes en lien avec " + " ou ".join(produit_selected)
+			result = "Il y a eu " + query_result[1] + " ventes en lien avec " + " ou ".join(produit_selected) + " "
 			result += "du " + start_date + " au " + "20170304 " 
 			result += "de la boutique de " + ', '.join([b for b in self.cities]) + " " if len(self.cities) > 0 else ''
 			result += "dans le pays " + ", ".join([p for p in self.countries]) + " " if len(self.cities) == 0 and len(self.countries) > 0 else ''
-			result += '.'
 			
 			print("***************")
 			return [product_query.request, result]
