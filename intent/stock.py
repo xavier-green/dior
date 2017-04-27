@@ -55,9 +55,8 @@ class Stock(object):
 		if len(self.cities) == 0:
 			for pays in self.countries :
 				stock_query.where(country, "Description_FR", pays)
-		print(stock_query.request)
 		# La requête est terminée, on l'écrit
-		res_stock = stock_query.write()
+		res_stock = int(stock_query.write())
 		print('Stock:', res_stock)
 		if 'sellthru' in self.sentence:
 			#Calculate sales for sellthru
@@ -106,7 +105,7 @@ class Stock(object):
 				product_query.wheredate(sale, 'DateNumYYYYMMDD') # par défaut sur les 7 derniers jours
 				# La requête est terminée, on l'écrit
 				# product_query.write()
-				res_sales = product_query.write()
+				res_sales = int(product_query.write())
 				print("Sales:", res_sales)
 				sellthru = 100 * res_sales / (res_sales  + res_stock)
 		return [stock_query.request + '\n' + product_query.request,sellthru ]
