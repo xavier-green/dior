@@ -87,8 +87,8 @@ def vector_get(sentence):
 		model_fasttext = fasttext.load_model(model_fasttext_path)
 	intent_extracted = intent_model.predict(sentence)
 	geo_extracted,sentence = world.find_similar_words(sentence)
-	dates_extracted,sentence = datex.extract(sentence)
 	numerical_dates_extracted = datex.extract_numerical(sentence)
+	dates_extracted,sentence = datex.extract(sentence)
 	boutiques_extracted,sentence = bouti.extract(sentence)
 	items_extracted = word.extract(sentence)
 	geo_extracted['dates'] = dates_extracted
@@ -125,6 +125,11 @@ def vector_get(sentence):
 		mainString = now.strftime("%Y-%m-%d %H:%M")+"||"+copy+"||"+answer[0]+"||"+answer[1]
 		mainString = mainString.replace('\n','')
 		myfile.write(mainString+"\n")
+
+	print("This is what is being returned to the App")
+	print("+++++++++++++++++++")
+	print(answer[1])
+	print("+++++++++++++++++++")
 
 	return answer[1]
 
