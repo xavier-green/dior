@@ -13,16 +13,10 @@ class intentData():
                 "quel mix de couleurs vend on sur a collection j'adior",
                 "quelle est la couleur de chemise qui se vend le plus",
                 "tailles de bague vendues à Sao Paulo",
-                "ou se vend le mieux l'article 172h19h",
                 "montaigne vend combien de chemises",
                 "prix moyen de vente du sac lady dior",
                 "ecart-type du prix ttc du collier or",
                 "prix de vente ht de la robe rouge baby",
-                "Dans quel pays vent-on le plus de roses des vents",
-                "Où vent-on le plus de Lady Dior",
-                "Dans quel pays les crocos s'écoulent-ils le mieux",
-                "A quel endroit a-t-on les meilleures ventes en J'Adior",
-                "Où a-t-on écoulé le plus de souliers la semaine dernière",
                 "Ce mois-ci, d'où venaient mes plus gros clients à New York",
                 "Quelle est la nationalité des plus grands acheteurs de bagues",
                 "Est-ce que la plupart des clients au Moyen Orient sont locaux",
@@ -48,6 +42,7 @@ class intentData():
                 "converture de stock de la collection jadior",
                 "stock de pantalons à londres",
                 "taille de mon stock en amerique"
+                "Quelle est la boutique en France avec la meilleure couverture de stocks",
             ]
         },"bonjour": {
             "examples" : ["bonjour",
@@ -61,6 +56,10 @@ class intentData():
             ]
         },"boutique": {
             "examples" : [
+                "ou se vend le mieux l'article 172h19h",
+                "Où a-t-on écoulé le plus de souliers la semaine dernière",
+                "A quel endroit a-t-on les meilleures ventes en J'Adior",
+                "Où vent-on le plus de Lady Dior",
                 "Qui sont les meilleures croissances du mois",
                 "Quelles sont les meilleurs boutiques du mois",
                 "J'aimerais connaître ma meilleure boutique ce mois-ci",
@@ -70,11 +69,13 @@ class intentData():
                 "Qui a vendu les crocos hier",
                 "Où a été vendue la maro cette semaine",
                 "Boutique vendant le plus aux Russes",
-                "Quelle est la boutique en France avec la meilleure couverture de stocks",
                 "Quelles sont les meilleures boutiques en ventes de J'Adior",
                 "Qui ont le plus vendu de Lady Dior",
-                "Et pour combien d'euros",
-                "Quelle est la boutique vendant le plus aux locaux "
+                "Quelle est la boutique vendant le plus aux locaux ",
+                "Dans quel pays vent-on le plus de roses des vents",
+                "Dans quel pays les crocos s'écoulent-ils le mieux",
+                "Donne-moi ma meilleure boutique du Japon",
+                "Quelle boutique vend le plus de roses des vents",
             ]
         }, "vendeur": {
             "examples" : ["Qui est le meilleur vendeur",
