@@ -1,14 +1,16 @@
-# Pour pouvoir importer les fichiers sql
-# from importlib.machinery import SourceFileLoader
+"""
+from importlib.machinery import SourceFileLoader
 
-# foo = SourceFileLoader("sql.request", "../sql/request.py").load_module()
-# foo = SourceFileLoader("sql.tables", "../sql/tables.py").load_module()
+foo = SourceFileLoader("sql.request", "../sql/request.py").load_module()
+foo = SourceFileLoader("sql.tables", "../sql/tables.py").load_module()
 
+"""
 
 from sql.request import query
 
 # Import de toutes les tables utilisées
 from sql.tables import item, sale, boutique, country, division, retail, theme, department, zone
+
 
 class Vente(object):
 
@@ -59,7 +61,7 @@ class Vente(object):
 		elif price_query:
 			product_query = query(sale, [(item, 'Description'), 'Std_RP_WOTax_REF'], top_distinct='DISTINCT TOP 1')
 		else:
-			product_query = query(sale, ['count(*)'])
+			product_query = query(sale, [(item, 'Description'), 'count(*)'])
 
 		product_query.join(sale, item, "Style", "Code")
 		product_query.join(sale, boutique, "Location", "Code")
@@ -98,6 +100,7 @@ class Vente(object):
 
 		front_products = []
 		
+		produit_selected = []
 		for produit in self.items :
 			for produit_key in produit:
 				front_products.append(produit[produit_key])
@@ -173,10 +176,23 @@ class Vente(object):
 			return [product_query.request,result]
 
 		else:
-			result = product_query.write().split('\n')
+			query_result = product_query.write().split('\n')
+			start_date = self.numerical_dates[0] if len(self.numerical_dates) > 0 else '20170225'
+			result = "Du " + start_date + " au " + "20170304 " 
+			result += "de la boutique de " + ', '.join([b for b in self.cities]) + " " if len(self.cities) > 0 else ''
+			result += "dans le pays " + ", ".join([p for p in self.countries]) + " " if len(self.cities) == 0 and len(self.countries) > 0 else ''
+			result += ', '
+
+			n = 0
+			for ligne in query_result:
+				if n > 0:
+					colonnes = ligne.split('|')
+					item_desc = colonnes[0]
+					item_nb = colonnes[1]
+					result += "l'item " + item_desc + " a été vendu " + item_nb +" fois ; "
 			
 			print("***************")
-			return [product_query.request,";;".join(result)]
+			return [product_query.request, result]
 
 	def append_details(self, text):
 		resp = text[:]+";;"
@@ -200,14 +216,18 @@ class Vente(object):
 				resp = resp[:-1]
 			resp += ");;"
 		return resp
-#
-# data = {
-# 		'cities' : ['Paris', 'Madrid'],
-# 		'countries' : [],
-# 		'nationalities' : [],
-# 		'dates' : [],
-# 		'items' : ['robe']
-# 		}
-#
-# test = Produit(data)
-# print(test.build_query())
+
+"""
+data = {
+		'cities' : ['Paris', 'Madrid'],
+		'countries' : [],
+		'nationalities' : [],
+		'dates' : [],
+		'numerical_dates' : [],
+		'sentence' : '',
+		'items' : {'produit':['robe']}
+		}
+
+test = Produit(data)
+print(test.build_query())
+"""
