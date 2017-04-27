@@ -15,10 +15,12 @@ class Stock(object):
 	def __init__(self, data):
 		self.cities = data['cities']
 		self.countries = data['countries']
-		self.items = data['items']
-		self.sentence = data['sentence']
+		self.nationalities = data['nationalities']
+		self.dates = data['dates']
 		self.numerical_dates = data['numerical_dates']
-
+		self.items = data['items']
+		self.boutiques = data['boutiques']
+		self.sentence = data['sentence']
 
 	def build_answer(self):
 		response_base = self.build_query()
@@ -56,7 +58,11 @@ class Stock(object):
 			for pays in self.countries :
 				stock_query.where(country, "Description_FR", pays)
 		# La requête est terminée, on l'écrit
-		res_stock = int(stock_query.write())
+		res_stock = stock_query.write()
+		if res_stock = 'NULL':
+			res_stock = 0
+		else:
+			res_stock = int(res_stock)
 		print('Stock:', res_stock)
 		if 'sellthru' in self.sentence:
 			print('It is a sellthru')
@@ -68,7 +74,8 @@ class Stock(object):
 			elif ('Où' in self.sentence) or ('où' in self.sentence):
 				product_query = query(sale, [(boutique, 'Description'),'count(*)'], top_distinct='DISTINCT TOP 5')
 			# Initialisation de la query : par défaut pour l'instant on sélectionne count(*)
-			product_query.join(sale, item, "Style", "Code") # jointure sur ITEM_Code = SALE_Style
+			if len(self.items) > 0:
+				product_query.join(sale, item, "Style", "Code") # jointure sur ITEM_Code = SALE_Style
 			product_query.join(sale, boutique, "Location", "Code") # jointure sur SALE_Location = LOCA_Code
 
 			# S'il n'y a pas de ville, on s'intéresse au pays
@@ -106,7 +113,11 @@ class Stock(object):
 				product_query.wheredate(sale, 'DateNumYYYYMMDD') # par défaut sur les 7 derniers jours
 				# La requête est terminée, on l'écrit
 				# product_query.write()
-			res_sales = int(product_query.write())
+			res_sales = product_query.write()
+			if res_stock = 'NULL':
+				res_stock = 0
+			else:
+				res_stock = int(res_stock)
 			print("Sales:", res_sales)
 			sellthru = str(100 * res_sales / (res_sales  + res_stock))
 			return [stock_query.request + '\n' + product_query.request,sellthru ]
