@@ -59,6 +59,7 @@ class Stock(object):
 		res_stock = int(stock_query.write())
 		print('Stock:', res_stock)
 		if 'sellthru' in self.sentence:
+			print('It is a sellthru')
 			#Calculate sales for sellthru
 			product_query = query(sale, ['count(*)'])
 
@@ -108,7 +109,8 @@ class Stock(object):
 				res_sales = int(product_query.write())
 				print("Sales:", res_sales)
 				sellthru = 100 * res_sales / (res_sales  + res_stock)
-		return [stock_query.request + '\n' + product_query.request,sellthru ]
+				return [stock_query.request + '\n' + product_query.request,sellthru ]
+		return(stock_query.request, res_stock)
 
 	def append_details(self, text):
 		resp = text[:]+";;"
