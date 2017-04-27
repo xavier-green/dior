@@ -191,6 +191,7 @@ class Vente(object):
 					item_desc = colonnes[0]
 					item_nb = colonnes[1]
 					result += "l'item " + item_desc + " a été vendu " + item_nb +" fois ; "
+				n += 1
 			
 			print("***************")
 			return [product_query.request, result]
