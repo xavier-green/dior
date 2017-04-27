@@ -25,11 +25,14 @@ class intentData():
                 "Les américains achètent-ils plus que les japonais"
             ]
         },"stock": {
-            "examples" : ["quelle est la couverture de stock de Ginza en Lady Dior",
-                "Quel est le pourcentage du sellthru au Japon",
+            "examples" : [
+                "Quel est le pourcentage du sellthru au Japon de la semine dernière",
+                "Quel est le pourcentage de sellthru en Asie de l'année dernière",
+                "Quel est le nombre de points de sellthru de Madrid la semaine derniere en Lady Dior",
                 "Quel est le sellthru de Paris le mois dernier",
-                "Quel est le sellthu à paris en dior homme la semaine derniere"
+                "Quel est le sellthru à paris en dior homme la semaine derniere"
                 "Combien de points de sellthru en Asie le mois dernier"
+                "quelle est la couverture de stock de Ginza en Lady Dior",
                 "couverture de stock en joaillerie à paris",
                 "quelle est ma couverture de stock à madrid pour l'article coccinnelle",
                 "vestes restantes rue lapalce",
