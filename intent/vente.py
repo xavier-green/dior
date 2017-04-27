@@ -106,19 +106,19 @@ class Vente(object):
 				front_products.append(produit[produit_key])
 				if produit_key == "division":
 					product_query.where(division, "Description", produit[produit_key])
-					produit_selected.append("à la division" + produit[produit_key])
+					produit_selected.append("à la division " + produit[produit_key])
 				elif produit_key == "departement":
 					product_query.where(department, "Description", produit[produit_key])
-					produit_selected.append("au departement" + produit[produit_key])
+					produit_selected.append("au departement " + produit[produit_key])
 				elif produit_key == "groupe":
 					product_query.where(retail, "Description", produit[produit_key])
-					produit_selected.append("au groupe retail" + produit[produit_key])
+					produit_selected.append("au groupe retail " + produit[produit_key])
 				elif produit_key == "theme":
 					product_query.where(theme, "Description", produit[produit_key])
-					produit_selected.append("au theme" + produit[produit_key])
+					produit_selected.append("au theme " + produit[produit_key])
 				elif produit_key == "produit":
 					product_query.where(item, "Description", produit[produit_key])
-					produit_selected.append("au produit" + produit[produit_key])
+					produit_selected.append("au produit " + produit[produit_key])
 
 		for ville in self.cities :
 			product_query.where(boutique, "Description", ville)
@@ -176,6 +176,7 @@ class Vente(object):
 			return [product_query.request,result]
 
 		else:
+			product_query.groupby(item, 'Description')
 			query_result = product_query.write().split('\n')
 			start_date = self.numerical_dates[0] if len(self.numerical_dates) > 0 else '20170225'
 			result = "Du " + start_date + " au " + "20170304 " 
