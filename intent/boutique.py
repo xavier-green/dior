@@ -32,7 +32,7 @@ class Boutique(object):
 
 	def build_query(self):
 
-		boutique_query = query(boutique, ['Description', 'count(*)', (sale, "sumStd_RP_WOTax_REF"), 'TOP 3'])
+		boutique_query = query(boutique, ['Description', 'count(*)', (sale, "sumStd_RP_WOTax_REF")], 'TOP 3')
 
 		sale_table = query(sale, ['*'])
 		sale_table.join(sale, zone, 'Zone', 'Code')
