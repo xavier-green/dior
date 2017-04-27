@@ -97,7 +97,7 @@ class Boutique(object):
 
 		# On n'oublie pas le GROUP BY, nécessaire ici vu qu'on prend à la fois une colonne et un count(*)
 		if scale_cible == 'pays':
-			boutique_query.groupby(country, 'description_FR')
+			boutique_query.groupby(country, 'Description')
 		elif scale_cible == 'zones':
 			boutique_query.groupby(zone, 'Description')
 		else:
