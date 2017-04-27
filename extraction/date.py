@@ -103,9 +103,9 @@ class DateExtractor(object):
                 date_word_index = sentence_split.index(date_word)
                 days_diff = int(date_words[date_word])
                 days_diff_amount = int(self.getPreviousAmount(date_word_index, sentence_split))
-                #print("{} : {}".format(days_diff,days_diff_amount))
+                print("{} : {}".format(days_diff,days_diff_amount))
                 total_days = days_diff*days_diff_amount
-                #print("Total days "+str(total_days))
+                print("Total days "+str(total_days))
                 new_date = self.get_new_date(addDays=total_days)
                 allDates.append(new_date)
             except:
