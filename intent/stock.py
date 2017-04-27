@@ -70,7 +70,7 @@ class Stock(object):
 			elif ('Où' in self.sentence) or ('où' in self.sentence):
 				product_query = query(sale, [(boutique, 'Description'),'count(*)'], top_distinct='DISTINCT TOP 5')
 			# Initialisation de la query : par défaut pour l'instant on sélectionne count(*)
-			if len(self.items) > 0
+			if len(self.items) > 0:
 				product_query.join(sale, item, "Style", "Code") # jointure sur ITEM_Code = SALE_Style
 			product_query.join(sale, boutique, "Location", "Code") # jointure sur SALE_Location = LOCA_Code
 
