@@ -8,7 +8,7 @@
 from sql.request import query
 
 # Import de toutes les tables utilisées
-from sql.tables import item, sale, boutique, country, division, retail, theme, department
+from sql.tables import item, sale, boutique, country, division, retail, theme, department, zone
 
 class Vente(object):
 
@@ -52,25 +52,21 @@ class Vente(object):
 		if len(self.items) == 0:
 			return "Veuillez préciser un produit svp"
 
-		product_query = query(sale, ['count(*)'])
-
 		if colour_query:
 			product_query = query(sale, ['Color','count(*)'], top_distinct='DISTINCT TOP 5')
 		elif location_query:
 			product_query = query(sale, [(boutique, 'Description'),'count(*)'], top_distinct='DISTINCT TOP 5')
 		elif price_query:
-			product_query = query(sale, ['Std_RP_WOTax_REF'], top_distinct='DISTINCT TOP 1')
+			product_query = query(sale, [(item, 'Description'), 'Std_RP_WOTax_REF'], top_distinct='DISTINCT TOP 1')
+		else:
+			product_query = query(sale, ['count(*)'])
 
-		# Initialisation de la query : par défaut pour l'instant on sélectionne count(*)
+		product_query.join(sale, item, "Style", "Code")
+		product_query.join(sale, boutique, "Location", "Code")
 
-		product_query.join(sale, item, "Style", "Code") # jointure sur ITEM_Code = SALE_Style
-		product_query.join(sale, boutique, "Location", "Code") # jointure sur SALE_Location = LOCA_Code
-
-		# S'il n'y a pas de ville, on s'intéresse au pays
 		if len(self.countries) > 0:
-			product_query.join(sale, country, "Country", "Code") # jointyre sur SALE_Country = COUN_Code
+			product_query.join(sale, country, "Country", "Code")
 
-		# Maintenant que toutes les jointures sont faites, on passe aux conditions
 		produit_seen = False
 		division_seen = False
 		department_seen = False
@@ -96,6 +92,10 @@ class Vente(object):
 						product_query.join(sale, theme,"Theme","Code")
 						theme_seen = True
 
+		# Retirer Jardin D'avron et Others
+		product_query.join(sale, zone, 'Zone', 'Code')
+		product_query.whereNotJDAandOTH()
+		
 		for produit in self.items :
 			for produit_key in produit:
 				if produit_key == "division":
@@ -144,6 +144,7 @@ class Vente(object):
 					return [product_query.request,";;".join(result)]
 			else:
 				return [product_query.request,"Aucune couleur enregistrée pour "+",".join(self.items)]
+
 		elif location_query:
 			product_query.groupby(boutique, 'Description')
 			product_query.orderby('count(*)', " DESC")
@@ -152,16 +153,20 @@ class Vente(object):
 			result = [w.split("|")[0]+" ( "+w.split("|")[1]+" vendus )" for w in query_result if 'LOCA_Description' not in w and '------' not in w]
 			print(result)
 			return [product_query.request,";;".join(result)]
+
 		elif price_query:
 			query_result = product_query.write().split('\n')
-			print(query_result)
-			result = [w+"€" for w in query_result if 'SALE_Std_RP_WOTax_REF' not in w and '------' not in w]
+			result_line = query_result[1].split('|')
+			item_desc = result_line[0]
+			item_price = result_line[1]
+			print(result_line)
+			result = "L'item " + item_desc +" se vend à " + item_price + " euros HT."
 			print(result)
 			return [product_query.request,";;".join(result)]
-		else:			
-			# La requête est terminée, on l'écrit
-			# product_query.write()
+
+		else:
 			result = product_query.write().split('\n')
+			
 			print("***************")
 			return [product_query.request,";;".join(result)]
 
