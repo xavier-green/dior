@@ -101,8 +101,6 @@ def vector_get(sentence):
 	print('data extracted:')
 	print(geo_extracted)
 
-	anwser = ""
-
 	if intent_extracted == 'vente':
 		print("Detected it's a sale \n")
 		produit = Vente(geo_extracted)
@@ -126,7 +124,6 @@ def vector_get(sentence):
 		now = datetime.datetime.now()
 		mainString = now.strftime("%Y-%m-%d %H:%M")+"||"+copy+"||"+answer[0]+"||"+answer[1]
 		mainString = mainString.replace('\n','')
-		print("logged: "+mainString)
 		myfile.write(mainString+"\n")
 
 	print("This is what is being returned to the App")
