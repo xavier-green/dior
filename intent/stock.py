@@ -15,10 +15,12 @@ class Stock(object):
 	def __init__(self, data):
 		self.cities = data['cities']
 		self.countries = data['countries']
-		self.items = data['items']
-		self.sentence = data['sentence']
+		self.nationalities = data['nationalities']
+		self.dates = data['dates']
 		self.numerical_dates = data['numerical_dates']
-
+		self.items = data['items']
+		self.boutiques = data['boutiques']
+		self.sentence = data['sentence']
 
 	def build_answer(self):
 		response_base = self.build_query()
@@ -68,7 +70,8 @@ class Stock(object):
 			elif ('Où' in self.sentence) or ('où' in self.sentence):
 				product_query = query(sale, [(boutique, 'Description'),'count(*)'], top_distinct='DISTINCT TOP 5')
 			# Initialisation de la query : par défaut pour l'instant on sélectionne count(*)
-			product_query.join(sale, item, "Style", "Code") # jointure sur ITEM_Code = SALE_Style
+			if len(self.items) > 0
+				product_query.join(sale, item, "Style", "Code") # jointure sur ITEM_Code = SALE_Style
 			product_query.join(sale, boutique, "Location", "Code") # jointure sur SALE_Location = LOCA_Code
 
 			# S'il n'y a pas de ville, on s'intéresse au pays
