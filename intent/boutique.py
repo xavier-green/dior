@@ -1,7 +1,16 @@
+"""
+from importlib.machinery import SourceFileLoader
+
+foo = SourceFileLoader("sql.request", "../sql/request.py").load_module()
+foo = SourceFileLoader("sql.tables", "../sql/tables.py").load_module()
+
+"""
+
 from sql.request import query
 
 # Import de toutes les tables utilisées
 from sql.tables import item, sale, boutique, country, division, retail, theme, department, zone
+
 
 class Boutique(object):
 
@@ -137,14 +146,18 @@ class Boutique(object):
 				resp = resp[:-1]
 			resp += ");;"
 		return resp
-#
-# data = {
-# 		'cities' : ['Paris', 'Madrid'],
-# 		'countries' : [],
-# 		'nationalities' : [],
-# 		'dates' : [],
-# 		'items' : ['robe']
-# 		}
-#
-# test = Produit(data)
-# print(test.build_query())
+
+"""
+data = {
+		'cities' : ['Paris', 'Madrid'],
+		'countries' : [],
+		'nationalities' : [],
+		'dates' : [],
+		'numerical_dates' : [],
+		'sentence': '',
+		'items' : {'produit':['robe']}
+		}
+
+test = Boutique(data)
+print(test.build_query())
+"""

@@ -40,6 +40,7 @@ print("Importing intents")
 from intent.vente import Vente
 from intent.vendeur import Vendeur
 from intent.stock import Stock
+from intent.boutique import Boutique
 
 print("Importing treetagger")
 
@@ -114,6 +115,10 @@ def vector_get(sentence):
 		print("Vous avez demandé des informations au sujet du stock \n")
 		my_stock = Stock(geo_extracted)
 		answer = my_stock.build_answer()
+	elif intent_extracted == 'boutique':
+		print("Vous avez demandé des informations au sujet d'une boutique \n")
+		boutique = Boutique(geo_extracted)
+		answer = boutique.build_answer()
 	else:
 		answer = ["","Bonjour, malheureusement je n'ai pas saisi votre requête. Pouvez-vous reformuler ?"]
 
