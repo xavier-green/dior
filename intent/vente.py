@@ -79,7 +79,7 @@ class Vente(object):
 					column_requested.append((division, "Description"))
 					break
 				elif produit_key == "departement":
-					column_requested.append((department "Description"))
+					column_requested.append((department, "Description"))
 					break
 				elif produit_key == "groupe":
 					column_requested.append((retail, "Description"))
