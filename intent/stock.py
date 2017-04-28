@@ -136,7 +136,15 @@ class Stock(object):
 				res_sales = int(res_sales)
 			print("Sales:", res_sales)
 			sellthru = format((100 * res_sales / (res_sales  + res_stock)), '.2f') + ' %'
-			return [stock_query.request + '\n' + product_query.request,sellthru ]
+			res_sellthru = 'Le sellthru '
+			if len(self.boutique) > 0:
+				res_sellthru += "dans la boutique " + self.boutique + ' '
+			if len(self.cities) > 0:
+				res_sellthru += "dans la ville"  + self.cities + ' '
+			if len(self.countries) > 0:
+				res_sellthru += 'dans le pays ' + self.countries + ' '
+			res_sellthru += "est de " + sellthru
+			return [stock_query.request + '\n' + product_query.request,res_sellthru ]
 		return(stock_query.request, str(res_stock))
 
 	def append_details(self, text):
