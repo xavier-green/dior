@@ -145,7 +145,15 @@ class Stock(object):
 				res_sellthru += 'dans le pays ' + self.countries + ' '
 			res_sellthru += "est de " + sellthru
 			return [stock_query.request + '\n' + product_query.request,res_sellthru ]
-		return(stock_query.request, str(res_stock))
+			str_res_stock = 'Le stock '
+			if len(self.boutique) > 0:
+				str_res_stock += "dans la boutique " + self.boutique + ' '
+			if len(self.cities) > 0:
+				str_res_stock += "dans la ville"  + self.cities + ' '
+			if len(self.countries) > 0:
+				str_res_stock += 'dans le pays ' + self.countries + ' '
+			res_sellthru += "est de " + str(res_stock)
+		return(stock_query.request, str_res_stock)
 
 	def append_details(self, text):
 		resp = text[:]+";;"
