@@ -1,4 +1,4 @@
-"""
+
 from importlib.machinery import SourceFileLoader
 
 foo = SourceFileLoader("sql.request", "../sql/request.py").load_module()
@@ -10,7 +10,7 @@ from sql.request import query
 
 # Import de toutes les tables utilisées
 from sql.tables import item, sale, boutique, country, division, retail, theme, department, zone
-
+"""
 
 class Vente(object):
 
@@ -28,7 +28,7 @@ class Vente(object):
 		response_base = self.build_query()
 		print(response_base)
 		response_complete = self.append_details(response_base[1])
-		details_query = [["lady dior", "34"], ["my lady", "12"]]
+		details_query = response_base[2] if len(response_base) > 2 else "No details"
 		return [response_base[0],response_complete, details_query] 
 
 
@@ -71,6 +71,27 @@ class Vente(object):
 			Quantity = ('sum', sale, 'MD_Quantity')
 			MDorFP = "en Mark Down "
 
+		# List in what categories we will be looking
+		columns_requested = []
+		for produit in self.items :
+			for produit_key in produit:
+				if produit_key == "division":
+					column_requested.append((division, "Description"))
+					break
+				elif produit_key == "departement":
+					column_requested.append((department "Description"))
+					break
+				elif produit_key == "groupe":
+					column_requested.append((retail, "Description"))
+					break
+				elif produit_key == "theme":
+					column_requested.append((theme, "Description"))
+					break
+				if produit_key == "produit":
+					column_requested.append((item, "Description"))
+					break
+		columns_requested.append(Quantity)
+
 		if colour_query:
 			product_query = query(sale, ['Color', 'count(*)'], top_distinct='DISTINCT TOP 5')
 		elif location_query:
@@ -78,7 +99,7 @@ class Vente(object):
 		elif price_query:
 			product_query = query(sale, [(item, 'Description'), 'Std_RP_WOTax_REF'], top_distinct='DISTINCT TOP 1')
 		else:
-			product_query = query(sale, [Quantity])
+			product_query = query(sale, [columns_requested])
 
 		product_query.join(sale, item, "Style", "Code")
 		product_query.join(sale, boutique, "Location", "Code")
@@ -86,30 +107,29 @@ class Vente(object):
 		if len(self.countries) > 0:
 			product_query.join(sale, country, "Country", "Code")
 
-		produit_seen = False
 		division_seen = False
 		department_seen = False
 		retail_seen = False
 		theme_seen = False
+		produit_seen = False
 
 		for produit in self.items :
 			for produit_key in produit:
-				if produit_key == "division":
-					if not produit_seen:
-						product_query.join(sale, division,"Division","Code")
-						produit_seen = True
-				elif produit_key == "departement":
-					if not department_seen:
-						product_query.join(sale, department,"Department","Code")
-						department_seen = True
-				elif produit_key == "groupe":
-					if not retail_seen:
-						product_query.join(sale, retail,"Group","Code")
-						retail_seen = True
-				elif produit_key == "theme":
-					if not theme_seen:
-						product_query.join(sale, theme,"Theme","Code")
-						theme_seen = True
+				if produit_key == "division" and not division_seen:
+					product_query.join(sale, division,"Division","Code")
+					division_seen = True
+				elif produit_key == "departement" and not department_seen:
+					product_query.join(sale, department,"Department","Code")
+					department_seen = True
+				elif produit_key == "groupe" and not retail_seen:
+					product_query.join(sale, retail,"Group","Code")
+					retail_seen = True
+				elif produit_key == "theme" and not theme_seen:
+					product_query.join(sale, theme,"Theme","Code")
+					theme_seen = True
+				elif produit_key == "produit" and not produit_seen:
+					product_query.join(sale, item,"Style","Code")
+					produit_seen = True
 
 		# Retirer Jardin D'avron et Others
 		product_query.join(sale, zone, 'Zone', 'Code')
@@ -194,16 +214,32 @@ class Vente(object):
 
 		else:
 			query_result = product_query.write().split('\n')
+			
+			somme = 0
+			n = 0
+			details_items = []
+			for ligne in query_result:
+				if n > 0:
+					colonnes = ligne.split('|')
+					nombre_ventes = colonnes[1]
+					somme += float(nombre_ventes)
+				if n > 0 and n < 20:
+					details_items.append(colonnes)
+				if n == 20:
+					details_items.append("...")
+				n += 1
+			print(details_items)
+			
 			start_date = self.numerical_dates[0] if len(self.numerical_dates) > 0 else '20170225'
 			
-			result = "Il y a eu " + query_result[1] + " ventes en lien avec " + " ou ".join(produit_selected) + " "
+			result = "Il y a eu " + query_result[1] + " ventes en lien avec " + " et/ou ".join(produit_selected) + " "
 			result += MDorFP
 			result += "du " + start_date + " au " + "20170304 " 
 			result += "de la boutique de " + ', '.join([b for b in self.cities]) + " " if len(self.cities) > 0 else ''
 			result += "dans le pays " + ", ".join([p for p in self.countries]) + " " if len(self.cities) == 0 and len(self.countries) > 0 else ''
 			
 			print("***************")
-			return [product_query.request, result]
+			return [product_query.request, result, details_items]
 
 	def append_details(self, text):
 		resp = text[:]+";;"
@@ -228,7 +264,7 @@ class Vente(object):
 			resp += ");;"
 		return resp
 
-"""
+
 data = {
 		'cities' : ['Paris', 'Madrid'],
 		'countries' : [],
@@ -241,4 +277,3 @@ data = {
 
 test = Produit(data)
 print(test.build_query())
-"""
