@@ -14,7 +14,7 @@ class query(object):
 			if c == '*' or c == 'count(*)' or (table == None and isinstance(c, str)):
 				response.append(c)
 			# Si la colonne appartient à la table de base
-			elif c in table.columns:
+			elif table != None and c in table.columns:
 				response.append(table.alias + '.' + table.prefix + c)
 			# Pour les colonnes n'appartenant pas à la table initiale : (table, 'colonne')
 			elif isinstance(c, tuple) and len(c) == 2:
