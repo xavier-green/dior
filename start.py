@@ -130,8 +130,9 @@ def vector_get(sentence):
 	print("+++++++++++++++++++")
 	print(answer[1])
 	print("+++++++++++++++++++")
+	print(answer[2] if len(answer) > 2 else "No detail")
 
-	return answer[1]
+	return answer[1:2] if len(answer) > 2 else answer[1]
 
 #, ans.make(geo_extracted)
     # return str(geo_extracted) # returns the vector of the first word just to check that the model was used

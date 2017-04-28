@@ -28,7 +28,8 @@ class Vente(object):
 		response_base = self.build_query()
 		print(response_base)
 		response_complete = self.append_details(response_base[1])
-		return [response_base[0],response_complete] 
+		details_query = [["lady dior", "34"], ["my lady", "12"]]
+		return [response_base[0],response_complete, details_query] 
 
 
 	def build_query(self):
