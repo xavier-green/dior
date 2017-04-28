@@ -124,7 +124,9 @@ class ProductExtractor(object):
         tags_dict = self.tag_dict(sentence)
         #print(tags_dict)
         for i in range(self.n_max,0,-1):
+            print("extraction des "+str(i)+"-gram")
             for key in self.order:
+                print("extraction en cours pour "+key)
                 results, sentence = self.extract_N(sentence, tags_dict, self.order[key], key, results, i)
         return results
         
@@ -164,6 +166,7 @@ class ProductExtractor(object):
             for key in w:
                 copy = copy.replace(w[key], "ITEM")
         return copy
-    
-# itm = ProductExtractor()
-# print(itm.extract("Combien de rose des vents et de souliers avons-nous vendu la semaine derniere"))
+
+itm = ProductExtractor()
+#itm = ProductExtractor(produit_path='/Users/xav/Downloads/products.csv',division_path='/Users/xav/Desktop/DTY/Dior/rest/data/Divisions.csv',departement_path='/Users/xav/Desktop/DTY/Dior/rest/data/Departements.csv',groupe_path='/Users/xav/Desktop/DTY/Dior/rest/data/Groupe.csv',theme_path='/Users/xav/Desktop/DTY/Dior/rest/data/Themes.csv')
+print(itm.extract("combien de bags avons nous vendu depuis"))
