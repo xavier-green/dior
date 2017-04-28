@@ -76,19 +76,19 @@ class Vente(object):
 		for produit in self.items :
 			for produit_key in produit:
 				if produit_key == "division":
-					column_requested.append((division, "Description"))
+					columns_requested.append((division, "Description"))
 					break
 				elif produit_key == "departement":
-					column_requested.append((department, "Description"))
+					columns_requested.append((department, "Description"))
 					break
 				elif produit_key == "groupe":
-					column_requested.append((retail, "Description"))
+					columns_requested.append((retail, "Description"))
 					break
 				elif produit_key == "theme":
-					column_requested.append((theme, "Description"))
+					columns_requested.append((theme, "Description"))
 					break
 				if produit_key == "produit":
-					column_requested.append((item, "Description"))
+					columns_requested.append((item, "Description"))
 					break
 		columns_requested.append(Quantity)
 
