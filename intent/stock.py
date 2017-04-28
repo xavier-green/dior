@@ -119,7 +119,7 @@ class Stock(object):
 			else:
 				res_sales = int(res_sales)
 			print("Sales:", res_sales)
-			sellthru = str(100 * res_sales / (res_sales  + res_stock))
+			sellthru = format((100 * res_sales / (res_sales  + res_stock)), '.2f') + ' %'
 			return [stock_query.request + '\n' + product_query.request,sellthru ]
 		return(stock_query.request, str(res_stock))
 
