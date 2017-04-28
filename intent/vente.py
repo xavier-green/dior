@@ -218,7 +218,6 @@ class Vente(object):
 			return [product_query.request,result]
 
 		else:
-			print("1", column_groupby[0], "2", column_groupby[1])
 			product_query.groupby(column_groupby[0], column_groupby[1])
 			query_result = product_query.write().split('\n')
 			
@@ -239,7 +238,7 @@ class Vente(object):
 			
 			start_date = self.numerical_dates[0] if len(self.numerical_dates) > 0 else '20170225'
 			
-			result = "Il y a eu " + query_result[1] + " ventes en lien avec " + " et/ou ".join(produit_selected) + " "
+			result = "Il y a eu " + somme + " ventes en lien avec " + " et/ou ".join(produit_selected) + " "
 			result += MDorFP
 			result += "du " + start_date + " au " + "20170304 " 
 			result += "de la boutique de " + ', '.join([b for b in self.cities]) + " " if len(self.cities) > 0 else ''
