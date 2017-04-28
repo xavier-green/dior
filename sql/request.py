@@ -46,7 +46,7 @@ class query(object):
 		colonnes = self.proprify_columns(table, columns)
 
 		# Ecrit le début de la requête
-		self.request = "SELECT " + colonnes + " FROM " + table.name + " AS " + table.alias + "\n"
+		self.request = "SELECT " + top_distinct + colonnes + " FROM " + table.name + " AS " + table.alias + "\n"
 
 		# Stock les tables utilisées dans la requête, et le nombre de where
 		self.joined_tables = [None, table]
