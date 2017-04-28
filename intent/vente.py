@@ -238,7 +238,7 @@ class Vente(object):
 			
 			start_date = self.numerical_dates[0] if len(self.numerical_dates) > 0 else '20170225'
 			
-			result = "Il y a eu " + somme + " ventes en lien avec " + " et/ou ".join(produit_selected) + " "
+			result = "Il y a eu " + str(somme) + " ventes en lien avec " + " et/ou ".join(produit_selected) + " "
 			result += MDorFP
 			result += "du " + start_date + " au " + "20170304 " 
 			result += "de la boutique de " + ', '.join([b for b in self.cities]) + " " if len(self.cities) > 0 else ''
