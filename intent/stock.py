@@ -138,7 +138,7 @@ class Stock(object):
 			sellthru = format((100 * res_sales / (res_sales  + res_stock)), '.2f') + ' %'
 			res_sellthru = 'Le sellthru '
 			if len(self.boutique) > 0:
-				res_sellthru += "dans la boutique " + self.boutique + ' '
+				res_sellthru += "dans la boutique " + self.boutiques + ' '
 			if len(self.cities) > 0:
 				res_sellthru += "dans la ville"  + self.cities + ' '
 			if len(self.countries) > 0:
@@ -147,7 +147,7 @@ class Stock(object):
 			return [stock_query.request + '\n' + product_query.request,res_sellthru ]
 			str_res_stock = 'Le stock '
 			if len(self.boutique) > 0:
-				str_res_stock += "dans la boutique " + self.boutique + ' '
+				str_res_stock += "dans la boutique " + self.boutiques + ' '
 			if len(self.cities) > 0:
 				str_res_stock += "dans la ville"  + self.cities + ' '
 			if len(self.countries) > 0:
