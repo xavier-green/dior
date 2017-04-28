@@ -1,7 +1,6 @@
 # coding=utf-8
 
 import subprocess, csv, socket
-from tables import staff, sale, boutique, country, item, zone, division, department, theme, retail
 
 class query(object):
 
@@ -132,6 +131,7 @@ class query(object):
 		out.pop(1)
 		return("\n".join(out))
 
+"""
 test = query(sale, ['Style', ('sum', sale, 'RG_Quantity')])
 test.join(sale, item, 'Style', 'Code')
 test.join(sale, zone, 'Location', 'Code')
@@ -140,3 +140,4 @@ test.orderby(None, 'count(*)')
 test.groupby(zone, 'Description')
 print(test.request)
 #print(test.proprify_columns(sale, ['Style', (staff, 'Name'), (None, 'count(*)'), ('sum', sale, 'RG_Quantity', sale, 'MD_Quantity')]))
+"""
