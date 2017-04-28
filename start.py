@@ -77,63 +77,6 @@ datex = DateExtractor()
 word = ProductExtractor()
 bouti = extract_boutique('data/Boutiques.csv')
 
-@app.route('/web/<string:sentence>', methods=["GET"])
-def vector_get_web(sentence):
-	print("new connection from: "+request.remote_addr)
-	copy = sentence[:]
-	sentence = sentence.lower()
-	global model_fasttext
-	if model_fasttext is None:
-		model_fasttext = fasttext.load_model(model_fasttext_path)
-	intent_extracted = intent_model.predict(sentence)
-	geo_extracted,sentence = world.find_similar_words(sentence)
-	numerical_dates_extracted = datex.extract_numerical(sentence)
-	dates_extracted,sentence = datex.extract(sentence)
-	boutiques_extracted,sentence = bouti.extract(sentence)
-	items_extracted = word.extract(sentence)
-	geo_extracted['dates'] = dates_extracted
-	geo_extracted['numerical_dates'] = numerical_dates_extracted
-	geo_extracted['intent'] = intent_extracted
-	geo_extracted['items'] = items_extracted
-	geo_extracted['boutiques'] = boutiques_extracted
-	geo_extracted['sentence'] = sentence
-
-	print('data extracted:')
-	print(geo_extracted)
-
-	if intent_extracted == 'vente':
-		print("Detected it's a sale \n")
-		produit = Vente(geo_extracted)
-		answer = produit.build_answer()
-	elif intent_extracted == 'vendeur':
-		print("Vous avez demandé des informations au sujet du staff \n")
-		vendeur = Vendeur(geo_extracted)
-		answer = vendeur.build_answer()
-	elif intent_extracted == 'stock':
-		print("Vous avez demandé des informations au sujet du stock \n")
-		my_stock = Stock(geo_extracted)
-		answer = my_stock.build_answer()
-	elif intent_extracted == 'boutique':
-		print("Vous avez demandé des informations au sujet d'une boutique \n")
-		boutique = Boutique(geo_extracted)
-		answer = boutique.build_answer()
-	else:
-		answer = ["","Bonjour, malheureusement je n'ai pas saisi votre requête. Pouvez-vous reformuler ?"]
-
-	with open("logs.txt", "a") as myfile:
-		now = datetime.datetime.now()
-		mainString = now.strftime("%Y-%m-%d %H:%M")+"||"+copy+"||"+answer[0]+"||"+answer[1]
-		mainString = mainString.replace('\n','')
-		myfile.write(mainString+"\n")
-
-	print("This is what is being returned to the App")
-	print("+++++++++++++++++++")
-	print(answer[1])
-	print("+++++++++++++++++++")
-	print(answer[2] if len(answer) > 2 else "No detail")
-
-	return answer[1]
-
 @app.route('/params/<string:sentence>', methods=["GET"])
 def vector_get(sentence):
 	print("new connection from: "+request.remote_addr)
@@ -187,9 +130,15 @@ def vector_get(sentence):
 	print("+++++++++++++++++++")
 	print(answer[1])
 	print("+++++++++++++++++++")
-	print(answer[2] if len(answer) > 2 else "No detail")
+	
+	if len(answer) > 2:
+		print(answer[2])
+		detail = []
+		for liste in answer[2]:
+			detail.append('[' + ', '.join(liste) + ']')
+		detail_string = '[' + ', '.join(detail) + ']'
 
-	return answer[1]+answer[2] if len(answer) > 2 else answer[1]
+	return answer[1]+detail_string if len(answer) > 2 else answer[1]
 
 #, ans.make(geo_extracted)
     # return str(geo_extracted) # returns the vector of the first word just to check that the model was used
