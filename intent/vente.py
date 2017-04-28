@@ -218,7 +218,7 @@ class Vente(object):
 			return [product_query.request,result]
 
 		else:
-			product_query.groupby(column_groupby[0], column_groupby[1], 1)
+			product_query.groupby(column_groupby)
 			query_result = product_query.write().split('\n')
 			
 			somme = 0
