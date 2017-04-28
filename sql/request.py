@@ -11,7 +11,7 @@ class query(object):
 		response = []
 		for c in columns:
 			# Cas spéciaux
-			if c == '*' or c == 'count(*)' or table == None:
+			if c == '*' or c == 'count(*)' or (table == None and isinstance(c, str)):
 				response.append(c)
 			# Si la colonne appartient à la table de base
 			elif c in table.columns:
