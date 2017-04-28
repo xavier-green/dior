@@ -33,28 +33,28 @@ class ProductExtractor(object):
         print("Cleaning csv ...")
         self.clean_csv()
         self.n_max = n_max
-        self.order = {
-            "division": {
+        self.order = [
+            {"division": {
                 "file": self.division,
                 "column": self.division.Division
-            },
-            "departement": {
+            }},
+            {"departement": {
                 "file": self.departement,
                 "column": self.departement.Departement
-            },
-            "groupe": {
+            }},
+            {"groupe": {
                 "file": self.groupe,
                 "column": self.groupe.Groupe
-            },
-            "theme": {
+            }},
+            {"theme": {
                 "file": self.theme,
                 "column": self.theme.Theme
-            },
-            "produit": {
+            }},
+            {"produit": {
                 "file": self.produit,
                 "column": self.produit.Produit
-            }
-        }
+            }}
+        ]
     
     def removeRowWithSpecialCharacterAndNumbers(self, w):
         pattern = re.compile('^[a-zA-Z-\' ]+$')
@@ -124,8 +124,11 @@ class ProductExtractor(object):
         tags_dict = self.tag_dict(sentence)
         #print(tags_dict)
         for i in range(self.n_max,0,-1):
-            for key in self.order:
-                results, sentence = self.extract_N(sentence, tags_dict, self.order[key], key, results, i)
+            print("extraction des "+str(i)+"-gram")
+            for orde in self.order:
+                for key in orde:
+                    print("extraction en cours pour "+key)
+                    results, sentence = self.extract_N(sentence, tags_dict, orde[key], key, results, i)
         return results
         
     def extract_N(self, sentence, tags_dict, csv, bdd, prev_results, n):
@@ -142,8 +145,9 @@ class ProductExtractor(object):
                     words_tags += tags_dict[itm]+"-"
                 if words_tags[:-1] in self.authorized:
                     #print(short_sentence)
+                    #print("getting product for "+str(csv))
                     if self.get_product(short_sentence, csv["file"], csv["column"]):
-                        #print("ok")
+                        print("ok")
                         matched_item = {}
                         matched_item[bdd] = short_sentence
                         ok_products.append(matched_item)
@@ -164,6 +168,7 @@ class ProductExtractor(object):
             for key in w:
                 copy = copy.replace(w[key], "ITEM")
         return copy
-    
-# itm = ProductExtractor()
-# print(itm.extract("Combien de rose des vents et de souliers avons-nous vendu la semaine derniere"))
+
+itm = ProductExtractor()
+#itm = ProductExtractor(produit_path='/Users/xav/Downloads/products.csv',division_path='/Users/xav/Desktop/DTY/Dior/rest/data/Divisions.csv',departement_path='/Users/xav/Desktop/DTY/Dior/rest/data/Departements.csv',groupe_path='/Users/xav/Desktop/DTY/Dior/rest/data/Groupe.csv',theme_path='/Users/xav/Desktop/DTY/Dior/rest/data/Themes.csv')
+print(itm.extract("combien de bags avons nous vendu depuis"))
