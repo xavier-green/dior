@@ -72,7 +72,7 @@ class Stock(object):
 				Quantity_requested.append('fp')
 			if 'md' in self.sentence.lower() or ('mark' in self.sentence.lower() and 'down' in self.sentence.lower()):
 				Quantity_requested.append('md')
-			
+
 			if len(Quantity_requested) == 0 or len(Quantity_requested) == 2:
 				Quantity = ('sum', sale, 'RG_Quantity', sale, 'MD_Quantity')
 				MDorFP = ""
@@ -83,7 +83,7 @@ class Stock(object):
 				Quantity = ('sum', sale, 'MD_Quantity')
 				MDorFP = "en Mark Down "
 
-			product_query = query(sale, ['Quantity'])
+			product_query = query(sale, [Quantity])
 
 			if 'couleur' in self.sentence:
 				product_query = query(sale, ['Color','count(*)'], top_distinct='DISTINCT TOP 5')
