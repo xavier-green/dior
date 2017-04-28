@@ -48,11 +48,11 @@ class Boutique(object):
 			scale_cible = "zones"
 			boutique_query.join_custom(zone, sale_table.request, sale, "Code", "Zone")
 		elif "pays" in self.sentence.lower():
-			boutique_query = query(country, ['Description', 'count(*)', (sale, "sumStd_RP_WOTax_REF")], 'TOP 3')
+			boutique_query = query(country, ['Description', 'count(*)', ("sum", sale, "Std_RP_WOTax_REF")], 'TOP 3')
 			scale_cible = "pays"
 			boutique_query.join_custom(country, sale_table.request, sale, "Code", "Country")
 		else:
-			boutique_query = query(boutique, ['Description', 'count(*)', (sale, "sumStd_RP_WOTax_REF")], 'TOP 3')
+			boutique_query = query(boutique, ['Description', 'count(*)', ("sum", sale, "Std_RP_WOTax_REF")], 'TOP 3')
 			scale_cible = "boutiques"
 			boutique_query.join_custom(boutique, sale_table.request, sale, "Code", "Location")
 		
