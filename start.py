@@ -135,8 +135,9 @@ def vector_get(sentence):
 		print(answer[2])
 		detail = []
 		for liste in answer[2]:
-			detail.append('[' + ', '.join(liste) + ']')
-		detail_string = '[' + ', '.join(detail) + ']'
+			detail.append('--'.join(liste))
+		detail_string = '??'.join(detail)
+		print(detail_string)
 
 	return answer[1]+detail_string if len(answer) > 2 else answer[1]
 
