@@ -67,7 +67,17 @@ class Stock(object):
 		if 'sellthru' in self.sentence:
 			print('It is a sellthru')
 			#Calculate sales for sellthru
-			product_query = query(sale, ['count(*)'])
+			if len(Quantity_requested) == 0 or len(Quantity_requested) == 2:
+				Quantity = ('sum', sale, 'RG_Quantity', sale, 'MD_Quantity')
+				MDorFP = ""
+			elif Quantity_requested[0] == 'fp':
+				Quantity = ('sum', sale, 'RG_Quantity')
+				MDorFP = "en Full Price "
+			else:
+				Quantity = ('sum', sale, 'MD_Quantity')
+				MDorFP = "en Mark Down "
+
+			product_query = query(sale, ['Quantity'])
 
 			if 'couleur' in self.sentence:
 				product_query = query(sale, ['Color','count(*)'], top_distinct='DISTINCT TOP 5')
