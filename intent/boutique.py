@@ -103,7 +103,7 @@ class Boutique(object):
 		else:
 			boutique_query.groupby(boutique, 'Description')
 
-		boutique_query.orderby('sum(SA.SALE_Std_RP_WOTax_REF)', " DESC")
+		boutique_query.orderby(None, ('sum', sale, 'Std_RP_WOTax_REF'), " DESC")
 		
 		# La requête est terminée, on utilise le résultat
 		result = boutique_query.write()

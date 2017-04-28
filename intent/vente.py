@@ -1,4 +1,4 @@
-"""
+
 from importlib.machinery import SourceFileLoader
 
 foo = SourceFileLoader("sql.request", "../sql/request.py").load_module()
@@ -10,7 +10,7 @@ from sql.request import query
 
 # Import de toutes les tables utilisées
 from sql.tables import item, sale, boutique, country, division, retail, theme, department, zone
-
+"""
 
 class Vente(object):
 
@@ -61,13 +61,13 @@ class Vente(object):
 			Quantity_requested.append('md')
 		
 		if len(Quantity_requested) == 0 or len(Quantity_requested) == 2:
-			Quantity = '&sum(SA.SALE_RG_Quantity + SA.SALE_MD_Quantity)'
+			Quantity = ('sum', sale, 'RG_Quantity', sale, 'MD_Quantity')
 			MDorFP = ""
 		elif Quantity_requested[0] == 'fp':
-			Quantity = '&sum(SA.SALE_RG_Quantity)'
+			Quantity = ('sum', sale, 'RG_Quantity')
 			MDorFP = "en Full Price "
 		else:
-			Quantity = '&sum(SA.SALE_MD_Quantity)'
+			Quantity = ('sum', sale, 'MD_Quantity')
 			MDorFP = "en Mark Down "
 
 		if colour_query:
@@ -154,7 +154,7 @@ class Vente(object):
 
 		if colour_query:
 			product_query.groupby(sale, 'Color')
-			product_query.orderby('count(*)', " DESC")
+			product_query.orderby(None, 'count(*)', " DESC")
 			query_result = product_query.write().split('\n')
 			print(query_result)
 			result = [w.split("|")[0]+" ( "+w.split("|")[1]+" vendus )" for w in query_result if 'SALE_Color' not in w and '------' not in w]
@@ -174,7 +174,7 @@ class Vente(object):
 
 		elif location_query:
 			product_query.groupby(boutique, 'Description')
-			product_query.orderby('count(*)', " DESC")
+			product_query.orderby(None, 'count(*)', " DESC")
 			query_result = product_query.write().split('\n')
 			print(query_result)
 			result = [w.split("|")[0]+" ( "+w.split("|")[1]+" vendus )" for w in query_result if 'LOCA_Description' not in w and '------' not in w]
@@ -227,7 +227,7 @@ class Vente(object):
 			resp += ");;"
 		return resp
 
-"""
+
 data = {
 		'cities' : ['Paris', 'Madrid'],
 		'countries' : [],
@@ -240,4 +240,3 @@ data = {
 
 test = Produit(data)
 print(test.build_query())
-"""

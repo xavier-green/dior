@@ -39,7 +39,7 @@ class Vendeur(object):
 		# IN PROGRESS
 
 		# Initialisation de la query : par défaut pour l'instant on sélectionne le nom
-		seller_query = query(staff, ['Name', 'count(*)', (sale, "sumStd_RP_WOTax_REF")], 'TOP 3')
+		seller_query = query(staff, ['Name', 'count(*)', ("sum", sale, "Std_RP_WOTax_REF")], 'TOP 3')
 		
 		# Par défaut, on joint les sales parce que ça nous intéresse
 		# Mais attention il faut joindre avec un set de date parce que sinon la reuqête timeout
@@ -111,7 +111,7 @@ class Vendeur(object):
 		
 		# On n'oublie pas le GROUP BY, nécessaire ici vu qu'on prend à la fois une colonne et un count(*)
 		seller_query.groupby(staff, 'Name')
-		seller_query.orderby('sum(SA.SALE_Std_RP_WOTax_REF)', " DESC")
+		seller_query.orderby(None, ('sum', sale, 'Std_RP_WOTax_REF'), " DESC")
 		
 		# La requête est terminée, on utilise le résultat
 		result = seller_query.write()

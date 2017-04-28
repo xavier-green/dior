@@ -1,50 +1,56 @@
 # coding=utf-8
 
 import subprocess, csv, socket
+from tables import staff, sale, boutique, country, item, zone, division, department, theme, retail
 
 class query(object):
 
-
-	def __init__ (self, table, columns, top_distinct =''):
-
-		self.selected_tables = [table]
-		# Vérifie que toutes les colonnes demandées appartiennent à la table indiquée
-		objectif = []
+	# A partir d'une table et de colonnes, renvoit un string de toutes les colonnes bien écrites
+	# ex : proprify_columns(sale, ['Style', (staff, 'Name'), (None, 'count(*)'), ('sum', sale, 'RG_Quantity', sale, 'MD_Quantity')])
+	# >> 'SA.SALE_Style, ST.STAFF_Name, count(*), sum(SA.SALE_RG_Quantity + SA.SALE_MD_Quantity)'
+	def proprify_columns(self, table, columns, max_columns = 0):
+		response = []
 		for c in columns:
-			# Si c'est un couple (table, colonne), vérifier que la colonne existe dans la table
-			# Puis vérifier plus tard (au write) qu'on va bien join cette table
-			if isinstance(c, tuple) and len(c) == 2:
+			# Cas spéciaux
+			if c == '*' or c == 'count(*)' or table == None:
+				response.append(c)
+			# Si la colonne appartient à la table de base
+			elif c in table.columns:
+				response.append(table.alias + '.' + table.prefix + c)
+			# Pour les colonnes n'appartenant pas à la table initiale : (table, 'colonne')
+			elif isinstance(c, tuple) and len(c) == 2:
 				table_asked = c[0]
-				if "sum" in c[1]:
-					column_asked = c[1][3:]
-					#assert column_asked in table_asked.columns, "La table " + table_asked.name + " ne contient pas d'attribut " + table_asked.prefix + column_asked
-					objectif.append("SUM("+table_asked.alias+'.'+table_asked.prefix+c[1][3:]+")")
+				if table_asked == None:
+					response.append(c[1])
 				else:
 					column_asked = c[1]
 					assert column_asked in table_asked.columns, "La table " + table_asked.name + " ne contient pas d'attribut " + table_asked.prefix + column_asked
-					objectif.append(table_asked.alias + '.' + table_asked.prefix + column_asked)
-				self.selected_tables.append(table_asked)
-			elif c == "count(*)" or c == "*" :
-				objectif.append(c)
-				
-			elif c[0] == '&' :
-				objectif.append(c[1:])
-			# format "sumCOLUMNNAME"
-			elif "sum" in c:
-				column_asked = c[3:]
-				objectif.append("SUM("+table.alias+'.'+table.prefix+c[3:]+")")
-			# Sinon, on vérifie que c'est une colonne de la première table
-			elif c in table.columns:
-				objectif.append(table.alias + '.' + table.prefix + c)
-			# Si ce n'est pas un des trois cas précédent, la requête est invalide
+					response.append(table_asked.alias + '.' + table_asked.prefix + column_asked)
+			# Appliquer une méthode à une ou plusieurs colonnes, par exemple sum(a + b)
+			elif isinstance(c, tuple) and len(c) > 2 and len(c)%2 == 1:
+				method = c[0]
+				method_columns = []
+				for i in range(1, len(c), 2):
+					method_table = c[i]
+					method_column = c[i+1]
+					method_columns.append(method_table.alias + '.' + method_table.prefix + method_column)
+				response.append(method + '(' + ' + '.join(method_columns) + ')')
 			else:
 				assert False, "Il semblerait que les colonnes demandées n'appartiennent à aucune table"
+		# Pour les requêtes comme ORDER BY et GROUP BY qui demandent uniquement une colonne
+		if max_columns > 0:
+			response = response[0:max_columns]
+		return ', '.join(response)
+
+	def __init__ (self, table, columns, top_distinct =''):
+		self.selected_tables = [table]
+		colonnes = self.proprify_columns(table, columns)
 
 		# Ecrit le début de la requête
-		self.request = "SELECT " + top_distinct + " " + ', '.join(objectif) + " FROM " + table.name + " AS " + table.alias + "\n"
+		self.request = "SELECT " + colonnes + " FROM " + table.name + " AS " + table.alias + "\n"
 
 		# Stock les tables utilisées dans la requête, et le nombre de where
-		self.joined_tables = [table]
+		self.joined_tables = [None, table]
 		self.wcount = []
 
 	# Pour faire une jointure entre deux tables sous la condition t1.join1 = t2.join2
@@ -55,18 +61,18 @@ class query(object):
 		assert join2 in table2.columns, "La table " + table2.name + " ne contient pas d'attribut " + table2.prefix + join2
 
 		self.joined_tables.append(table2)
-		jointure1 = table1.alias + "." + table1.prefix + join1
-		jointure2 = table2.alias + "." + table2.prefix + join2
+		jointure1 = self.proprify_columns(table1, [join1], 1)
+		jointure2 = self.proprify_columns(table2, [join2], 1)
 		self.request += "JOIN " + table2.name + " AS " + table2.alias + " ON "  + jointure1 + " = " + jointure2 + "\n"
 
 	# Pour faire une jointure avec des requêtes imbriquées
-	# Comme c'est fait spécifiquement pour la table sale,
+	# original_table doit contenir la table principale de cette jointure imbriquée, généralement la table sale
 	def join_custom(self, table1, request_table, original_table, join1, join2):
 		assert join1 in table1.columns, "La table " + table1.name + " ne contient pas d'attribut " + table1.prefix + join1
 
 		self.joined_tables.append(original_table)
-		jointure1 = table1.alias + "." + table1.prefix + join1
-		jointure2 = original_table.alias + "." + original_table.prefix + join2
+		jointure1 = self.proprify_columns(table1, [join1], 1)
+		jointure2 = self.proprify_columns(original_table, [join2], 1)
 		self.request += "JOIN (\n" + request_table + ") AS " + original_table.alias + " ON "  + jointure1 + " = " + jointure2 + "\n"
 
 	# à faire pour une vraie BDD : mettre end = time.strftime("%Y%m%d") pour avoir le current_date
@@ -74,7 +80,7 @@ class query(object):
 		assert table in self.joined_tables, "Vous faites appel à la table " + table.name + " absente de la requête, utilisez JOIN pour l'ajouter"
 		assert column in table.columns, "La table " + table.name + " ne possède pas d'attribut " + table.prefix + column
 
-		table_date = table.alias + '.' + table.prefix + column
+		table_date = self.proprify_columns(table, [column], 1)
 		where = "WHERE " if len(self.wcount) == 0 else "AND "
 		self.wcount.append(table.alias + column)
 
@@ -102,17 +108,18 @@ class query(object):
 		else:
 			where_and_or = "OR "
 
-		self.request += where_and_or + table.alias + '.' + table.prefix + column + " LIKE '%" + description + "%'\n"
+		self.request += where_and_or + self.proprify_columns(table, [column], 1) + " LIKE '%" + description + "%'\n"
 
 	def groupby(self, table, column):
 		assert table in self.joined_tables,  "Vous faites appel à la table " + table.name + " absente de la requête, utilisez JOIN pour l'ajouter"
 		assert column in table.columns, "La table " + table.name + " ne possède pas d'attribut " + table.prefix + column
-		self.request += "GROUP BY " + table.alias + '.' + table.prefix + column + "\n"
+		self.request += "GROUP BY " + self.proprify_columns(table, [column], 1) + '\n'
 
-	def orderby(self, column, desc=""):
-
-		self.request += "ORDER BY " + column + desc + '\n'
-
+	def orderby(self, table, column, desc=""):
+		if table:
+			assert table in self.joined_tables,  "Vous faites appel à la table " + table.name + " absente de la requête, utilisez JOIN pour l'ajouter"
+			assert column in table.columns, "La table " + table.name + " ne possède pas d'attribut " + table.prefix + column
+		self.request += "ORDER BY " + self.proprify_columns(table, [column], 1) + ' ' + desc + '\n'
 
 	def write(self):
 		# Vérification que les colonnes SELECTed sont bien JOINed
@@ -124,3 +131,12 @@ class query(object):
 		out = sock.recv(8192).decode('utf-8').splitlines()[:-2]
 		out.pop(1)
 		return("\n".join(out))
+
+test = query(sale, ['Style', ('sum', sale, 'RG_Quantity')])
+test.join(sale, item, 'Style', 'Code')
+test.join(sale, zone, 'Location', 'Code')
+test.wheredate(sale, 'Style')
+test.orderby(None, 'count(*)')
+test.groupby(zone, 'Description')
+print(test.request)
+#print(test.proprify_columns(sale, ['Style', (staff, 'Name'), (None, 'count(*)'), ('sum', sale, 'RG_Quantity', sale, 'MD_Quantity')]))

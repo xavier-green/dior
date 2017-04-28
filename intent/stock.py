@@ -32,7 +32,7 @@ class Stock(object):
 	def build_query(self):
 		# IN PROGRESS
 		# Initialisation de la query : par défaut pour l'instant on sélectionne count(*)vj
-		stock_query = query(stock_daily, ['sumQuantity'])
+		stock_query = query(stock_daily, [('sum', stock_daily, 'Quantity')])
 
 		# S'il y a une précision, on considère que ça concerne des ventes
 		# On fait les jointures en fonction
