@@ -67,6 +67,12 @@ class Stock(object):
 		if 'sellthru' in self.sentence:
 			print('It is a sellthru')
 			#Calculate sales for sellthru
+			Quantity_requested = []
+			if 'fp' in self.sentence.lower() or ('full' in self.sentence.lower() and 'price' in self.sentence.lower()):
+				Quantity_requested.append('fp')
+			if 'md' in self.sentence.lower() or ('mark' in self.sentence.lower() and 'down' in self.sentence.lower()):
+				Quantity_requested.append('md')
+			
 			if len(Quantity_requested) == 0 or len(Quantity_requested) == 2:
 				Quantity = ('sum', sale, 'RG_Quantity', sale, 'MD_Quantity')
 				MDorFP = ""
