@@ -44,7 +44,7 @@ class Boutique(object):
 
 		# On détermine si la requête porte sur une boutique, un pays, une zone, ...
 		if "zone" in self.sentence.lower():
-			boutique_query = query(zone, ['Description', 'count(*)', (sale, "sumStd_RP_WOTax_REF")], 'TOP 7')
+			boutique_query = query(zone, ['Description', 'count(*)', ("sum", sale, "Std_RP_WOTax_REF")], 'TOP 7')
 			scale_cible = "zones"
 			boutique_query.join_custom(zone, sale_table.request, sale, "Code", "Zone")
 		elif "pays" in self.sentence.lower():
