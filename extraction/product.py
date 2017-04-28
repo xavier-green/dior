@@ -144,8 +144,9 @@ class ProductExtractor(object):
                     words_tags += tags_dict[itm]+"-"
                 if words_tags[:-1] in self.authorized:
                     #print(short_sentence)
+                    print("getting product for "+str(csv))
                     if self.get_product(short_sentence, csv["file"], csv["column"]):
-                        #print("ok")
+                        print("ok")
                         matched_item = {}
                         matched_item[bdd] = short_sentence
                         ok_products.append(matched_item)
