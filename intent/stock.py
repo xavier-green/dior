@@ -73,7 +73,7 @@ class Stock(object):
 				product_query = query(sale, ['Color','count(*)'], top_distinct='DISTINCT TOP 5')
 			elif ('Où' in self.sentence) or ('où' in self.sentence):
 				product_query = query(sale, [(boutique, 'Description'),'count(*)'], top_distinct='DISTINCT TOP 5')
-			# Initialisation de la query : par défaut pour l'instant on sélectionne count(*)
+			# Initialisation de la query : par défaut pour l'instant on sélectionne count(*)	'""'
 			if len(self.items) > 0:
 				product_query.join(sale, item, "Style", "Code") # jointure sur ITEM_Code = SALE_Style
 			product_query.join(sale, boutique, "Location", "Code") # jointure sur SALE_Location = LOCA_Code
@@ -114,10 +114,10 @@ class Stock(object):
 				# La requête est terminée, on l'écrit
 				# product_query.write()
 			res_sales = product_query.write()
-			if res_stock == 'NULL':
-				res_stock = 0
+			if res_sales == 'NULL':
+				res_sales = 0
 			else:
-				res_stock = int(res_stock)
+				res_sales = int(res_sales)
 			print("Sales:", res_sales)
 			sellthru = str(100 * res_sales / (res_sales  + res_stock))
 			return [stock_query.request + '\n' + product_query.request,sellthru ]
