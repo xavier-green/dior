@@ -1,4 +1,4 @@
-
+"""
 from importlib.machinery import SourceFileLoader
 
 foo = SourceFileLoader("sql.request", "../sql/request.py").load_module()
@@ -10,7 +10,7 @@ from sql.request import query
 
 # Import de toutes les tables utilisées
 from sql.tables import item, sale, boutique, country, division, retail, theme, department, zone
-"""
+
 
 class Vente(object):
 
@@ -264,7 +264,7 @@ class Vente(object):
 			resp += ");;"
 		return resp
 
-
+"""
 data = {
 		'cities' : ['Paris', 'Madrid'],
 		'countries' : [],
@@ -277,3 +277,4 @@ data = {
 
 test = Produit(data)
 print(test.build_query())
+"""
