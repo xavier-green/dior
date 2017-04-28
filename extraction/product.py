@@ -33,28 +33,28 @@ class ProductExtractor(object):
         print("Cleaning csv ...")
         self.clean_csv()
         self.n_max = n_max
-        self.order = {
-            "division": {
+        self.order = [
+            {"division": {
                 "file": self.division,
                 "column": self.division.Division
-            },
-            "departement": {
+            }},
+            {"departement": {
                 "file": self.departement,
                 "column": self.departement.Departement
-            },
-            "groupe": {
+            }},
+            {"groupe": {
                 "file": self.groupe,
                 "column": self.groupe.Groupe
-            },
-            "theme": {
+            }},
+            {"theme": {
                 "file": self.theme,
                 "column": self.theme.Theme
-            },
-            "produit": {
+            }},
+            {"produit": {
                 "file": self.produit,
                 "column": self.produit.Produit
-            }
-        }
+            }}
+        ]
     
     def removeRowWithSpecialCharacterAndNumbers(self, w):
         pattern = re.compile('^[a-zA-Z-\' ]+$')
@@ -125,9 +125,10 @@ class ProductExtractor(object):
         #print(tags_dict)
         for i in range(self.n_max,0,-1):
             print("extraction des "+str(i)+"-gram")
-            for key in self.order:
-                print("extraction en cours pour "+key)
-                results, sentence = self.extract_N(sentence, tags_dict, self.order[key], key, results, i)
+            for orde in self.order:
+                for key in orde:
+                    print("extraction en cours pour "+key)
+                    results, sentence = self.extract_N(sentence, tags_dict, orde[key], key, results, i)
         return results
         
     def extract_N(self, sentence, tags_dict, csv, bdd, prev_results, n):
