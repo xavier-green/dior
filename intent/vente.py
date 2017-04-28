@@ -76,18 +76,23 @@ class Vente(object):
 		for produit in self.items :
 			for produit_key in produit:
 				if produit_key == "division":
+					column_groupby = (division, "Description")
 					columns_requested.append((division, "Description"))
 					break
 				elif produit_key == "departement":
+					column_groupby = (department, "Description")
 					columns_requested.append((department, "Description"))
 					break
 				elif produit_key == "groupe":
+					column_groupby = (retail, "Description")
 					columns_requested.append((retail, "Description"))
 					break
 				elif produit_key == "theme":
+					column_groupby = (theme, "Description")
 					columns_requested.append((theme, "Description"))
 					break
 				if produit_key == "produit":
+					column_groupby = (item, "Description")
 					columns_requested.append((item, "Description"))
 					break
 		columns_requested.append(Quantity)
@@ -213,6 +218,7 @@ class Vente(object):
 			return [product_query.request,result]
 
 		else:
+			product_query.groupby(column_groupby[0], column_groupby[1], 1)
 			query_result = product_query.write().split('\n')
 			
 			somme = 0
