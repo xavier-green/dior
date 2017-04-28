@@ -8,6 +8,7 @@
 
 import UIKit
 
+@available(iOS 10.0, *)
 class InitialViewController: UIViewController {
 
     override func viewDidLoad() {

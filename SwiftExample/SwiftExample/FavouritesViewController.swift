@@ -8,10 +8,12 @@
 
 import UIKit
 
-class FavouritesViewController: UIViewController, UITableViewDelegate,UITableViewDataSource {
+class FavouritesViewController: UIViewController, UITableViewDelegate,UITableViewDataSource, UITextFieldDelegate {
     
     var all_questions = [String]()
     var favourites = Favourites()
+    
+    @IBOutlet var excep_amount: UITextField!
     
     @IBAction func retour(_ sender: Any) {
         dismiss(animated: true, completion: nil)
@@ -23,12 +25,33 @@ class FavouritesViewController: UIViewController, UITableViewDelegate,UITableVie
         super.viewDidLoad()
         favourite_questions_view.delegate=self
         favourite_questions_view.dataSource=self
+        excep_amount.delegate = self
         all_questions = favourites.read_file()
+        excep_amount.text = favourites.read_file_transac()
+        self.hideKeyboardWhenTappedAround()
+    }
+    
+    func hideKeyboardWhenTappedAround() {
+        let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.dismissKeyboard))
+        view.addGestureRecognizer(tap)
+    }
+    func dismissKeyboard() {
+        view.endEditing(true)
     }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
+    }
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        self.view.endEditing(true)
+        return false
+    }
+    
+    func textFieldDidEndEditing(_ textField: UITextField) {
+        let exceptional_amount = textField.text!
+        favourites.write_to_file_transac(transaction_level: exceptional_amount)
     }
     
     func numberOfSections(in tableView: UITableView) -> Int {

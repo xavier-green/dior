@@ -64,8 +64,8 @@ class Server {
         print("Connecting to ",connectionUrl)
         
         let config = URLSessionConfiguration.default
-        config.timeoutIntervalForRequest=TimeInterval(20)
-        config.timeoutIntervalForResource=TimeInterval(60)
+        config.timeoutIntervalForRequest=TimeInterval(120)
+        config.timeoutIntervalForResource=TimeInterval(120)
         let authString = constructHeaders()
         config.httpAdditionalHeaders = ["Authorization" : authString]
         let session = URLSession(configuration: config)
@@ -112,6 +112,8 @@ class Server {
         session.dataTask(with: request, completionHandler: { (data, response, error) in
             if error != nil {
                 NotificationCenter.default.post(name: Notification.Name(rawValue: "TIME_OUT_BACK"), object: errors)
+                print("operation timeout ----")
+//                print(error)
                 return
             }
             if let httpStatus = response as? HTTPURLResponse, httpStatus.statusCode != 200 {
@@ -145,8 +147,15 @@ class Server {
             return "Malheureusement il y a eu un problème avec le serveur 😭"
         }
         
+        print("RESULT")
+        print(dataString)
+        
         return dataString!
         
+    }
+    
+    func send_slow() -> String {
+        return "Le serveur a répondu trop lentement 😭"
     }
     
     //MARK: Set Headers for request

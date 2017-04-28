@@ -7,3 +7,8 @@
 //
 
 import Foundation
+import UIKit
+
+struct GlobalVariables {
+    static var previous_message = String()
+}

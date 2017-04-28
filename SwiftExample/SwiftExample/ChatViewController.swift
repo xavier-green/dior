@@ -14,13 +14,17 @@ class ChatViewController: JSQMessagesViewController {
     
     var favorits = [String]()
     var favourites = Favourites()
+    var chat_details = ["Pas de détails pour ce message !"]
     
     var incomingBubble: JSQMessagesBubbleImage!
     var outgoingBubble: JSQMessagesBubbleImage!
     fileprivate var displayName: String!
     
     override func viewDidLoad() {
+        print("Main chat loading...")
         super.viewDidLoad()
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(self.slow_response), name: NSNotification.Name(rawValue: "TIME_OUT_BACK"), object: nil)
         
         favorits = favourites.read_file()
         
@@ -99,9 +103,19 @@ class ChatViewController: JSQMessagesViewController {
         print("sending {"+sentence+"} to server")
         DispatchQueue.global(qos: .background).async {
             let parsed_messages = Methods().parse_message(sentence: sentence)
-            let sentences = parsed_messages.components(separatedBy: ";;")
+            var sentences = parsed_messages.components(separatedBy: ";;")
+            let details_string = sentences.last
+            sentences.remove(at: sentences.count-1)
+            let details = details_string?.components(separatedBy: "??")
+            var item_details = ""
+            for detail in details! {
+                let exploded = detail.components(separatedBy: "--")
+                item_details += exploded[0]+" ("+exploded[1]+")\n"
+            }
+            print(item_details)
             DispatchQueue.main.async {
                 print("done")
+                self.chat_details.append(item_details)
                 self.toogleTyping()
                 for sentence in sentences {
                     if sentence != "" {
@@ -299,6 +313,8 @@ class ChatViewController: JSQMessagesViewController {
         let message = self.messages[indexPath.item]
         if (message.senderDisplayName == "Question") {
             self.add_to_fav_popup(question: message.text)
+        } else {
+            self.see_info(index: indexPath.row)
         }
     }
     
@@ -311,10 +327,30 @@ class ChatViewController: JSQMessagesViewController {
         self.present(alert, animated: true, completion: nil)
     }
     
+    func see_info(index: Int) {
+        let details_index = quotient(a: index, b: 2)
+        let alert = UIAlertController(title: "Informations", message: "Voici d'où les infos sont extraites:\n"+self.chat_details[details_index], preferredStyle: UIAlertControllerStyle.alert)
+        alert.addAction(UIAlertAction(title: "Fermer", style: UIAlertActionStyle.cancel, handler: nil))
+        self.present(alert, animated: true, completion: nil)
+    }
+    
     func add_to_fav(question: String) {
-        let all_questions = favorits+[question]
-        favourites.write_to_file(questions: all_questions)
-        favorits = favourites.read_file()
+        if !favorits.contains(question) {
+            let all_questions = favorits+[question]
+            favourites.write_to_file(questions: all_questions)
+            favorits = favourites.read_file()
+        }
+    }
+    
+    func slow_response() {
+        DispatchQueue.main.async {
+            self.toogleTyping()
+            self.reply(sentence: "Malheureusement le server a mis trop longtemps à répondre...")
+        }
+    }
+    
+    func quotient(a: Int, b: Int) -> Int {
+        return ~(~(a/b))
     }
     
 }

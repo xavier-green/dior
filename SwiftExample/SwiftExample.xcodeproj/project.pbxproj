@@ -11,6 +11,10 @@
 		378FC9851D43F3CD00DF0026 /* SettingsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 378FC9841D43F3CD00DF0026 /* SettingsTests.swift */; };
 		41AF84C51CFCA73B006ED473 /* ChatViewControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41AF84C41CFCA73B006ED473 /* ChatViewControllerTests.swift */; };
 		433104B61E97C05A00DE0DB7 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 433104B51E97C05A00DE0DB7 /* Images.xcassets */; };
+		4372F03B1EB22668000DF469 /* Favourites.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4372F03A1EB22668000DF469 /* Favourites.swift */; };
+		4372F03D1EB22E08000DF469 /* FavouritesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4372F03C1EB22E08000DF469 /* FavouritesViewController.swift */; };
+		4372F03F1EB22F8B000DF469 /* Settings.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4372F03E1EB22F8B000DF469 /* Settings.storyboard */; };
+		437BF2911EA78EFE002630F1 /* GlobalVariable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 437BF2901EA78EFE002630F1 /* GlobalVariable.swift */; };
 		43B7FBA61E979E6E008083F2 /* InitialViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43B7FBA51E979E6E008083F2 /* InitialViewController.swift */; };
 		43EBD4D11E9B8DD200DB3478 /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43EBD4D01E9B8DD200DB3478 /* Config.swift */; };
 		43EBD4D41E9B8E0800DB3478 /* Server.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43EBD4D31E9B8E0800DB3478 /* Server.swift */; };
@@ -39,6 +43,10 @@
 		3D5DE46B5737B20C9B95257C /* Pods-SwiftExample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SwiftExample.debug.xcconfig"; path = "Pods/Target Support Files/Pods-SwiftExample/Pods-SwiftExample.debug.xcconfig"; sourceTree = "<group>"; };
 		41AF84C41CFCA73B006ED473 /* ChatViewControllerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatViewControllerTests.swift; sourceTree = "<group>"; };
 		433104B51E97C05A00DE0DB7 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		4372F03A1EB22668000DF469 /* Favourites.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Favourites.swift; sourceTree = "<group>"; };
+		4372F03C1EB22E08000DF469 /* FavouritesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FavouritesViewController.swift; sourceTree = "<group>"; };
+		4372F03E1EB22F8B000DF469 /* Settings.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Settings.storyboard; sourceTree = "<group>"; };
+		437BF2901EA78EFE002630F1 /* GlobalVariable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GlobalVariable.swift; sourceTree = "<group>"; };
 		43B7FBA51E979E6E008083F2 /* InitialViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InitialViewController.swift; sourceTree = "<group>"; };
 		43EBD4D01E9B8DD200DB3478 /* Config.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
 		43EBD4D31E9B8E0800DB3478 /* Server.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Server.swift; sourceTree = "<group>"; };
@@ -140,6 +148,10 @@
 				F82D09CE1CDFBB4900DD74CF /* Info.plist */,
 				43B7FBA51E979E6E008083F2 /* InitialViewController.swift */,
 				43EBD4D01E9B8DD200DB3478 /* Config.swift */,
+				437BF2901EA78EFE002630F1 /* GlobalVariable.swift */,
+				4372F03A1EB22668000DF469 /* Favourites.swift */,
+				4372F03C1EB22E08000DF469 /* FavouritesViewController.swift */,
+				4372F03E1EB22F8B000DF469 /* Settings.storyboard */,
 			);
 			path = SwiftExample;
 			sourceTree = "<group>";
@@ -249,6 +261,7 @@
 				F82D09CD1CDFBB4900DD74CF /* LaunchScreen.storyboard in Resources */,
 				433104B61E97C05A00DE0DB7 /* Images.xcassets in Resources */,
 				F82D09C81CDFBB4900DD74CF /* Main.storyboard in Resources */,
+				4372F03F1EB22F8B000DF469 /* Settings.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -361,10 +374,13 @@
 			files = (
 				43EBD4D61E9B8E7200DB3478 /* Methods.swift in Sources */,
 				43B7FBA61E979E6E008083F2 /* InitialViewController.swift in Sources */,
+				4372F03D1EB22E08000DF469 /* FavouritesViewController.swift in Sources */,
 				F80276D11CE38FA600063D88 /* DemoConversation.swift in Sources */,
 				43EBD4D11E9B8DD200DB3478 /* Config.swift in Sources */,
+				4372F03B1EB22668000DF469 /* Favourites.swift in Sources */,
 				F80276D51CE3915700063D88 /* ChatViewController.swift in Sources */,
 				F82D09C31CDFBB4900DD74CF /* AppDelegate.swift in Sources */,
+				437BF2911EA78EFE002630F1 /* GlobalVariable.swift in Sources */,
 				43EBD4D41E9B8E0800DB3478 /* Server.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
