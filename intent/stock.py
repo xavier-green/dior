@@ -48,8 +48,10 @@ class Stock(object):
 			stock_query.join(stock_daily, country, "Country", "Code") # jointure sur STOC_Country = COUN_Code
 
 		# Maintenant que toutes les jointures sont faites, on passe aux conditions
+		# for produit in self.items :
 		for produit in self.items :
-			stock_query.where(item, "Description", produit)
+			for produit_key in produit:
+				stock_query.where(item, "Description", produit[produit_key])
 
 		for ville in self.cities :
 			stock_query.where(boutique, "Description", ville)
