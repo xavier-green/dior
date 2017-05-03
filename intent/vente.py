@@ -138,7 +138,7 @@ class Vente(object):
 		elif croissance_query:
 			product_query = query(sale, [("sum", sale, 'Std_RP_WOTax_REF')])
 		elif margin_query:
-			product_query = query(sale, [("sum", sale, 'Std_RP_WOTax_REF'),("sum", sale, 'Unit_Avg_Cost_REF')])
+			product_query = query(sale, columns_requested+[("sum", sale, 'Std_RP_WOTax_REF'),("sum", sale, 'Unit_Avg_Cost_REF')])
 		else:
 			product_query = query(sale, columns_requested)
 
