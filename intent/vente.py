@@ -298,14 +298,19 @@ class Vente(object):
 				product_query.wheredate(sale, 'DateNumYYYYMMDD') # par défaut sur les 7 derniers jours
 				second_query.wheredate(sale, 'DateNumYYYYMMDD', "20170218", "20170225") # TODO : à changer
 			vente_date_n = float(product_query.write().split('\n')[1])
-			vente_date_n_moins_un = float(second_query.write().split('\n')[1])
+			vente_date_n_moins_un = second_query.write().split('\n')[1]
 			
-			croissance = 100 * (vente_date_n - vente_date_n_moins_un) / vente_date_n_moins_un if vente_date_n_moins_un > 0 else 0
-			print("Croissance calculée, ", croissance)
-			
+			if vente_date_n_moins_un == "NULL":
+				result = "Aucune vente enregistrée "
+			else:
+				vente_date_n_moins_un = float(vente_date_n_moins_un)
+				croissance = 100 * (vente_date_n - vente_date_n_moins_un) / vente_date_n_moins_un if vente_date_n_moins_un > 0 else 0
+				print("Croissance calculée, ", croissance)
+				result = "La croissance est de %i pourcent " %(croissance)
+
 			start_date = self.numerical_dates[0] if len(self.numerical_dates) > 0 else '20170225'
 			second_start_date = self.numerical_dates[1] if len(self.numerical_dates) > 1 else '20170218'
-			result = "La croissance est de %i pourcent " %(croissance)
+
 			result += "du %s au %s par rapport au %s au %s " %(start_date, "20170304", second_start_date, start_date)
 			result += "pour " + ', '.join(produit_selected) + " " if len(produit_selected) > 0 else ''
 			result += "dans les boutiques de " + ', '.join([b for b in self.cities]) + " " if len(self.cities) > 0 else ''
