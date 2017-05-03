@@ -24,7 +24,8 @@ class intentData():
                 "Quelle part de russes dans les achats de Lady Dior",
                 "Les américains achètent-ils plus que les japonais",
                 "Combien de ventes exceptionnelles",
-                "Ai je eu des ventes exceptionnelles en souliers ce mois-ci"
+                "Ai je eu des ventes exceptionnelles en souliers ce mois-ci",
+                "Quelle croissance sur le japon"
             ]
         },"stock": {
             "examples" : [
