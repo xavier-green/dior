@@ -307,7 +307,7 @@ class Vente(object):
 				vente_date_n_moins_un = float(vente_date_n_moins_un)
 				croissance = 100 * (vente_date_n - vente_date_n_moins_un) / vente_date_n_moins_un if vente_date_n_moins_un > 0 else 0
 				print("Croissance calculée, ", croissance)
-				result = "La croissance est de %i pourcent " %(croissance)
+				result = "La croissance est de %.2f pourcent " %(croissance)
 
 			start_date = self.numerical_dates[0] if len(self.numerical_dates) > 0 else '20170225'
 			second_start_date = self.numerical_dates[1] if len(self.numerical_dates) > 1 else '20170218'
