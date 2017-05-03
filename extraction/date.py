@@ -93,6 +93,11 @@ class DateExtractor(object):
             anotherTime = timeNow
         return anotherTime.strftime(dateFormat)
 
+    def getPrevious(self, date_string, minus, dateFormat="%Y%m%d"):
+        current_date = datetime.datetime.strptime(date_string, dateFormat)
+        previous_date = current_date + datetime.timedelta(days=minus)
+        return previous_date.strftime(dateFormat)
+
     def extract_numerical(self,sentence,text=False):
         sentence_split = self.clean(sentence)#.split(" ")
         sentence_length = len(sentence_split)
@@ -107,7 +112,8 @@ class DateExtractor(object):
                 total_days = days_diff*days_diff_amount
                 print("Total days "+str(total_days))
                 new_date = self.get_new_date(addDays=total_days)
-                allDates.append(new_date)
+                older_new_date = self.getPrevious(new_date, total_days)
+                allDates += [new_date, older_new_date]
             except:
                 pass
         return allDates
@@ -135,5 +141,6 @@ class DateExtractor(object):
         return (allDates, " ".join(sentence_split).replace(date_string,"").rstrip())
 
 
-# datex = DateExtractor()
-# print(datex.extract_numerical("La semaine dernière, qui a conclu le plus de ventes à Ginza"))
+datex = DateExtractor()
+#print(datex.getPrevious("20160510",7))
+print(datex.extract_numerical("La semaine dernière, qui a conclu le plus de ventes à Ginza"))
