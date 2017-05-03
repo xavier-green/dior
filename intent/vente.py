@@ -311,13 +311,25 @@ class Vente(object):
 				if n == 10:
 					details_items.append("...")
 					break
-			print(details_items)
-			net_sales = float(details_items[0][0])
-			net_costs = float(details_items[0][1])
-			margin = str((net_sales-net_costs)/net_sales*100)
-			result = "Margin: "+margin+"%"
+			real_items = []
+			margins = []
+			total = 0
+			for item in details_items:
+				name = item[0]
+				margin = (float(item[2])-float(item[3]))/float(item[2])
+				margins.append({
+					'margin': margin,
+					'count': float(item[1])
+				})
+				total += float(item[1])
+				real_items.append([name,margin])
+			margin_global = 0
+			for margin in margins:
+				margin_global += margin['margin']*margin['count']/total
 
-			return [product_query.request, result] 
+			result = "Margin: "+str(margin*100)+"%"
+
+			return [product_query.request, result, real_items] 
 		
 		elif croissance_query:
 			second_query = copy(product_query)
