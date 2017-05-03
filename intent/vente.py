@@ -255,7 +255,7 @@ class Vente(object):
 				if n > 0:
 					colonnes = ligne.split('|')
 					item_desc, item_prix, item_date, item_lieu = colonnes
-					result +="%s vendu à %s le %s à %s\n" (item_desc, item_prix, item_date, item_lieu)
+					result += "%s vendu à %s le %s à %s\n" % (item_desc, item_prix, item_date, item_lieu)
 			
 			print("***************")
 			return [product_query.request, result]
