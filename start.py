@@ -140,7 +140,7 @@ def process_sentence(sentence,seuil=None):
 	# 	print(detail_string)
 
 	resp_detail = []
-	if len(answer) > 2:
+	if len(answer) > 2 and answer[2] != "No details":
 		print(answer[2])
 		for liste in answer[2]:
 			resp_detail.append({
