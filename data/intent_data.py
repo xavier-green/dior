@@ -22,7 +22,9 @@ class intentData():
                 "Est-ce que la plupart des clients au Moyen Orient sont locaux",
                 "Quel pourcentage des achats faits en Chine est fait par des chinois",
                 "Quelle part de russes dans les achats de Lady Dior",
-                "Les américains achètent-ils plus que les japonais"
+                "Les américains achètent-ils plus que les japonais",
+                "Combien de ventes exceptionnelles",
+                "Ai je eu des ventes exceptionnelles en souliers ce mois-ci"
             ]
         },"stock": {
             "examples" : [
