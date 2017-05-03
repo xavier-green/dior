@@ -72,7 +72,7 @@ class Stock(object):
 				Quantity_requested.append('fp')
 			if 'md' in self.sentence.lower() or ('mark' in self.sentence.lower() and 'down' in self.sentence.lower()):
 				Quantity_requested.append('md')
-			
+
 			if len(Quantity_requested) == 0 or len(Quantity_requested) == 2:
 				Quantity = ('sum', sale, 'RG_Quantity', sale, 'MD_Quantity')
 				MDorFP = ""
@@ -83,7 +83,7 @@ class Stock(object):
 				Quantity = ('sum', sale, 'MD_Quantity')
 				MDorFP = "en Mark Down "
 
-			product_query = query(sale, ['Quantity'])
+			product_query = query(sale, [Quantity])
 
 			if 'couleur' in self.sentence:
 				product_query = query(sale, ['Color','count(*)'], top_distinct='DISTINCT TOP 5')
@@ -136,8 +136,24 @@ class Stock(object):
 				res_sales = int(res_sales)
 			print("Sales:", res_sales)
 			sellthru = format((100 * res_sales / (res_sales  + res_stock)), '.2f') + ' %'
-			return [stock_query.request + '\n' + product_query.request,sellthru ]
-		return(stock_query.request, str(res_stock))
+			res_sellthru = 'Le sellthru '
+			if len(self.boutiques) > 0:
+				res_sellthru += "dans la boutique " + ' '.join(self.boutiques) + ' '
+			if len(self.cities) > 0:
+				res_sellthru += "dans la ville"  + ' '.join(self.cities) + ' '
+			if len(self.countries) > 0:
+				res_sellthru += 'dans le pays ' + ' '.join(self.countries) + ' '
+			res_sellthru += "est de " + sellthru
+			return [stock_query.request + '\n' + product_query.request,res_sellthru ]
+			str_res_stock = 'Le stock '
+			if len(self.boutiques) > 0:
+				str_res_stock += "dans la boutique " + ' '.join(self.boutiques) + ' '
+			if len(self.cities) > 0:
+				str_res_stock += "dans la ville"  + ' '.join(self.cities) + ' '
+			if len(self.countries) > 0:
+				str_res_stock += 'dans le pays ' + ' '.join(self.countries) + ' '
+			res_sellthru += "est de " + str(res_stock)
+		return(stock_query.request, str_res_stock)
 
 	def append_details(self, text):
 		resp = text[:]+";;"

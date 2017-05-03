@@ -42,6 +42,7 @@ class query(object):
 		return ', '.join(response)
 
 	def __init__ (self, table, columns, top_distinct =''):
+		print(table.name, columns)
 		self.selected_tables = [table]
 		colonnes = self.proprify_columns(table, columns)
 
