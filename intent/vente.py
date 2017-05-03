@@ -192,7 +192,7 @@ class Vente(object):
 			if touriste:
 				product_query.whereComparaison(sale, "Country", "<>", "CO.COUN_Code")
 			else:
-				product_query.whereComparaison(sale, "Country", "=", "CO.COUNT_Code")
+				product_query.whereComparaison(sale, "Country", "=", "CO.COUN_Code")
 
 		for ville in self.cities :
 			product_query.where(boutique, "Description", ville)
