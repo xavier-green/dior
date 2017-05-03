@@ -140,8 +140,8 @@ def process_sentence(sentence,seuil=None):
 
 	# return answer[1]+detail_string if len(answer) > 2 else answer[1]
 	return str({
-		answer: answer[1],
-		details: answer[2] if len(answer) > 2 else []
+		'answer': answer[1],
+		'details': answer[2] if len(answer) > 2 else []
 	})
 
 @app.route('/params/<string:sentence>', methods=["GET"])
