@@ -1,5 +1,6 @@
 from flask import Flask, render_template
 from flask import request, jsonify
+from flask import jsonify
 
 import flask_admin as admin
 import datetime
@@ -149,10 +150,10 @@ def process_sentence(sentence,seuil=None):
 	print(resp_detail)
 
 	# return answer[1]+detail_string if len(answer) > 2 else answer[1]
-	return {
+	return jsonify({
 		'answer': answer[1],
 		'details': resp_detail
-	}
+	})
 
 @app.route('/params/<string:sentence>', methods=["GET"])
 def vector_get(sentence):
