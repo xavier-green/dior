@@ -44,7 +44,7 @@ class intentData():
                 "pins restant en boutique à shanghai",
                 "converture de stock de la collection jadior",
                 "stock de pantalons à londres",
-                "taille de mon stock en amerique"
+                "taille de mon stock en amerique",
                 "Quelle est la boutique en France avec la meilleure couverture de stocks",
             ]
         },"bonjour": {
