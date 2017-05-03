@@ -190,7 +190,7 @@ class Vente(object):
 
 		if nationality_query:
 			if touriste:
-				product_query.whereComparaison(sale, "Country", "<>", "CO.COUNT_Code")
+				product_query.whereComparaison(sale, "Country", "<>", "CO.COUN_Code")
 			else:
 				product_query.whereComparaison(sale, "Country", "=", "CO.COUNT_Code")
 
