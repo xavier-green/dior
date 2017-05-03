@@ -40,6 +40,8 @@ class Vente(object):
 		price_query = False
 		exceptionnal_query = False
 		croissance_query = False
+		nationality_query = False
+		touriste = False
 
 		first_word = self.sentence.split(" ")[0]
 
@@ -66,6 +68,13 @@ class Vente(object):
 		
 		if ('croissance' in self.sentence.lower()):
 			croissance_query = True
+
+		if ('local' in self.sentence.lower() or 'locaux' in self.sentence.lower()):
+			nationality_query = True
+			
+		if ('touriste' in self.sentence.lower()):
+			nationality_query = True
+			touriste = True
 
 		if (not croissance_query or not exceptionnal_query) and len(self.items) == 0:
 			return "Veuillez préciser un produit svp"
@@ -126,10 +135,15 @@ class Vente(object):
 			product_query = query(sale, columns_requested)
 
 		product_query.join(sale, item, "Style", "Code")
-		product_query.join(sale, boutique, "Location", "Code")
+
+		if len(self.boutiques) > 0:
+			product_query.join(sale, boutique, "Location", "Code")
 
 		if len(self.countries) > 0:
 			product_query.join(sale, country, "Country", "Code")
+
+		if nationality_query:
+			product_query.join(sale, country, "Cust_Nationality", "Code_ISO")
 
 		division_seen = False
 		department_seen = False
@@ -180,6 +194,12 @@ class Vente(object):
 				elif produit_key == "produit":
 					product_query.where(item, "Description", produit[produit_key])
 					produit_selected.append("le produit " + produit[produit_key])
+
+		if nationality_query:
+			if touriste:
+				product_query.whereComparaison(sale, "Country", "<>", "CO.COUN_Code")
+			else:
+				product_query.whereComparaison(sale, "Country", "=", "CO.COUN_Code")
 
 		for ville in self.cities :
 			product_query.where(boutique, "Description", ville)

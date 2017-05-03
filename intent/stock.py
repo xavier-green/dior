@@ -25,8 +25,8 @@ class Stock(object):
 	def build_answer(self):
 		response_base = self.build_query()
 		print(response_base)
-		response_complete = self.append_details(response_base[1])
-		return [response_base[0],response_complete]
+		# response_complete = self.append_details(response_base[1])
+		return [response_base[0],response_base[1]]
 
 
 	def build_query(self):
@@ -86,6 +86,9 @@ class Stock(object):
 				MDorFP = "en Mark Down "
 
 			product_query = query(sale, [Quantity])
+			# Retirer Jardin D'avron et Others
+			product_query.join(sale, zone, 'Zone', 'Code')
+			product_query.whereNotJDAandOTH()
 
 			if 'couleur' in self.sentence:
 				product_query = query(sale, ['Color','count(*)'], top_distinct='DISTINCT TOP 5')
@@ -142,7 +145,7 @@ class Stock(object):
 			if len(self.boutiques) > 0:
 				res_sellthru += "dans la boutique " + ' '.join(self.boutiques) + ' '
 			if len(self.cities) > 0:
-				res_sellthru += "dans la ville"  + ' '.join(self.cities) + ' '
+				res_sellthru += "dans la ville "  + ' '.join(self.cities) + ' '
 			if len(self.countries) > 0:
 				res_sellthru += 'dans le pays ' + ' '.join(self.countries) + ' '
 			res_sellthru += "est de " + sellthru
@@ -151,7 +154,7 @@ class Stock(object):
 			if len(self.boutiques) > 0:
 				str_res_stock += "dans la boutique " + ' '.join(self.boutiques) + ' '
 			if len(self.cities) > 0:
-				str_res_stock += "dans la ville"  + ' '.join(self.cities) + ' '
+				str_res_stock += "dans la ville "  + ' '.join(self.cities) + ' '
 			if len(self.countries) > 0:
 				str_res_stock += 'dans le pays ' + ' '.join(self.countries) + ' '
 			res_sellthru += "est de " + str(res_stock)
