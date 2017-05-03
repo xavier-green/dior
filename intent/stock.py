@@ -86,6 +86,9 @@ class Stock(object):
 				MDorFP = "en Mark Down "
 
 			product_query = query(sale, [Quantity])
+			# Retirer Jardin D'avron et Others
+			product_query.join(sale, zone, 'Zone', 'Code')
+			product_query.whereNotJDAandOTH()
 
 			if 'couleur' in self.sentence:
 				product_query = query(sale, ['Color','count(*)'], top_distinct='DISTINCT TOP 5')
