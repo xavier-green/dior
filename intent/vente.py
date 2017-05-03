@@ -28,7 +28,7 @@ class Vente(object):
 	def build_answer(self):
 		response_base = self.build_query()
 		print(response_base)
-		response_complete = self.append_details(response_base[1])
+		response_complete = response_base[1])
 		details_query = response_base[2] if len(response_base) > 2 else "No details"
 		return [response_base[0],response_complete, details_query] 
 
@@ -56,11 +56,10 @@ class Vente(object):
 		
 		if ('exceptionnel' in self.sentence.lower()):
 			print("Sale specific to exceptionnal sales")
-			price_query = True
-
-		if len(self.items) == 0:
-			return "Veuillez préciser un produit svp"
 			exceptionnal_query = True
+
+		if not exceptionnal_query and len(self.items) == 0:
+			return "Veuillez préciser un produit svp"
 
 		Quantity_requested = []
 		if 'fp' in self.sentence.lower() or ('full' in self.sentence.lower() and 'price' in self.sentence.lower()):

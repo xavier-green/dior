@@ -28,7 +28,7 @@ class intentData():
             ]
         },"stock": {
             "examples" : [
-                "Quel est le pourcentage du sellthru au Japon de la semine dernière",
+                "Quel est le pourcentage du sellthru au Japon de la semaine dernière",
                 "Quel est le pourcentage de sellthru en Asie de l'année dernière",
                 "Quel est le nombre de points de sellthru de Madrid la semaine derniere en Lady Dior",
                 "Quel est le sellthru de Paris le mois dernier",
