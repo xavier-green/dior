@@ -192,11 +192,17 @@ class Vente(object):
 					print("retourne: "+result_string)
 					if result_string[-1] == ",":
 						result_string = result_string[:-1]
-					return result_string
+					return [product_query.request,result_string]
 				else:
 					return [product_query.request,";;".join(result)]
 			else:
-				return [product_query.request,"Aucune couleur enregistrée pour "+",".join(self.items)]
+				ret_string = "Aucune couleur enregistrée pour "
+				for produit in self.items :
+					for produit_key in produit:
+						ret_string += produit[produit_key]+","
+				if ret_string[-1] == ",":
+					ret_string = ret_string[:-1]
+				return [product_query.request,ret_string]
 
 		elif location_query:
 			product_query.groupby(boutique, 'Description')
