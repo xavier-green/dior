@@ -322,7 +322,7 @@ class Vente(object):
 					'count': float(items[1])
 				})
 				total += float(items[1])
-				real_items.append([name,margin])
+				real_items.append([name,items[1]])
 			margin_global = 0
 			for margin in margins:
 				margin_global += margin['margin']*margin['count']/total
