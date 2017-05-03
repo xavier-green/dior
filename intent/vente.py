@@ -327,7 +327,7 @@ class Vente(object):
 			for margin in margins:
 				margin_global += margin['margin']*margin['count']/total
 
-			result = "Margin: "+str(margin*100)+"%"
+			result = "Margin: "+str(margin_global*100)+"%"
 
 			return [product_query.request, result, real_items] 
 		
