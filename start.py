@@ -77,7 +77,7 @@ datex = DateExtractor()
 word = ProductExtractor()
 bouti = extract_boutique('data/Boutiques.csv')
 
-def process_sentence(sentence):
+def process_sentence(sentence,seuil=None):
 	copy = sentence[:]
 	sentence = sentence.lower()
 	global model_fasttext
@@ -95,6 +95,7 @@ def process_sentence(sentence):
 	geo_extracted['items'] = items_extracted
 	geo_extracted['boutiques'] = boutiques_extracted
 	geo_extracted['sentence'] = sentence
+	geo_extracted['seuil'] = seuil
 
 	print('data extracted:')
 	print(geo_extracted)
@@ -137,7 +138,11 @@ def process_sentence(sentence):
 		detail_string = '??'.join(detail)
 		print(detail_string)
 
-	return answer[1]+detail_string if len(answer) > 2 else answer[1]
+	# return answer[1]+detail_string if len(answer) > 2 else answer[1]
+	return str({
+		answer: answer[1],
+		details: answer[2] if len(answer) > 2 else []
+	})
 
 @app.route('/params/<string:sentence>', methods=["GET"])
 def vector_get(sentence):
@@ -148,7 +153,8 @@ def vector_get(sentence):
 def vector_post():
 	global model_fasttext
 	sentence = request.json.get("sentence", None)
-	return process_sentence(sentence)
+	seuil = request.json.get("seuil", None)
+	return process_sentence(sentence,seuil=seuil)
 
 # Create admin navbar
 admin = admin.Admin(name="Dior Admin Page", template_mode='bootstrap3')
