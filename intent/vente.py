@@ -39,6 +39,7 @@ class Vente(object):
 		colour_query = False
 		price_query = False
 		exceptionnal_query = False
+		croissance_query = False
 
 		first_word = self.sentence.split(" ")[0]
 
@@ -62,8 +63,11 @@ class Vente(object):
 				self.seuil_exc = 50000
 				print("Sale specific to exceptionnal sales, default seuil at 50k")
 				exceptionnal_query = True
+		
+		if ('croissance' in self.sentence.lower()):
+			croissance_query = True
 
-		if not exceptionnal_query and len(self.items) == 0:
+		if (not croissance_query or not exceptionnal_query) and len(self.items) == 0:
 			return "Veuillez préciser un produit svp"
 
 		Quantity_requested = []
@@ -116,6 +120,8 @@ class Vente(object):
 			product_query = query(sale, [(item, 'Description'), 'Std_RP_WOTax_REF'], top_distinct='DISTINCT TOP 1')
 		elif exceptionnal_query:
 			product_query = query(sale, [(item, 'Description'), 'Std_RP_WOTax_REF', "DateNumYYYYMMDD", (boutique, "Description")], top_distinct= 'DISTINCT TOP 3')
+		elif croissance_query:
+			product_query = query(sale, [("sum", sale, 'Std_RP_WOTax_REF')])
 		else:
 			product_query = query(sale, columns_requested)
 
@@ -186,10 +192,11 @@ class Vente(object):
 			for _boutique in self.boutiques :
 				product_query.where(boutique, "Description", _boutique)
 
-		if len(self.numerical_dates) > 0:
-			product_query.wheredate(sale, 'DateNumYYYYMMDD', self.numerical_dates[0])
-		else:
-			product_query.wheredate(sale, 'DateNumYYYYMMDD') # par défaut sur les 7 derniers jours
+		if not croissance_query:
+			if len(self.numerical_dates) > 0:
+				product_query.wheredate(sale, 'DateNumYYYYMMDD', self.numerical_dates[0])
+			else:
+				product_query.wheredate(sale, 'DateNumYYYYMMDD') # par défaut sur les 7 derniers jours
 
 		if colour_query:
 			product_query.groupby(sale, 'Color')
@@ -260,6 +267,29 @@ class Vente(object):
 			print("***************")
 			return [product_query.request, result]
 		
+		elif croissance_query:
+			second_query = product_query
+			if len(self.numerical_dates) > 1:
+				product_query.wheredate(sale, 'DateNumYYYYMMDD', self.numerical_dates[0])
+				second_query.wheredate(sale, 'DateNumYYYYMMDD', self.numerical_dates[1], self.numerical_dates[0])
+			else:
+				product_query.wheredate(sale, 'DateNumYYYYMMDD') # par défaut sur les 7 derniers jours
+				second_query.wheredate(sale, 'DateNumYYYYMMDD', "20170218", "20170225") # TODO : à changer
+			vente_date_n = int(product_query.write().split('\n')[1])
+			vente_date_n_moins_un = int(second_query.write().split('\n')[1])
+			
+			croissance = 100 * (vente_date_n - vente_date_n_moins_un) / vente_date_n_moins_un if vente_date_n_moins_un > 0 else 0
+			
+			start_date = self.numerical_dates[0] if len(self.numerical_dates) > 0 else '20170225'
+			second_start_date = self.numerical_dates[1] if len(self.numerical_dates) > 1 else '20170218'
+			result = "La croissance est de %i pourcent " %(croissance)
+			result += "du %i au %i par rapport au %i au %i " %(start_date, "20170304", second_start_date, start_date)
+			result += "pour " + ', '.join(produit_selected) + " " if len(produit_selected) > 0 else ''
+			result += "dans les boutiques de " + ', '.join([b for b in self.cities]) + " " if len(self.cities) > 0 else ''
+			result += "dans le pays " + ", ".join([p for p in self.countries]) + " " if len(self.cities) == 0 and len(self.countries) > 0 else ''
+
+			print("***************")
+			return [product_query.request, result]
 		
 		else:
 			product_query.groupby(column_groupby[0], column_groupby[1])
