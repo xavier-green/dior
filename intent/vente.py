@@ -326,12 +326,13 @@ class Vente(object):
 			else:
 				product_query.wheredate(sale, 'DateNumYYYYMMDD') # par défaut sur les 7 derniers jours
 				second_query.wheredate(sale, 'DateNumYYYYMMDD', "20170218", "20170225") # TODO : à changer
-			vente_date_n = float(product_query.write().split('\n')[1])
+			vente_date_n = product_query.write().split('\n')[1]
 			vente_date_n_moins_un = second_query.write().split('\n')[1]
 			
-			if vente_date_n_moins_un == "NULL":
+			if vente_date_n_moins_un == "NULL" or vente_date_n == "NULL":
 				result = "Aucune vente enregistrée "
 			else:
+				vente_date_n = float(vente_date_n)
 				vente_date_n_moins_un = float(vente_date_n_moins_un)
 				croissance = 100 * (vente_date_n - vente_date_n_moins_un) / vente_date_n_moins_un if vente_date_n_moins_un > 0 else 0
 				print("Croissance calculée, ", croissance)
