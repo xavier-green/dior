@@ -23,6 +23,7 @@ class Vente(object):
 		self.items = data['items']
 		self.boutiques = data['boutiques']
 		self.sentence = data['sentence']
+		self.seuil_exc = data['seuil']
 
 	def build_answer(self):
 		response_base = self.build_query()
@@ -37,6 +38,7 @@ class Vente(object):
 		location_query = False
 		colour_query = False
 		price_query = False
+		exceptionnal_query = False
 
 		first_word = self.sentence.split(" ")[0]
 
@@ -51,9 +53,14 @@ class Vente(object):
 		if ('prix' in self.sentence.lower()):
 			print("Sale specific to a price")
 			price_query = True
+		
+		if ('exceptionnel' in self.sentence.lower()):
+			print("Sale specific to exceptionnal sales")
+			price_query = True
 
 		if len(self.items) == 0:
 			return "Veuillez préciser un produit svp"
+			exceptionnal_query = True
 
 		Quantity_requested = []
 		if 'fp' in self.sentence.lower() or ('full' in self.sentence.lower() and 'price' in self.sentence.lower()):
@@ -103,10 +110,12 @@ class Vente(object):
 			product_query = query(sale, [(boutique, 'Description'), 'count(*)'], top_distinct='DISTINCT TOP 5')
 		elif price_query:
 			product_query = query(sale, [(item, 'Description'), 'Std_RP_WOTax_REF'], top_distinct='DISTINCT TOP 1')
+		elif exceptionnal_query:
+			product_query = query(sale, [(item, 'Description'), 'Std_RP_WOTax_REF', "DateNumYYYYMMDD", (boutique, "Description")], top_distinct= 'DISTINCT TOP 3')
 		else:
 			product_query = query(sale, columns_requested)
 
-		# product_query.join(sale, item, "Style", "Code")
+		product_query.join(sale, item, "Style", "Code")
 		product_query.join(sale, boutique, "Location", "Code")
 
 		if len(self.countries) > 0:
@@ -133,7 +142,7 @@ class Vente(object):
 					product_query.join(sale, theme,"Theme","Code")
 					theme_seen = True
 				elif produit_key == "produit" and not produit_seen:
-					product_query.join(sale, item,"Style","Code")
+					# product_query.join(sale, item,"Style","Code")
 					produit_seen = True
 
 		# Retirer Jardin D'avron et Others
@@ -222,24 +231,48 @@ class Vente(object):
 			result = "L'item " + item_desc + " correspondant " + " et ".join(produit_selected) + " se vend à " + item_price + " euros HT."
 			print(result)
 			return [product_query.request,result]
+		
+		elif exceptionnal_query:
+			product_query.whereComparaison(sale, "Std_RP_WOTax_REF", ">", self.seuil_exc)
+			product_query.orderby(sale, "Std_RP_WOTax_REF", "DESC")
+			
+			query_result = product_query.write().split('\n')
+			start_date = self.numerical_dates[0] if len(self.numerical_dates) > 0 else '20170225'
 
+			
+			result = "Il y a eu %i ventes exceptionnelles " %(len(query_result)-1) if len(query_result)-1 < 3 else "Voici les 3 meilleures ventes exceptionnelles "
+			result += "du %s au 20170304 " %(start_date)
+			result += "pour " + ', '.join(produit_selected) + " " if len(produit_selected) > 0 else ''
+			result += "dans les boutiques de " + ', '.join([b for b in self.cities]) + " " if len(self.cities) > 0 else ''
+			result += "dans le pays " + ", ".join([p for p in self.countries]) + " " if len(self.cities) == 0 and len(self.countries) > 0 else ''
+			result += "\n"
+			
+			for n, ligne in enumerate(query_result):
+				if n > 0:
+					colonnes = ligne.split('|')
+					item_desc, item_prix, item_date, item_lieu = colonnes
+					result +="%s vendu à %i le %s à %s\n" (item_desc, item_prix, item_date, item_lieu)
+			
+			print("***************")
+			return [product_query.request, result]
+		
+		
 		else:
 			product_query.groupby(column_groupby[0], column_groupby[1])
 			query_result = product_query.write().split('\n')
 			
 			somme = 0
-			n = 0
 			details_items = []
-			for ligne in query_result:
+			for n, ligne in enumerate(query_result):
 				if n > 0:
 					colonnes = ligne.split('|')
 					nombre_ventes = colonnes[1]
 					somme += float(nombre_ventes)
-				if n > 0 and n < 20:
+				if n > 0 and n < 10:
 					details_items.append(colonnes)
-				if n == 20:
+				if n == 10:
 					details_items.append("...")
-				n += 1
+					break
 			print(details_items)
 			
 			start_date = self.numerical_dates[0] if len(self.numerical_dates) > 0 else '20170225'
@@ -247,7 +280,7 @@ class Vente(object):
 			result = "Il y a eu " + str(somme) + " ventes en lien avec " + " et/ou ".join(produit_selected) + " "
 			result += MDorFP
 			result += "du " + start_date + " au " + "20170304 " 
-			result += "de la boutique de " + ', '.join([b for b in self.cities]) + " " if len(self.cities) > 0 else ''
+			result += "dans les boutiques de " + ', '.join([b for b in self.cities]) + " " if len(self.cities) > 0 else ''
 			result += "dans le pays " + ", ".join([p for p in self.countries]) + " " if len(self.cities) == 0 and len(self.countries) > 0 else ''
 			
 			print("***************")
