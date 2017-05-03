@@ -300,7 +300,7 @@ class Vente(object):
 			vente_date_n = float(product_query.write().split('\n')[1])
 			vente_date_n_moins_un = second_query.write().split('\n')[1]
 			
-			if vente_date_n_moins_un == "NULL":
+			if vente_date_n_moins_un == "NULL" or vente_date_n == "NULL":
 				result = "Aucune vente enregistrée "
 			else:
 				vente_date_n_moins_un = float(vente_date_n_moins_un)
