@@ -25,8 +25,8 @@ class Stock(object):
 	def build_answer(self):
 		response_base = self.build_query()
 		print(response_base)
-		response_complete = self.append_details(response_base[1])
-		return [response_base[0],response_complete]
+		# response_complete = self.append_details(response_base[1])
+		return [response_base[0],response_base[1]]
 
 
 	def build_query(self):
@@ -142,7 +142,7 @@ class Stock(object):
 			if len(self.boutiques) > 0:
 				res_sellthru += "dans la boutique " + ' '.join(self.boutiques) + ' '
 			if len(self.cities) > 0:
-				res_sellthru += "dans la ville"  + ' '.join(self.cities) + ' '
+				res_sellthru += "dans la ville "  + ' '.join(self.cities) + ' '
 			if len(self.countries) > 0:
 				res_sellthru += 'dans le pays ' + ' '.join(self.countries) + ' '
 			res_sellthru += "est de " + sellthru
@@ -151,7 +151,7 @@ class Stock(object):
 			if len(self.boutiques) > 0:
 				str_res_stock += "dans la boutique " + ' '.join(self.boutiques) + ' '
 			if len(self.cities) > 0:
-				str_res_stock += "dans la ville"  + ' '.join(self.cities) + ' '
+				str_res_stock += "dans la ville "  + ' '.join(self.cities) + ' '
 			if len(self.countries) > 0:
 				str_res_stock += 'dans le pays ' + ' '.join(self.countries) + ' '
 			res_sellthru += "est de " + str(res_stock)
