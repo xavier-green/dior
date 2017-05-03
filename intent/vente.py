@@ -237,7 +237,7 @@ class Vente(object):
 			return [product_query.request,result]
 		
 		elif exceptionnal_query:
-			product_query.whereComparaison(sale, "Std_RP_WOTax_REF", ">", self.seuil_exc)
+			product_query.whereComparaison(sale, "Std_RP_WOTax_REF", ">", str(self.seuil_exc))
 			product_query.orderby(sale, "Std_RP_WOTax_REF", "DESC")
 			
 			query_result = product_query.write().split('\n')
