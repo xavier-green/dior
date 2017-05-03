@@ -316,7 +316,7 @@ class Vente(object):
 			margin = str((net_sales-net_costs)/net_sales*100)
 			result = "Margin: "+margin+"%"
 
-			return [product_query.request, "Margin to be calculated", details_items] 
+			return [product_query.request, result] 
 		
 		elif croissance_query:
 			second_query = copy(product_query)
