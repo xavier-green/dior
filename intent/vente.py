@@ -314,14 +314,14 @@ class Vente(object):
 			real_items = []
 			margins = []
 			total = 0
-			for item in details_items:
-				name = item[0]
-				margin = (float(item[2])-float(item[3]))/float(item[2])
+			for items in details_items:
+				name = items[0]
+				margin = (float(items[2])-float(items[3]))/float(items[2])
 				margins.append({
 					'margin': margin,
-					'count': float(item[1])
+					'count': float(items[1])
 				})
-				total += float(item[1])
+				total += float(items[1])
 				real_items.append([name,margin])
 			margin_global = 0
 			for margin in margins:
