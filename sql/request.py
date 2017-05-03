@@ -92,6 +92,23 @@ class query(object):
 		self.wcount.append("ZO.ZONE_Code")
 		
 		self.request += where + "ZO.ZONE_Code NOT IN ('JDA', 'OTH')\n"
+	
+	# whereComparaison(sale, prix, ">", 35000)
+	def whereComparaison(self, table, column, comparaison, description):
+		assert table in self.joined_tables, "Vous faites appel à la table " + table.name + " absente de la requête, utilisez JOIN pour l'ajouter"
+		assert column in table.columns, "La table " + table.name + " ne possède pas d'attribut " + table.prefix + column
+
+		# Choix d'utiliser WHERE, AND ou OR au début de la condition
+		if len(self.wcount) == 0:
+			where_and_or = "WHERE "
+			self.wcount.append(table.alias + column)
+		elif (table.alias + column) not in self.wcount:
+			where_and_or = "AND "
+			self.wcount.append(table.alias + column)
+		else:
+			where_and_or = "OR "
+
+		self.request += where_and_or + self.proprify_columns(table, [column], 1) + " " + comparaison + " " + description + "\n"
 
 
 	def where(self, table, column, description):

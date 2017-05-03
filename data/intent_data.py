@@ -22,11 +22,13 @@ class intentData():
                 "Est-ce que la plupart des clients au Moyen Orient sont locaux",
                 "Quel pourcentage des achats faits en Chine est fait par des chinois",
                 "Quelle part de russes dans les achats de Lady Dior",
-                "Les américains achètent-ils plus que les japonais"
+                "Les américains achètent-ils plus que les japonais",
+                "Combien de ventes exceptionnelles",
+                "Ai je eu des ventes exceptionnelles en souliers ce mois-ci"
             ]
         },"stock": {
             "examples" : [
-                "Quel est le pourcentage du sellthru au Japon de la semine dernière",
+                "Quel est le pourcentage du sellthru au Japon de la semaine dernière",
                 "Quel est le pourcentage de sellthru en Asie de l'année dernière",
                 "Quel est le nombre de points de sellthru de Madrid la semaine derniere en Lady Dior",
                 "Quel est le sellthru de Paris le mois dernier",
