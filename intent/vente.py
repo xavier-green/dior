@@ -106,7 +106,7 @@ class Vente(object):
 		else:
 			product_query = query(sale, columns_requested)
 
-		product_query.join(sale, item, "Style", "Code")
+		# product_query.join(sale, item, "Style", "Code")
 		product_query.join(sale, boutique, "Location", "Code")
 
 		if len(self.countries) > 0:
