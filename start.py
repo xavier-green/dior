@@ -130,18 +130,28 @@ def process_sentence(sentence,seuil=None):
 	print(answer[1])
 	print("+++++++++++++++++++")
 	
+	# if len(answer) > 2:
+	# 	print(answer[2])
+	# 	detail = []
+	# 	for liste in answer[2]:
+	# 		detail.append('--'.join(liste))
+	# 	detail_string = '??'.join(detail)
+	# 	print(detail_string)
+
+	resp_detail = []
 	if len(answer) > 2:
 		print(answer[2])
-		detail = []
 		for liste in answer[2]:
-			detail.append('--'.join(liste))
-		detail_string = '??'.join(detail)
-		print(detail_string)
+			resp_detail.append({
+				'item': liste[0].rstrip().lstrip(),
+				'count': liste[1]
+			})
+	print(resp_detail)
 
 	# return answer[1]+detail_string if len(answer) > 2 else answer[1]
 	return str({
 		'answer': answer[1],
-		'details': answer[2] if len(answer) > 2 else []
+		'details': resp_detail
 	})
 
 @app.route('/params/<string:sentence>', methods=["GET"])
