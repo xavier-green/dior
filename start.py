@@ -77,9 +77,7 @@ datex = DateExtractor()
 word = ProductExtractor()
 bouti = extract_boutique('data/Boutiques.csv')
 
-@app.route('/params/<string:sentence>', methods=["GET"])
-def vector_get(sentence):
-	print("new connection from: "+request.remote_addr)
+def process_sentence(sentence):
 	copy = sentence[:]
 	sentence = sentence.lower()
 	global model_fasttext
@@ -141,38 +139,16 @@ def vector_get(sentence):
 
 	return answer[1]+detail_string if len(answer) > 2 else answer[1]
 
-#, ans.make(geo_extracted)
-    # return str(geo_extracted) # returns the vector of the first word just to check that the model was used
-
-"""@app.route('/logs',methods=["GET"])
-def get_logs():
-	with open("logs.txt") as f:
-		content = f.readlines()
-		content = [x for x in content]
-		print(content)
-		# center = ""
-		data = []
-		for entry in content:
-			# center += "<tr>"
-			words = entry.split("||")
-			data.append(words)
-			# for word in words:
-			# 	center += "<td style='border: 1px solid #dddddd;'>"+word+"</td>"
-			# center += "</tr>"
-
-		return render_template('logs.html', data=data)"""
+@app.route('/params/<string:sentence>', methods=["GET"])
+def vector_get(sentence):
+	print("new connection from: "+request.remote_addr)
+	return process_sentence(sentence)
 
 @app.route('/', methods=["POST"]) # same but getting the sentence via POST
 def vector_post():
 	global model_fasttext
-	if request.json is None:
-		return "incorrect request (no json attached)"
-
 	sentence = request.json.get("sentence", None)
-
-	if sentence is None:
-		return "incorrect request (no sentence field)"
-	return str(model_fasttext[sentence.split()[0]])
+	return process_sentence(sentence)
 
 # Create admin navbar
 admin = admin.Admin(name="Dior Admin Page", template_mode='bootstrap3')
