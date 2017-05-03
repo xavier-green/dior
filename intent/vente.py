@@ -12,6 +12,8 @@ from sql.request import query
 # Import de toutes les tables utilisées
 from sql.tables import item, sale, boutique, country, division, retail, theme, department, zone
 
+import math
+
 
 class Vente(object):
 
@@ -327,7 +329,7 @@ class Vente(object):
 			for margin in margins:
 				margin_global += margin['margin']*margin['count']/total
 
-			result = "Margin: "+str(margin_global*100)+"%"
+			result = "Margin: "+str(math.ceil(margin_global*100000)/1000)+"%"
 
 			return [product_query.request, result, real_items] 
 		
