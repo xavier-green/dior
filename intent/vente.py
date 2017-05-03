@@ -297,10 +297,6 @@ class Vente(object):
 
 		elif margin_query:
 			query_result = product_query.write().split('\n')
-
-			print("*** MARGIN")
-			print(query_result)
-			print("*** DETAILS")
 			
 			somme = 0
 			details_items = []
@@ -315,8 +311,12 @@ class Vente(object):
 					details_items.append("...")
 					break
 			print(details_items)
+			net_sales = float(details_items[0][0])
+			net_costs = float(details_items[0][1])
+			margin = str((net_sales-net_costs)/net_sales*100)
+			result = "Margin: "+margin+"%"
 
-			return [product_query.request, result, details_items] 
+			return [product_query.request, "Margin to be calculated", details_items] 
 		
 		elif croissance_query:
 			second_query = copy(product_query)
