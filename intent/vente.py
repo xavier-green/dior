@@ -5,6 +5,7 @@ foo = SourceFileLoader("sql.request", "../sql/request.py").load_module()
 foo = SourceFileLoader("sql.tables", "../sql/tables.py").load_module()
 
 """
+from copy import copy
 
 from sql.request import query
 
@@ -288,7 +289,7 @@ class Vente(object):
 			return [product_query.request, result]
 		
 		elif croissance_query:
-			second_query = product_query
+			second_query = copy(product_query)
 			if len(self.numerical_dates) > 1:
 				product_query.wheredate(sale, 'DateNumYYYYMMDD', self.numerical_dates[0])
 				second_query.wheredate(sale, 'DateNumYYYYMMDD', self.numerical_dates[1], self.numerical_dates[0])
