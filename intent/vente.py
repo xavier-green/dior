@@ -68,6 +68,7 @@ class Vente(object):
 				exceptionnal_query = True
 		
 		if ('croissance' in self.sentence.lower()):
+			print("Sale specific to a croissance")
 			croissance_query = True
 
 		if ('local' in self.sentence.lower() or 'locaux' in self.sentence.lower()):
@@ -296,8 +297,8 @@ class Vente(object):
 			else:
 				product_query.wheredate(sale, 'DateNumYYYYMMDD') # par défaut sur les 7 derniers jours
 				second_query.wheredate(sale, 'DateNumYYYYMMDD', "20170218", "20170225") # TODO : à changer
-			vente_date_n = int(product_query.write().split('\n')[1])
-			vente_date_n_moins_un = int(second_query.write().split('\n')[1])
+			vente_date_n = float(product_query.write().split('\n')[1])
+			vente_date_n_moins_un = float(second_query.write().split('\n')[1])
 			
 			croissance = 100 * (vente_date_n - vente_date_n_moins_un) / vente_date_n_moins_un if vente_date_n_moins_un > 0 else 0
 			
