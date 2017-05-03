@@ -55,8 +55,13 @@ class Vente(object):
 			price_query = True
 		
 		if ('exceptionnel' in self.sentence.lower()):
-			print("Sale specific to exceptionnal sales")
-			exceptionnal_query = True
+			if self.seuil_exc:
+				print("Sale specific to exceptionnal sales")
+				exceptionnal_query = True
+			else:
+				self.seuil_exc = 50000
+				print("Sale specific to exceptionnal sales, default seuil at 50k")
+				exceptionnal_query = True
 
 		if not exceptionnal_query and len(self.items) == 0:
 			return "Veuillez préciser un produit svp"
