@@ -41,6 +41,7 @@ class Vente(object):
 		price_query = False
 		exceptionnal_query = False
 		croissance_query = False
+		margin_query = False
 		nationality_query = False
 		touriste = False
 
@@ -66,6 +67,9 @@ class Vente(object):
 				self.seuil_exc = 50000
 				print("Sale specific to exceptionnal sales, default seuil at 50k")
 				exceptionnal_query = True
+
+		if ('margin' in self.sentence.lower()):
+			margin_query = True
 		
 		if ('croissance' in self.sentence.lower()):
 			print("Sale specific to a croissance")
@@ -133,6 +137,8 @@ class Vente(object):
 			product_query = query(sale, [(item, 'Description'), 'Std_RP_WOTax_REF', "DateNumYYYYMMDD", (boutique, "Description")], top_distinct= 'DISTINCT TOP 3')
 		elif croissance_query:
 			product_query = query(sale, [("sum", sale, 'Std_RP_WOTax_REF')])
+		elif margin_query:
+			product_query = query(sale, columns_requested+[("sum", sale, 'Std_RP_WOTax_REF'),("sum", sale, 'Unit_Avg_Cost_REF')])
 		else:
 			product_query = query(sale, columns_requested)
 
@@ -288,6 +294,42 @@ class Vente(object):
 			
 			print("***************")
 			return [product_query.request, result]
+
+		elif margin_query:
+			product_query.groupby(column_groupby[0], column_groupby[1])
+			query_result = product_query.write().split('\n')
+			
+			somme = 0
+			details_items = []
+			for n, ligne in enumerate(query_result):
+				if n > 0:
+					colonnes = ligne.split('|')
+					nombre_ventes = colonnes[1]
+					somme += float(nombre_ventes)
+				if n > 0 and n < 10:
+					details_items.append(colonnes)
+				if n == 10:
+					details_items.append("...")
+					break
+			real_items = []
+			margins = []
+			total = 0
+			for item in details_items:
+				name = item[0]
+				margin = (float(item[2])-float(item[3]))/float(item[2])
+				margins.append({
+					'margin': margin,
+					'count': float(item[1])
+				})
+				total += float(item[1])
+				real_items.append([name,margin])
+			margin_global = 0
+			for margin in margins:
+				margin_global += margin['margin']*margin['count']/total
+
+			result = "Margin: "+str(margin*100)+"%"
+
+			return [product_query.request, result, real_items] 
 		
 		elif croissance_query:
 			second_query = copy(product_query)
