@@ -314,14 +314,14 @@ class Vente(object):
 			real_items = []
 			margins = []
 			total = 0
-			for item in details_items:
-				name = item[0]
-				margin = (float(item[2])-float(item[3]))/float(item[2])
+			for items in details_items:
+				name = items[0]
+				margin = (float(items[2])-float(items[3]))/float(items[2])
 				margins.append({
 					'margin': margin,
-					'count': float(item[1])
+					'count': float(items[1])
 				})
-				total += float(item[1])
+				total += float(items[1])
 				real_items.append([name,margin])
 			margin_global = 0
 			for margin in margins:
@@ -349,7 +349,7 @@ class Vente(object):
 				vente_date_n_moins_un = float(vente_date_n_moins_un)
 				croissance = 100 * (vente_date_n - vente_date_n_moins_un) / vente_date_n_moins_un if vente_date_n_moins_un > 0 else 0
 				print("Croissance calculée, ", croissance)
-				result = "La croissance est de %i pourcent " %(croissance)
+				result = "La croissance est de %.2f pourcent " %(croissance)
 
 			start_date = self.numerical_dates[0] if len(self.numerical_dates) > 0 else '20170225'
 			second_start_date = self.numerical_dates[1] if len(self.numerical_dates) > 1 else '20170218'
