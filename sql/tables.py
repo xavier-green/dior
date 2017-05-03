@@ -7,7 +7,7 @@ class table(object):
 		self.alias = alias
 		self.columns = columns
 
-country = table("COUN_COUNTRY", "COUN_", "CO", ["Code", "Description", "Zone", "Currency", "Sub_Zone", "Description_FR"])
+country = table("COUN_COUNTRY", "COUN_", "CO", ["Code", "Description", "Zone", "Currency", "Sub_Zone", "Description_FR", "Code_ISO"])
 nationality = table("CRM_Country_Nationality", "CRM_", "CN", ["Code_ISO", "Country_Desc_FR", "Nationality_Desc_FR", "Zone", "Sub_Zone"])
 customer = table("CUST_CUSTOMER", "CUST_", "CU", ["Nationality"])
 department = table("DEPT_Department", "DEPT_", "DE", ["Code", "Description", "Division"])
