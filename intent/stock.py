@@ -88,7 +88,6 @@ class Stock(object):
 			product_query = query(sale, [Quantity])
 			# Retirer Jardin D'avron et Others
 			product_query.join(sale, zone, 'Zone', 'Code')
-			product_query.whereNotJDAandOTH()
 
 			if 'couleur' in self.sentence:
 				product_query = query(sale, ['Color','count(*)'], top_distinct='DISTINCT TOP 5')
@@ -120,6 +119,8 @@ class Stock(object):
 						product_query.where(theme, "Description", produit[produit_key])
 					elif produit_key == "produit":
 						product_query.where(item, "Description", produit[produit_key])
+
+			product_query.whereNotJDAandOTH()
 
 			for ville in self.cities :
 				product_query.where(boutique, "Description", ville)
