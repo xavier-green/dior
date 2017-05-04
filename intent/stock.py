@@ -61,7 +61,7 @@ class Stock(object):
 				stock_query.where(country, "Description_FR", pays)
 		# La requête est terminée, on l'écrit
 		res_stock = stock_query.write()
-		if res_stock == 'NULL':
+		if 'NULL' in res_stock:
 			res_stock = 0
 		else:
 			res_stock = int(res_stock)
@@ -159,7 +159,8 @@ class Stock(object):
 			if len(self.countries) > 0:
 				str_res_stock += 'dans le pays ' + ' '.join(self.countries) + ' '
 			res_sellthru += "est de " + str(res_stock)
-		return(stock_query.request, str_res_stock)
+			return(stock_query.request, str_res_stock)
+		return(stock_query.request, res_stock)
 
 	def append_details(self, text):
 		resp = text[:]+";;"
