@@ -144,14 +144,14 @@ def process_sentence(sentence,seuil=None):
 		print(answer[2])
 		for liste in answer[2]:
 			resp_detail.append({
-				'item': liste[0].rstrip().lstrip(),
-				'count': liste[1]
+				'item': str(liste[0].rstrip().lstrip()),
+				'count': str(liste[1])
 			})
 	print(resp_detail)
 
 	# return answer[1]+detail_string if len(answer) > 2 else answer[1]
 	return jsonify({
-		'answer': answer[1],
+		'answer': str(answer[1]),
 		'details': resp_detail
 	})
 
