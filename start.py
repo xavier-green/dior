@@ -122,7 +122,7 @@ def process_sentence(sentence,seuil=None):
 
 	with open("logs.txt", "a") as myfile:
 		now = datetime.datetime.now()
-		mainString = now.strftime("%Y-%m-%d %H:%M")+"||"+copy+"||"+answer[0]+"||"+answer[1]
+		mainString = now.strftime("%Y-%m-%d %H:%M")+"||"+copy+"||"+str(answer[0])+"||"+str(answer[1])
 		mainString = mainString.replace('\n','')
 		myfile.write(mainString+"\n")
 
