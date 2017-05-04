@@ -84,7 +84,7 @@ class Vente(object):
 			nationality_query = True
 			touriste = True
 
-		if (not croissance_query or not exceptionnal_query) and len(self.items) == 0:
+		if (not croissance_query and not exceptionnal_query) and len(self.items) == 0:
 			return "Veuillez préciser un produit svp"
 
 		Quantity_requested = []
