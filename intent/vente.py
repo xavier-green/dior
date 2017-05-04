@@ -146,7 +146,7 @@ class Vente(object):
 
 		product_query.join(sale, item, "Style", "Code")
 
-		if len(self.boutiques) > 0 or exceptionnal_query:
+		if len(self.boutiques) > 0 or exceptionnal_query or croissance_query:
 			product_query.join(sale, boutique, "Location", "Code")
 
 		if len(self.countries) > 0:
