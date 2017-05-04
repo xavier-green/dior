@@ -10,7 +10,7 @@ from sql.request import query
 
 # Import de toutes les tables utilisées
 from sql.tables import item, sale, boutique, country, division, retail, theme, department, zone, sub_zone, uzone
-
+from mise_en_forme import affichage_euros
 
 class Boutique(object):
 
@@ -126,7 +126,7 @@ class Boutique(object):
 				nom = colonnes[0]
 				nombre_ventes = colonnes[1]
 				montant_ventes = colonnes[2]
-				reponse += nom + " avec " + nombre_ventes + " ventes pour un montant de " + montant_ventes + " euros HT ; \n"
+				reponse += nom + " avec " + nombre_ventes + " ventes pour un montant de " + affichage_euros(montant_ventes) + " HT ; \n"
 			n += 1
 			
 		return [boutique_query.request,reponse]
