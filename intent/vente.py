@@ -146,7 +146,7 @@ class Vente(object):
 
 		product_query.join(sale, item, "Style", "Code")
 
-		if len(self.boutiques) > 0:
+		if len(self.boutiques) > 0 or exceptionnal_query:
 			product_query.join(sale, boutique, "Location", "Code")
 
 		if len(self.countries) > 0:
@@ -244,7 +244,7 @@ class Vente(object):
 						result_string = result_string[:-1]
 					return [product_query.request,result_string]
 				else:
-					return [product_query.request,";;".join(result)]
+					return [product_query.request,"\n".join(result)]
 			else:
 				ret_string = "Aucune couleur enregistrée pour "
 				for produit in self.items :
