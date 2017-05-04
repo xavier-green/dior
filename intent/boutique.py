@@ -10,7 +10,7 @@ from sql.request import query
 
 # Import de toutes les tables utilisées
 from sql.tables import item, sale, boutique, country, division, retail, theme, department, zone, sub_zone, uzone
-from mise_en_forme import affichage_euros
+from intent.mise_en_forme import affichage_euros
 
 class Boutique(object):
 
