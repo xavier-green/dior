@@ -26,7 +26,7 @@ class Boutique(object):
 	def build_answer(self):
 		response_base = self.build_query()
 		print(response_base)
-		response_complete = self.append_details(response_base[1])
+		response_complete = response_base[1]
 		return [response_base[0],response_complete] 
 
 
