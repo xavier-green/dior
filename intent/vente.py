@@ -12,6 +12,8 @@ from sql.request import query
 # Import de toutes les tables utilisées
 from sql.tables import item, sale, boutique, country, division, retail, theme, department, zone
 
+import math
+
 
 class Vente(object):
 
@@ -82,7 +84,7 @@ class Vente(object):
 			nationality_query = True
 			touriste = True
 
-		if (not croissance_query or not exceptionnal_query) and len(self.items) == 0:
+		if (not croissance_query and not exceptionnal_query) and len(self.items) == 0:
 			return "Veuillez préciser un produit svp"
 
 		Quantity_requested = []
@@ -144,7 +146,7 @@ class Vente(object):
 
 		product_query.join(sale, item, "Style", "Code")
 
-		if len(self.boutiques) > 0:
+		if len(self.boutiques) > 0 or exceptionnal_query or croissance_query:
 			product_query.join(sale, boutique, "Location", "Code")
 
 		if len(self.countries) > 0:
@@ -242,7 +244,7 @@ class Vente(object):
 						result_string = result_string[:-1]
 					return [product_query.request,result_string]
 				else:
-					return [product_query.request,";;".join(result)]
+					return [product_query.request,"\n".join(result)]
 			else:
 				ret_string = "Aucune couleur enregistrée pour "
 				for produit in self.items :
@@ -322,12 +324,12 @@ class Vente(object):
 					'count': float(items[1])
 				})
 				total += float(items[1])
-				real_items.append([name,margin])
+				real_items.append([name,str(math.ceil(margin*100000)/1000)+"%"])
 			margin_global = 0
 			for margin in margins:
 				margin_global += margin['margin']*margin['count']/total
 
-			result = "Margin: "+str(margin*100)+"%"
+			result = "Margin: "+str(math.ceil(margin_global*100000)/1000)+"%"
 
 			return [product_query.request, result, real_items] 
 		

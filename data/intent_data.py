@@ -25,7 +25,7 @@ class intentData():
                 "Les américains achètent-ils plus que les japonais",
                 "Combien de ventes exceptionnelles",
                 "Ai je eu des ventes exceptionnelles en souliers ce mois-ci",
-                "Quelle croissance sur le japon"
+                "Quelle croissance sur le japon",
                 "Quelle est la croissance sur l'item robe",
                 "Comment évolue la croissance en Amérique"
             ]

@@ -61,7 +61,7 @@ class Stock(object):
 				stock_query.where(country, "Description_FR", pays)
 		# La requête est terminée, on l'écrit
 		res_stock = stock_query.write()
-		if res_stock == 'NULL':
+		if 'NULL' in res_stock:
 			res_stock = 0
 		else:
 			res_stock = int(res_stock)
@@ -88,7 +88,6 @@ class Stock(object):
 			product_query = query(sale, [Quantity])
 			# Retirer Jardin D'avron et Others
 			product_query.join(sale, zone, 'Zone', 'Code')
-			product_query.whereNotJDAandOTH()
 
 			if 'couleur' in self.sentence:
 				product_query = query(sale, ['Color','count(*)'], top_distinct='DISTINCT TOP 5')
@@ -120,6 +119,8 @@ class Stock(object):
 						product_query.where(theme, "Description", produit[produit_key])
 					elif produit_key == "produit":
 						product_query.where(item, "Description", produit[produit_key])
+
+			product_query.whereNotJDAandOTH()
 
 			for ville in self.cities :
 				product_query.where(boutique, "Description", ville)
@@ -158,7 +159,8 @@ class Stock(object):
 			if len(self.countries) > 0:
 				str_res_stock += 'dans le pays ' + ' '.join(self.countries) + ' '
 			res_sellthru += "est de " + str(res_stock)
-		return(stock_query.request, str_res_stock)
+			return(stock_query.request, str_res_stock)
+		return(stock_query.request, res_stock)
 
 	def append_details(self, text):
 		resp = text[:]+";;"
