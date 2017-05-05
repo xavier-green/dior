@@ -70,8 +70,8 @@ class Vente(object):
 				print("Sale specific to exceptionnal sales")
 				exceptionnal_query = True
 			else:
-				self.seuil_exc = 50000
-				print("Sale specific to exceptionnal sales, default seuil at 50k")
+				self.seuil_exc = 5000
+				print("Sale specific to exceptionnal sales, default seuil at 5k")
 				exceptionnal_query = True
 
 		if ('margin' in self.sentence.lower()):
@@ -305,7 +305,7 @@ class Vente(object):
 			start_date = self.numerical_dates[0] if len(self.numerical_dates) > 0 else '20170225'
 
 
-			result = "Il y a eu %i ventes exceptionnelles " %(len(query_result)-1)
+			result = "Il y a eu %i ventes exceptionnelles (supérieures à %s)" %(len(query_result)-1, affichage_euros(self.seuil_exc))
 			result += "pour " + ', '.join(produit_selected) + " " if len(produit_selected) > 0 else ''
 			result += "dans les boutiques de " + ', '.join([b for b in self.cities]) + " " if len(self.cities) > 0 else ''
 			result += "dans le pays " + ", ".join([p for p in self.countries]) + " " if len(self.cities) == 0 and len(self.countries) > 0 else ''
@@ -317,7 +317,7 @@ class Vente(object):
 				if n > 0 and n < 4:
 					colonnes = ligne.split('|')
 					item_desc, item_prix, item_date, item_lieu = colonnes
-					result += "%s vendu à %s le %s à %s\n" % (item_desc, item_prix, item_date, item_lieu)
+					result += "%s vendu à %s le %s à %s\n" % (item_desc, affichage_euros(item_prix), item_date, item_lieu)
 
 			print("***************")
 			return [product_query.request, result]
