@@ -145,7 +145,7 @@ class Vente(object):
 		elif price_query:
 			product_query = query(sale, [(item, 'Description'), 'Std_RP_WOTax_REF'], top_distinct='DISTINCT TOP 1')
 		elif exceptionnal_query:
-			product_query = query(sale, [(item, 'Description'), 'Std_RP_WOTax_REF', "DateNumYYYYMMDD", (boutique, "Description")], top_distinct= 'DISTINCT TOP 3')
+			product_query = query(sale, [(item, 'Description'), 'Std_RP_WOTax_REF', "DateNumYYYYMMDD", (boutique, "Description")], top_distinct= 'DISTINCT')
 		elif croissance_query:
 			product_query = query(sale, [("sum", sale, 'Std_RP_WOTax_REF')])
 		elif margin_query:
@@ -305,15 +305,16 @@ class Vente(object):
 			start_date = self.numerical_dates[0] if len(self.numerical_dates) > 0 else '20170225'
 
 
-			result = "Il y a eu %i ventes exceptionnelles " %(len(query_result)-1) if len(query_result)-1 < 3 else "Voici les 3 meilleures ventes exceptionnelles "
-			result += "du %s au 20170304 " %(start_date)
+			result = "Il y a eu %i ventes exceptionnelles " %(len(query_result)-1)
 			result += "pour " + ', '.join(produit_selected) + " " if len(produit_selected) > 0 else ''
 			result += "dans les boutiques de " + ', '.join([b for b in self.cities]) + " " if len(self.cities) > 0 else ''
 			result += "dans le pays " + ", ".join([p for p in self.countries]) + " " if len(self.cities) == 0 and len(self.countries) > 0 else ''
 			result += "\n"
 
+			result += "Voici les 3 meilleures :" if len(query_result)-1 > 3 else ""
+
 			for n, ligne in enumerate(query_result):
-				if n > 0:
+				if n > 0 and n < 4:
 					colonnes = ligne.split('|')
 					item_desc, item_prix, item_date, item_lieu = colonnes
 					result += "%s vendu à %s le %s à %s\n" % (item_desc, item_prix, item_date, item_lieu)
