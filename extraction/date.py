@@ -5,27 +5,38 @@ import unicodedata
 import sys
 sys.path.append('/usr/local/Cellar/python3/3.6.0/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages')
 import datetime
+import time
 
 jours = ["Lundi","Lu","Lun","Mardi","Mercredi","Mer","Me","Jeudi","Jeu","Je","Vendredi","Ven","Ve","Samedi","Sam","Sa","Dimanche","Dim","Di"]
 mois = ["Janvier","Janv","Jan","Février","Févr","Fév","Mars","Avril","Avr","Mai","Juin","Jun","Juillet","Juil","Jul","Août","Aoû","Septembre","Sept","Sep","Octobre","Oct","Novembre","Nov","Décembre","Déc"]
-date_words = {
-    "mois":-30,
-    "semaine":-7,
-    "semaines":-7,
-    "année":-365,
-    "années":-365,
-    "annee":-365,
-    "annees":-365,
-    "an":-365,
-    "ans":-365,
-    "jour":-1,
-    "jours":-1,
-    "trimestre":-90,
-    "semestre":-120,
-    "semestres":-120,
-    "hier":-1,
-    "avant-hier":-2,
+day_words = {
+    "jour":1,
+    "jours":1,
+    "hier":1,
+    "avant-hier":2,
     "aujourd'hui":0
+}
+year_words = {
+    "année":1,
+    "années":1,
+    "annee":1,
+    "annees":1,
+    "an":1,
+    "ans":1,
+    "ytd":-1
+}
+month_words = {
+    "mois":1,
+    "trimestre":3,
+    "trimestres":3,
+    "semestre":4,
+    "semestres":4,
+    "mtd":-1
+}
+week_words = {
+    "semaine":1,
+    "semaines":1,
+    "wtd":-1
 }
 previous_words = ["il y a","depuis","ce","cette","dernier","derniers","derniere","dernieres"]
 post_words = ["dernier","derniers","derniere","dernière"]
@@ -97,25 +108,122 @@ class DateExtractor(object):
         current_date = datetime.datetime.strptime(date_string, dateFormat)
         previous_date = current_date + datetime.timedelta(days=minus)
         return previous_date.strftime(dateFormat)
+    
+    def getCurrentDate(self):
+        return {
+            "day": int(time.strftime("%d")),
+            "week": int(time.strftime("%W")),
+            "month": int(time.strftime("%m")),
+            "year": int(time.strftime("%Y")),
+        }
+
+    def annee(self,remove=1,dateFormat="%Y%m%d",toDate=False):
+        currentDate = self.getCurrentDate()
+        newYear = currentDate["year"] - remove
+        startDate = datetime.datetime(newYear, 1, 1, 12, 00)
+        startDate = startDate.strftime(dateFormat)
+        if toDate:
+            endDate = datetime.datetime(currentDate["year"], 12, 31, 12, 00)
+        else:
+            endDate = datetime.datetime(newYear, 12, 31, 12, 00)
+        endDate = endDate.strftime(dateFormat)
+        return [startDate,endDate]
+    
+    def mois(self, remove=1,dateFormat="%Y%m%d",toDate=False):
+        currentDate = self.getCurrentDate()
+        newMonth = currentDate["month"] - remove
+        year = currentDate["year"]
+        if (newMonth<=0):
+            newMonth += 12
+            year -= 1
+        last_m, last_day = monthrange(year, newMonth) 
+        startDate = datetime.datetime(year, newMonth, 1, 12, 00)
+        startDate = startDate.strftime(dateFormat)
+        if toDate:
+            endDate = datetime.datetime(currentDate["year"], currentDate["month"], currentDate["day"], 12, 00)
+        else:
+            endDate = datetime.datetime(year, newMonth, last_day, 12, 00)
+        endDate = endDate.strftime(dateFormat)
+        return [startDate,endDate]
+
+    def semaine(self, remove=1,dateFormat="%Y%m%d",toDate=False):
+        currentDate = self.getCurrentDate()
+        newWeek = currentDate["week"] - remove
+        year = currentDate["year"]
+        if (newWeek<=0):
+            newWeek += 52
+            year -= 1 
+        stime = time.strptime('{} {} 1'.format(year, newWeek), '%Y %W %w')
+        sDay,sMonth = stime.tm_mday,stime.tm_mon
+        etime = time.strptime('{} {} 1'.format(year, newWeek+1), '%Y %W %w')
+        eDay,eMonth = etime.tm_mday,etime.tm_mon
+        startDate = datetime.datetime(year, sMonth, sDay, 12, 00)
+        startDate = startDate.strftime(dateFormat)
+        if toDate:
+            endDate = datetime.datetime(currentDate["year"], currentDate["month"], currentDate["day"], 12, 00)
+        else:
+            endDate = datetime.datetime(year, eMonth, eDay, 12, 00)
+        endDate = endDate.strftime(dateFormat)
+        return [startDate,endDate]
+    
+    def jour(self, remove=1,dateFormat="%Y%m%d"):
+        currentDate = self.getCurrentDate()
+        newDay = currentDate["day"] - remove
+        year = currentDate["year"]
+        month_to_take = currentDate["month"]
+        newMonth = currentDate["month"] - 1
+        if (newMonth<=0):
+            newMonth += 12
+            year -= 1
+        last_previous_m, last_previous_day = monthrange(year, newMonth)
+        if newDay<=0:
+            newDay = last_previous_day
+            month_to_take = newMonth
+        startDate = datetime.datetime(year, month_to_take, newDay, 12, 00)
+        startDate = startDate.strftime(dateFormat)
+        endDate = datetime.datetime(year, month_to_take, currentDate["day"], 12, 00)
+        endDate = endDate.strftime(dateFormat)
+        return [startDate,endDate]
 
     def extract_numerical(self,sentence,text=False):
         sentence_split = self.clean(sentence)#.split(" ")
         sentence_length = len(sentence_split)
         date_part,date_string = [],"abcdefghijklmnopqrstuvw"
         allDates = []
-        for date_word in date_words:
-            try:
-                date_word_index = sentence_split.index(date_word)
-                days_diff = int(date_words[date_word])
-                days_diff_amount = int(self.getPreviousAmount(date_word_index, sentence_split))
-                print("{} : {}".format(days_diff,days_diff_amount))
-                total_days = days_diff*days_diff_amount
-                print("Total days "+str(total_days))
-                new_date = self.get_new_date(addDays=total_days)
-                older_new_date = self.getPrevious(new_date, total_days)
-                allDates += [new_date, older_new_date]
-            except:
-                pass
+        order = {
+            "day": {
+                "words": day_words,
+                "function": self.jour
+            },"week": {
+                "words": week_words,
+                "function": self.semaine
+            },"month": {
+                "words": month_words,
+                "function": self.mois
+            },"year": {
+                "words": year_words,
+                "function": self.annee
+            },
+        }
+        
+        for key in order:
+            for date_word in order[key]["words"]:
+                try:
+                    date_word_index = sentence_split.index(date_word)
+                    days_diff = int(order[key]["words"][date_word])
+                    if days_diff == -1:
+                        new_dates_array = order[key]["function"](remove=0,toDate=True)
+                        allDates.append(new_dates_array)
+                    else:
+                        days_diff_amount = int(self.getPreviousAmount(date_word_index, sentence_split))
+                        print("{} : {}".format(days_diff,days_diff_amount))
+                        total_days = days_diff*days_diff_amount
+                        print("Total days "+str(total_days))
+                        new_dates_array = order[key]["function"](remove=total_days)
+                        allDates.append(new_dates_array)
+                        allDates.append(order[key]["function"](remove=total_days+1))
+                except:
+                    pass
         return allDates
 
     def extract(self,sentence,text=False):
@@ -143,4 +251,4 @@ class DateExtractor(object):
 
 datex = DateExtractor()
 #print(datex.getPrevious("20160510",7))
-print(datex.extract_numerical("La semaine dernière, qui a conclu le plus de ventes à Ginza"))
+print(datex.extract_numerical("wtd, qui a conclu le plus de ventes à Ginza"))
