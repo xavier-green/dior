@@ -213,16 +213,19 @@ class Server {
 //        let params: [[String]] = [[]]
 //        let params = [["sentence",sentence]]
 
-//        Handle the continuation of a sentence 
+//        Handle the continuation of a sentence
         
-        if sentence.lowercaseString.hasPrefix("et") {
-            sentence = GlobalVariables.previous_message + sentence
-            GlobalVariables.previous_message = sentence
+        
+        
+        if sentence.lowercased().hasPrefix("et") {
+            print("detected that there is more")
+            GlobalVariables.previous_message += sentence
         } else {
             GlobalVariables.previous_message = sentence
         }
         
-        let params = ["username":"jameson", "password":"password", "sentence":sentence, "seuil":seuil] as Dictionary<String, String>
+        let params = ["username":"jameson", "password":"password", "sentence":GlobalVariables.previous_message
+            , "seuil":seuil] as Dictionary<String, String>
         
         return postRequest(connectionUrl: url, params: params, notificationString: "PARSED_MSG")
 //        return postRequest(url: url, params: params, method: "POST", notificationString: "PARSED_MSG")
