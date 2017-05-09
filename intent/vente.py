@@ -8,6 +8,7 @@ foo = SourceFileLoader("sql.tables", "../sql/tables.py").load_module()
 from copy import copy
 
 from sql.request import query
+from sql.mise_en_forme import affichage_euros
 
 # Import de toutes les tables utilisées
 from sql.tables import item, sale, boutique, country, division, retail, theme, department, zone
@@ -70,8 +71,8 @@ class Vente(object):
 				print("Sale specific to exceptionnal sales")
 				exceptionnal_query = True
 			else:
-				self.seuil_exc = 5000
-				print("Sale specific to exceptionnal sales, default seuil at 5k")
+				self.seuil_exc = 9000
+				print("Sale specific to exceptionnal sales, default seuil at %i" %(self.seuil_exc))
 				exceptionnal_query = True
 
 		if ('margin' in self.sentence.lower()):
