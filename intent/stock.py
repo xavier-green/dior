@@ -32,32 +32,38 @@ class Stock(object):
 	def build_query(self):
 
 		"""
+		Détermine s'il s'agit d'une demande de stock ou de sellthru
+		"""
+
+		sellthru_query = False
+
+		if 'sellthru' in self.sentence:
+			print('It is a sellthru')
+			sellthru_query = True
+
+		"""
 		Initialisation de la query
 		"""
-		# IN PROGRESS
-		# Initialisation de la query : par défaut pour l'instant on sélectionne count(*)vj
+
 		stock_query = query(stock_daily, [('sum', stock_daily, 'Quantity')])
 
 		"""
 		Jointures
 		"""
 
-		# S'il y a une précision, on considère que ça concerne des ventes
-		# On fait les jointures en fonction
 		if len(self.items) > 0:
-			stock_query.join(stock_daily,item, "Style", "Code") # jselointure sur ITEM_Code = STOC_Style
+			stock_query.join(stock_daily, item, "Style", "Code") # jselointure sur ITEM_Code = STOC_Style
 
-		# S'il y a une ville, on fait JOIN sur la table des boutiques
 		if len(self.cities) > 0:
 			stock_query.join(stock_daily, boutique, "Location", "Code") # jointure sur STOC_Location = LOCA_Code
 
-		# S'il n'y a pas de ville, on s'intéresse au pays
 		elif len(self.countries) > 0:
 			stock_query.join(stock_daily, country, "Country", "Code") # jointure sur STOC_Country = COUN_Code
 
 		"""
 		Conditions
 		"""
+
 		for produit in self.items :
 			for produit_key in produit:
 				stock_query.where(item, "Description", produit[produit_key])
@@ -75,11 +81,22 @@ class Stock(object):
 		"""
 
 		res_stock = stock_query.write()
+
+		if not sellthru_query:
+			response = "Le stock concernant les mots-clés " + ", ".join(self.items) + " est de " + res_stock
+			return(stock_query.request, response)
+
+
+
+
+
 		if 'NULL' in res_stock:
 			res_stock = 0
 		else:
 			res_stock = int(res_stock)
 		print('Stock:', res_stock)
+
+
 		if 'sellthru' in self.sentence:
 			print('It is a sellthru')
 			#Calculate sales for sellthru
@@ -175,16 +192,3 @@ class Stock(object):
 			res_sellthru += "est de " + str(res_stock)
 			return(stock_query.request, str_res_stock)
 		return(stock_query.request, res_stock)
-
-	def append_details(self, text):
-		resp = text[:]+";;"
-		if (len(self.cities)>0 or len(self.countries)>0):
-			resp += "Avec un critère géographique ("
-			if len(self.cities)>0:
-				resp += ",".join(self.cities)+","
-			if len(self.countries)>0:
-				resp += ",".join(self.countries)+","
-			if resp[-1]==",":
-				resp = resp[:-1]
-			resp += ");;"
-		return resp
