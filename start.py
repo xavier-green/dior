@@ -137,7 +137,7 @@ def process_sentence(sentence,seuil=None):
 
 	resp_detail = []
 	if len(answer) > 2 and answer[2] != "No details":
-		print(answer[2])
+		print("There are details :", answer[2])
 		for liste in answer[2]:
 			resp_detail.append({
 				'item': str(liste[0].rstrip().lstrip()),

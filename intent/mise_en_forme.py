@@ -17,9 +17,10 @@ def affichage_euros(montant):
 	else:
 		somme, centimes = [montant, "0"]
 	n = len(somme) % 3
+	en_tete = somme[0:n] + " " if n > 0 else ""
 	milliers = [somme[i+n:i+3+n] for i in range(0, len(somme)-n, 3)]
 	centimes = "" if (centimes == "00" or centimes == "0") else "," + centimes
-	return somme[0:n] + " " + " ".join(milliers) + centimes +' €'
+	return en_tete + " ".join(milliers) + centimes +' €'
 
 def affichage_date(date):
 	"""
