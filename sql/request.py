@@ -139,7 +139,7 @@ class query(object):
 		self.request += "ORDER BY " + self.proprify_columns(table, [column], 1) + ' ' + desc + '\n'
 
 	def write(self):
-		p = subprocess.run('docker exec  mssql /opt/mssql-tools/bin/sqlcmd -l 300 -S localhost -U sa -P D10R_password! -d Reporting -W -w 999 -s | -Q'.split() + [self.request], stdout=subprocess.PIPE, universal_newlines=True)
+		p = subprocess.run('docker exec  mssql /opt/mssql-tools/bin/sqlcmd -l 300 -S localhost -U sa -P D10R_password! -d Reporting -W -w 999 -s # -Q'.split() + [self.request], stdout=subprocess.PIPE, universal_newlines=True)
 		out = p.stdout.splitlines()[:-2]
 		out.pop(1)
 		return("\n".join(out))
