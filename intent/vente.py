@@ -258,7 +258,7 @@ class Vente(object):
 			product_query.orderby(None, 'count(*)', " DESC")
 			query_result = product_query.write().split('\n')
 			print(query_result)
-			result = [w.split("|")[0]+" ( "+w.split("|")[1]+" vendus )" for w in query_result if 'SALE_Color' not in w and '------' not in w]
+			result = [w.split("#")[0]+" ( "+w.split("#")[1]+" vendus )" for w in query_result if 'SALE_Color' not in w and '------' not in w]
 			if len(result) > 0:
 				if 'le plus' in self.sentence or 'la plus' in self.sentence:
 					print("Wanting the top one from: ")
@@ -284,13 +284,13 @@ class Vente(object):
 			product_query.orderby(None, 'count(*)', " DESC")
 			query_result = product_query.write().split('\n')
 			print(query_result)
-			result = [w.split("|")[0]+" ( "+w.split("|")[1]+" vendus )" for w in query_result if 'LOCA_Description' not in w and '------' not in w]
+			result = [w.split("#")[0]+" ( "+w.split("#")[1]+" vendus )" for w in query_result if 'LOCA_Description' not in w and '------' not in w]
 			print(result)
 			return [product_query.request,";;".join(result)]
 
 		elif price_query:
 			query_result = product_query.write().split('\n')
-			result_line = query_result[1].split('|')
+			result_line = query_result[1].split('#')
 			item_desc = result_line[0]
 			item_price = result_line[1]
 			print(result_line)
@@ -316,7 +316,7 @@ class Vente(object):
 
 			for n, ligne in enumerate(query_result):
 				if n > 0 and n < 4:
-					colonnes = ligne.split('|')
+					colonnes = ligne.split('#')
 					item_desc, item_prix, item_date, item_lieu = colonnes
 					result += "%s vendu à %s le %s à %s\n" % (item_desc, affichage_euros(item_prix), item_date, item_lieu)
 
@@ -331,7 +331,7 @@ class Vente(object):
 			details_items = []
 			for n, ligne in enumerate(query_result):
 				if n > 0:
-					colonnes = ligne.split('|')
+					colonnes = ligne.split('#')
 					nombre_ventes = colonnes[1]
 					somme += float(nombre_ventes)
 				if n > 0 and n < 10:
@@ -398,7 +398,7 @@ class Vente(object):
 			details_items = []
 			for n, ligne in enumerate(query_result):
 				if n > 0:
-					colonnes = ligne.split('|')
+					colonnes = ligne.split('#')
 					nombre_ventes = colonnes[1]
 					somme += float(nombre_ventes)
 				if n > 0 and n < 10:

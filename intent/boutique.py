@@ -27,7 +27,7 @@ class Boutique(object):
 		response_base = self.build_query()
 		print(response_base)
 		response_complete = response_base[1]
-		return [response_base[0],response_complete] 
+		return [response_base[0],response_complete]
 
 
 	def build_query(self):
@@ -36,7 +36,7 @@ class Boutique(object):
 		sale_table = query(sale, ['*'])
 		sale_table.join(sale, zone, 'Zone', 'Code')
 		sale_table.whereNotJDAandOTH()
-		
+
 		if len(self.numerical_dates) > 0:
 			sale_table.wheredate(sale, 'DateNumYYYYMMDD', self.numerical_dates[0])
 		else:
@@ -55,11 +55,11 @@ class Boutique(object):
 			boutique_query = query(boutique, ['Description', 'count(*)', ("sum", sale, "Std_RP_WOTax_REF")], 'TOP 3')
 			scale_cible = "boutiques"
 			boutique_query.join_custom(boutique, sale_table.request, sale, "Code", "Location")
-		
+
 
 		if len(self.countries) > 0 and scale_cible != "pays":
 			boutique_query.join(sale, country, "Country", "Code")
-		
+
 		produit_selected = []
 		for produit in self.items :
 			for produit_key in produit:
@@ -104,31 +104,31 @@ class Boutique(object):
 			boutique_query.groupby(boutique, 'Description')
 
 		boutique_query.orderby(None, ('sum', sale, 'Std_RP_WOTax_REF'), " DESC")
-		
+
 		# La requête est terminée, on utilise le résultat
 		result = boutique_query.write()
 		print("***************")
 		print(result)
 		reponse = "Voici les " + scale_cible + " ayant eu les meilleures ventes "
 		start_date = self.numerical_dates[0] if len(self.numerical_dates) > 0 else '20170225'
-		reponse += "du " + start_date + " au " + "20170304 " 
+		reponse += "du " + start_date + " au " + "20170304 "
 		reponse += "pour " + ', '.join(produit_selected) + " " if len(produit_selected) > 0 else ''
 		reponse += "dans le pays " + ", ".join([p for p in self.countries]) + " " if len(self.cities) == 0 and len(self.countries) > 0 else ''
 		reponse += " : \n"
-		
+
 		liste_resultat = result.split("\n")
 		n = 0
 		for ligne in liste_resultat:
 			if n == 0:
 				pass
 			else:
-				colonnes = ligne.split('|')
+				colonnes = ligne.split('#')
 				nom = colonnes[0]
 				nombre_ventes = colonnes[1]
 				montant_ventes = colonnes[2]
 				reponse += nom + " avec " + nombre_ventes + " ventes pour un montant de " + affichage_euros(montant_ventes) + " HT ; \n"
 			n += 1
-			
+
 		return [boutique_query.request,reponse]
 
 	def append_details(self, text):
