@@ -221,6 +221,7 @@ class DateExtractor(object):
                         print("Total days "+str(total_days))
                         new_dates_array = order[key]["function"](remove=total_days)
                         allDates.append(new_dates_array)
+                        allDates.append(order[key]["function"](remove=total_days+1))
                 except:
                     pass
         return allDates
