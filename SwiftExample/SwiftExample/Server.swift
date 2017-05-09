@@ -212,6 +212,16 @@ class Server {
         let url : String = BASE_URL+"/"
 //        let params: [[String]] = [[]]
 //        let params = [["sentence",sentence]]
+
+//        Handle the continuation of a sentence 
+        
+        if sentence.lowercaseString.hasPrefix("et") {
+            sentence = GlobalVariables.previous_message + sentence
+            GlobalVariables.previous_message = sentence
+        } else {
+            GlobalVariables.previous_message = sentence
+        }
+        
         let params = ["username":"jameson", "password":"password", "sentence":sentence, "seuil":seuil] as Dictionary<String, String>
         
         return postRequest(connectionUrl: url, params: params, notificationString: "PARSED_MSG")
