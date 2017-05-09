@@ -32,8 +32,12 @@ class Boutique(object):
 
 	def build_query(self):
 
-		# Table sale sur laquelle sera faite la jointure
+		"""
+		Creation de la query secondaire pour un join futur
+		"""
+
 		sale_table = query(sale, ['*'])
+
 		sale_table.join(sale, zone, 'Zone', 'Code')
 		sale_table.whereNotJDAandOTH()
 
@@ -42,6 +46,10 @@ class Boutique(object):
 		else:
 			sale_table.wheredate(sale, 'DateNumYYYYMMDD') # par défaut sur les 7 derniers jours
 
+
+		"""
+		Jointure avec la vraie query
+		"""
 		# On détermine si la requête porte sur une boutique, un pays, une zone, ...
 		if "zone" in self.sentence.lower():
 			boutique_query = query(zone, ['Description', 'count(*)', ("sum", sale, "Std_RP_WOTax_REF")], 'TOP 7')
@@ -56,6 +64,10 @@ class Boutique(object):
 			scale_cible = "boutiques"
 			boutique_query.join_custom(boutique, sale_table.request, sale, "Code", "Location")
 
+
+		"""
+		Jointures
+		"""
 
 		if len(self.countries) > 0 and scale_cible != "pays":
 			boutique_query.join(sale, country, "Country", "Code")
@@ -79,6 +91,10 @@ class Boutique(object):
 					boutique_query.join(sale, item,"Style","Code")
 					produit_selected.append("le produit " + produit[produit_key])
 
+		"""
+		Conditions
+		"""
+
 		for produit in self.items :
 			for produit_key in produit:
 				if produit_key == "division":
@@ -95,6 +111,10 @@ class Boutique(object):
 		for pays in self.countries :
 			boutique_query.where(country, "Description_FR", pays)
 
+		"""
+		Finitions
+		"""
+
 		# On n'oublie pas le GROUP BY, nécessaire ici vu qu'on prend à la fois une colonne et un count(*)
 		if scale_cible == 'pays':
 			boutique_query.groupby(country, 'Description')
@@ -105,11 +125,15 @@ class Boutique(object):
 
 		boutique_query.orderby(None, ('sum', sale, 'Std_RP_WOTax_REF'), " DESC")
 
+		"""
+		Traitement de la réponse
+		"""
+
 		# La requête est terminée, on utilise le résultat
 		result = boutique_query.write()
 		print("***************")
 		print(result)
-		reponse = "Voici les " + scale_cible + " ayant eu les meilleures ventes "
+		reponse = "Voici les " + scale_cible + " ayant eu les meilleures ventes :"
 		start_date = self.numerical_dates[0][0] if len(self.numerical_dates) > 0 else '20170225'
 		reponse += "du " + start_date + " au " + "20170304 "
 		reponse += "pour " + ', '.join(produit_selected) + " " if len(produit_selected) > 0 else ''
