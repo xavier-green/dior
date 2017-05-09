@@ -8,7 +8,7 @@ foo = SourceFileLoader("sql.tables", "../sql/tables.py").load_module()
 from copy import copy
 
 from sql.request import query
-from intent.mise_en_forme import affichage_euros
+from intent.mise_en_forme import affichage_euros, affichage_date
 
 # Import de toutes les tables utilisées
 from sql.tables import item, sale, boutique, country, division, retail, theme, department, zone
@@ -318,7 +318,7 @@ class Vente(object):
 				if n > 0 and n < 4:
 					colonnes = ligne.split('|')
 					item_desc, item_prix, item_date, item_lieu = colonnes
-					result += "%s vendu à %s le %s à %s\n" % (item_desc, affichage_euros(item_prix), item_date, item_lieu)
+					result += "%s vendu à %s le %s à %s\n" % (item_desc, affichage_euros(item_prix), affichage_date(item_date), item_lieu)
 
 			print("***************")
 			return [product_query.request, result]
