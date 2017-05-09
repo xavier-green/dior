@@ -165,7 +165,7 @@ class Boutique(object):
 			for key in produit:
 				details.append(["%s trouvé dans" %(produit[key]), key])
 
-
+		print("Details de boutique :", details)
 
 		return [boutique_query.request, reponse, details]
 
