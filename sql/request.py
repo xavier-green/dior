@@ -140,6 +140,8 @@ class query(object):
 
 	def write(self):
 		p = subprocess.run('docker exec  mssql /opt/mssql-tools/bin/sqlcmd -l 300 -S localhost -U sa -P D10R_password! -d Reporting -W -w 999 -s # -Q'.split() + [self.request], stdout=subprocess.PIPE, universal_newlines=True)
+		if "Error" in p.stdout:
+			raise Exception("Error during SQL query : \n"+p.stdout)
 		out = p.stdout.splitlines()[:-2]
 		out.pop(1)
 		return("\n".join(out))
