@@ -28,7 +28,8 @@ class Boutique(object):
 		response_base = self.build_query()
 		print(response_base)
 		response_complete = response_base[1]
-		return [response_base[0],response_complete]
+		details_query = response_base[2] if len(response_base) > 2 else "No details"
+		return [response_base[0],response_complete, details_query]
 
 
 	def build_query(self):
