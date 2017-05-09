@@ -19,4 +19,4 @@ def affichage_euros(montant):
 	n = len(somme) % 3
 	milliers = [somme[i+n:i+3+n] for i in range(0, len(somme)-n, 3)]
 	centimes = "" if (centimes == "00" or centimes == "0") else "," + centimes
-	return somme[0:n] + " " + " ".join(milliers) + centimes +'&euro'
+	return somme[0:n] + " " + " ".join(milliers) + centimes +' €'
