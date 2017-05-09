@@ -64,9 +64,11 @@ class Stock(object):
 		Conditions
 		"""
 
+		liste_item = []
 		for produit in self.items :
 			for produit_key in produit:
 				stock_query.where(item, "Description", produit[produit_key])
+				liste_item.append(produit[produit_key])
 
 		for ville in self.cities :
 			stock_query.where(boutique, "Description", ville)
@@ -83,7 +85,7 @@ class Stock(object):
 		res_stock = stock_query.write()
 
 		if not sellthru_query:
-			response = "Le stock concernant les mots-clés " + ", ".join(self.items) + " est de " + res_stock
+			response = "Le stock concernant les mots-clés " + ", ".join(liste_item) + " est de " + res_stock
 			return(stock_query.request, response)
 
 
