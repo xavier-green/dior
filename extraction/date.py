@@ -56,6 +56,26 @@ chiffres = {
     "vingt":20
 }
 
+date_words = {
+    "mois":-30,
+    "semaine":-7,
+    "semaines":-7,
+    "année":-365,
+    "années":-365,
+    "annee":-365,
+    "annees":-365,
+    "an":-365,
+    "ans":-365,
+    "jour":-1,
+    "jours":-1,
+    "trimestre":-90,
+    "semestre":-120,
+    "semestres":-120,
+    "hier":-1,
+    "avant-hier":-2,
+    "aujourd'hui":0
+}
+
 class DateExtractor(object):
 
     def clean(self,text):
