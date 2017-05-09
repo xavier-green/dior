@@ -71,7 +71,7 @@ class Logs(admin.BaseView):
 		return self.render('logs.html', data=data)
 
 
-app = Flask("test", template_folder='templates')
+app = Flask("test", template_folder='D:/dior/templates')
 
 world = WordClassification(model_fasttext)
 datex = DateExtractor()
@@ -130,7 +130,7 @@ def process_sentence(sentence,seuil=None):
 	print("+++++++++++++++++++")
 	print(answer[1])
 	print("+++++++++++++++++++")
-	
+
 	# if len(answer) > 2:
 	# 	print(answer[2])
 	# 	detail = []
