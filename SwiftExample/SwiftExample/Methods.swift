@@ -27,11 +27,35 @@ class Methods {
         return dictionary
     }
 
-    func parse_message(sentence: String) -> String {
+    func parse_message(sentence: String, seuil: String) -> [String] {
         print("parsed msg backend")
-        let parsed_msg = Server().parseMessage(sentence: sentence.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed)!)
+        let parsed_msg = Server().parseMessage(sentence: sentence, seuil: seuil)
         print("Server parse message: "+parsed_msg)
-        return parsed_msg
+        let json_parsed_msg = parse_json(json_string: parsed_msg)
+        return json_parsed_msg
+    }
+    
+    func parse_json(json_string: String) -> [String] {
+        var string_response = ""
+        var details = ""
+        do {
+            if let data = json_string.data(using: String.Encoding.utf8) {
+                let json = try JSONSerialization.jsonObject(with: data) as? [String: Any]
+                string_response = (json?["answer"] as? String)!
+                print("interm resp: "+string_response)
+                for detail in (json?["details"] as? [[String: Any]])! {
+                    print(detail)
+                    let item = detail["item"] as? String
+                    let count = detail["count"] as? String
+                    details += item!+" ("+count!+")\n"
+                }
+            }
+        } catch {
+            print("Error deserializing JSON: \(error)")
+        }
+        print("Answer: "+string_response)
+        print("Details: "+details)
+        return [string_response,details]
     }
     
 }

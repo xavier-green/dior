@@ -21,9 +21,12 @@ class Favourites {
     
     func read_file() -> [String] {
         print("Reading favourites list")
-        let questions = NSArray(contentsOf: writePath) as! [String]
-        print(questions)
-        return questions
+        let questions = NSArray(contentsOf: writePath)
+        print(questions ?? "No questions")
+        if (questions == nil || questions?.count == 0) {
+            return []
+        }
+        return questions as! [String]
     }
     
     func write_to_file(questions: [String]) {

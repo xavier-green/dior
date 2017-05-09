@@ -19,27 +19,27 @@ class Server {
     
     //MARK: Request Functions
     
-    func connectToServer(url: String, params: [[String]], method: String, notificationString: String) -> String {
-        
-        if method=="GET" {
-            
-            let connectionUrl = constructURL(base: BASE_URL, url: url, params: params)
-            return getRequest(connectionUrl: connectionUrl, notificationString: notificationString)
-            
-        } else if method=="POST" {
-            
-            return postRequest(connectionUrl: BASE_URL+url, params: params, notificationString: notificationString)
-            
-        } else if method=="PUT" {
-            
-            let connectionUrl = constructURL(base: BASE_URL, url: url, params: params)
-            return putRequest(connectionUrl: connectionUrl, notificationString: notificationString)
-            
-        }
-        
-        return ""
-        
-    }
+//    func connectToServer(url: String, params: [[String]], method: String, notificationString: String) -> String {
+//        
+//        if method=="GET" {
+//            
+//            let connectionUrl = constructURL(base: BASE_URL, url: url, params: params)
+//            return getRequest(connectionUrl: connectionUrl, notificationString: notificationString)
+//            
+//        } else if method=="POST" {
+//            
+//            return postRequest(connectionUrl: BASE_URL+url, params: params, notificationString: notificationString)
+//            
+//        } else if method=="PUT" {
+//            
+//            let connectionUrl = constructURL(base: BASE_URL, url: url, params: params)
+//            return putRequest(connectionUrl: connectionUrl, notificationString: notificationString)
+//            
+//        }
+//        
+//        return ""
+//        
+//    }
     
     func putRequest(connectionUrl: String, notificationString: String) -> String {
         
@@ -76,26 +76,31 @@ class Server {
         
     }
     
-    func postRequest(connectionUrl: String, params: [[String]], notificationString: String) -> String {
+    func postRequest(connectionUrl: String, params: Dictionary<String, String>, notificationString: String) -> String {
         
         print("Connecting to ",connectionUrl)
         
-        let postParams = constructParams(params: params)
-        let sendData = postParams.data(using: String.Encoding.utf8)!
+//        let postParams = constructParams(params: params)
+//        let sendData = postParams.data(using: String.Encoding.utf8)!
         
         //print(postParams)
         
         let config = URLSessionConfiguration.default
-        config.timeoutIntervalForRequest=TimeInterval(20)
-        config.timeoutIntervalForResource=TimeInterval(60)
+        config.timeoutIntervalForRequest=TimeInterval(120)
+        config.timeoutIntervalForResource=TimeInterval(120)
         let authString = constructHeaders()
         config.httpAdditionalHeaders = ["Authorization" : authString]
         let session = URLSession(configuration: config)
         let url = URL(string: connectionUrl)!
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
-        request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
-        request.httpBody = sendData
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.addValue("application/json", forHTTPHeaderField: "Accept")
+        do {
+            request.httpBody = try JSONSerialization.data(withJSONObject: params, options: JSONSerialization.WritingOptions.prettyPrinted)
+        } catch  {
+            print("error in request")
+        }
         
         return sendRequest(session: session, request: request, notificationString: notificationString)
         
@@ -200,13 +205,17 @@ class Server {
         
     }
     
-    func parseMessage(sentence: String) -> String {
+    func parseMessage(sentence: String, seuil: String) -> String {
         print("Getting user attribute")
         
-        let url: String = "/params/"+sentence
-        let params: [[String]] = [[]]
+//        let url: String = "/params/"+sentence
+        let url : String = BASE_URL+"/"
+//        let params: [[String]] = [[]]
+//        let params = [["sentence",sentence]]
+        let params = ["username":"jameson", "password":"password", "sentence":sentence, "seuil":seuil] as Dictionary<String, String>
         
-        return connectToServer(url: url, params: params, method: "GET", notificationString: "PARSED_MSG")
+        return postRequest(connectionUrl: url, params: params, notificationString: "PARSED_MSG")
+//        return postRequest(url: url, params: params, method: "POST", notificationString: "PARSED_MSG")
     }
     
     

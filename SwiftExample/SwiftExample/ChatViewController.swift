@@ -12,7 +12,6 @@ import JSQMessagesViewController
 class ChatViewController: JSQMessagesViewController {
     var messages = [JSQMessage]()
     
-    var favorits = [String]()
     var favourites = Favourites()
     var chat_details = ["Pas de détails pour ce message !"]
     
@@ -25,8 +24,6 @@ class ChatViewController: JSQMessagesViewController {
         super.viewDidLoad()
         
         NotificationCenter.default.addObserver(self, selector: #selector(self.slow_response), name: NSNotification.Name(rawValue: "TIME_OUT_BACK"), object: nil)
-        
-        favorits = favourites.read_file()
         
         // Setup navigation
         setupFavButton()
@@ -53,6 +50,9 @@ class ChatViewController: JSQMessagesViewController {
         
         let barButton = UIBarButtonItem(customView: button)
         navigationItem.rightBarButtonItem = barButton
+        navigationController?.navigationBar.barTintColor = UIColor(colorLiteralRed: 87/255, green: 93/255, blue: 102/255, alpha: 1)
+        navigationController?.navigationBar.tintColor = UIColor.white
+        navigationController?.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.white, NSFontAttributeName: UIFont.systemFont(ofSize: 22)]
         
     }
     
@@ -101,27 +101,14 @@ class ChatViewController: JSQMessagesViewController {
     
     func send_message(sentence: String){
         print("sending {"+sentence+"} to server")
+        let seuil: String = favourites.read_file_transac()
         DispatchQueue.global(qos: .background).async {
-            let parsed_messages = Methods().parse_message(sentence: sentence)
-            var sentences = parsed_messages.components(separatedBy: ";;")
-            let details_string = sentences.last
-            sentences.remove(at: sentences.count-1)
-            let details = details_string?.components(separatedBy: "??")
-            var item_details = ""
-            for detail in details! {
-                let exploded = detail.components(separatedBy: "--")
-                item_details += exploded[0]+" ("+exploded[1]+")\n"
-            }
-            print(item_details)
+            let parsed_messages = Methods().parse_message(sentence: sentence, seuil: seuil)
             DispatchQueue.main.async {
                 print("done")
-                self.chat_details.append(item_details)
+                self.chat_details.append(parsed_messages[1])
                 self.toogleTyping()
-                for sentence in sentences {
-                    if sentence != "" {
-                        self.reply(sentence: sentence)
-                    }
-                }
+                self.reply(sentence: parsed_messages[0])
             }
         }
     }
@@ -160,11 +147,15 @@ class ChatViewController: JSQMessagesViewController {
     override func didPressAccessoryButton(_ sender: UIButton) {
         self.inputToolbar.contentView!.textView!.resignFirstResponder()
         
+        let favorits: [String] = favourites.read_file()
+        
         let sheet = UIAlertController(title: "Vos questions favorites", message: nil, preferredStyle: .actionSheet)
         
-        for question in self.favorits {
+        for question in favorits {
             sheet.addAction(UIAlertAction(title: question, style: .default) { (action) in
-                self.send_message(text: question, senderId: self.senderId(), senderDisplayName: self.senderId(), date: Date())
+                self.inputToolbar.contentView?.textView?.text = question+" "
+                self.inputToolbar.contentView!.textView!.becomeFirstResponder()
+//                self.send_message(text: question, senderId: self.senderId(), senderDisplayName: self.senderId(), date: Date())
             })
         }
         
@@ -335,10 +326,10 @@ class ChatViewController: JSQMessagesViewController {
     }
     
     func add_to_fav(question: String) {
+        let favorits: [String] = favourites.read_file()
         if !favorits.contains(question) {
             let all_questions = favorits+[question]
             favourites.write_to_file(questions: all_questions)
-            favorits = favourites.read_file()
         }
     }
     

@@ -10,7 +10,5 @@ import Foundation
 
 struct Config {
     // Backend server settings
-    static var serverURL: String = "http://vps397505.ovh.net:5000"
-    static var serverUsername: String = "youyoun"
-    static var serverPassword: String = "password"
+    static var serverURL: String = "http://10.148.101.62:5000"
 }

@@ -29,6 +29,9 @@ class FavouritesViewController: UIViewController, UITableViewDelegate,UITableVie
         all_questions = favourites.read_file()
         excep_amount.text = favourites.read_file_transac()
         self.hideKeyboardWhenTappedAround()
+        navigationController?.navigationBar.barTintColor = UIColor(colorLiteralRed: 87/255, green: 93/255, blue: 102/255, alpha: 1)
+        navigationController?.navigationBar.tintColor = UIColor.white
+        navigationController?.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.white, NSFontAttributeName: UIFont.systemFont(ofSize: 22)]
     }
     
     func hideKeyboardWhenTappedAround() {
