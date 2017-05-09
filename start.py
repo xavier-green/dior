@@ -18,10 +18,6 @@ from extraction.product import ProductExtractor
 print("Importing boutique class")
 from extraction.boutique import extract_boutique
 
-print("Importing sql files")
-from sql.answer import answer
-ans = answer()
-
 print("Importing training data")
 from data import intent_data
 data = intent_data.intentData.data
@@ -130,7 +126,7 @@ def process_sentence(sentence,seuil=None):
 	print("+++++++++++++++++++")
 	print(answer[1])
 	print("+++++++++++++++++++")
-	
+
 	# if len(answer) > 2:
 	# 	print(answer[2])
 	# 	detail = []
