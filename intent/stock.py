@@ -30,9 +30,17 @@ class Stock(object):
 
 
 	def build_query(self):
+
+		"""
+		Initialisation de la query
+		"""
 		# IN PROGRESS
 		# Initialisation de la query : par défaut pour l'instant on sélectionne count(*)vj
 		stock_query = query(stock_daily, [('sum', stock_daily, 'Quantity')])
+
+		"""
+		Jointures
+		"""
 
 		# S'il y a une précision, on considère que ça concerne des ventes
 		# On fait les jointures en fonction
@@ -47,8 +55,9 @@ class Stock(object):
 		elif len(self.countries) > 0:
 			stock_query.join(stock_daily, country, "Country", "Code") # jointure sur STOC_Country = COUN_Code
 
-		# Maintenant que toutes les jointures sont faites, on passe aux conditions
-		# for produit in self.items :
+		"""
+		Conditions
+		"""
 		for produit in self.items :
 			for produit_key in produit:
 				stock_query.where(item, "Description", produit[produit_key])
@@ -59,7 +68,12 @@ class Stock(object):
 		if len(self.cities) == 0:
 			for pays in self.countries :
 				stock_query.where(country, "Description_FR", pays)
-		# La requête est terminée, on l'écrit
+
+
+		"""
+		Traitement de la réponse
+		"""
+
 		res_stock = stock_query.write()
 		if 'NULL' in res_stock:
 			res_stock = 0
