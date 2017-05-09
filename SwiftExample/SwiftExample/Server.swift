@@ -12,8 +12,8 @@ import UIKit
 class Server {
     
     private let BASE_URL: String = Config.serverURL
-    private let SERVER_USERNAME: String = Config.serverUsername
-    private let SERVER_PASSWORD: String = Config.serverPassword
+    private let SERVER_USERNAME: String = "NULL"
+    private let SERVER_PASSWORD: String = "NULL"
     
     private var resultData: String = ""
     

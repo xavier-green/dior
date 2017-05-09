@@ -11,4 +11,5 @@ import Foundation
 struct Config {
     // Backend server settings
     static var serverURL: String = "http://10.148.101.62:5000"
+    static var favourites = true
 }

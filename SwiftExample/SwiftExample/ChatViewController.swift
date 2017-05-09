@@ -153,8 +153,7 @@ class ChatViewController: JSQMessagesViewController {
         
         for question in favorits {
             sheet.addAction(UIAlertAction(title: question, style: .default) { (action) in
-                self.inputToolbar.contentView?.textView?.text = question+" "
-                self.inputToolbar.contentView!.textView!.becomeFirstResponder()
+                self.writeQuestionToInput(question: question)
 //                self.send_message(text: question, senderId: self.senderId(), senderDisplayName: self.senderId(), date: Date())
             })
         }
@@ -303,7 +302,11 @@ class ChatViewController: JSQMessagesViewController {
     override func collectionView(_ collectionView: JSQMessagesCollectionView, didTapMessageBubbleAt indexPath: IndexPath) {
         let message = self.messages[indexPath.item]
         if (message.senderDisplayName == "Question") {
-            self.add_to_fav_popup(question: message.text)
+            if favourites.read_file_favourites() {
+                self.add_to_fav_popup(question: message.text)
+            } else {
+                self.writeQuestionToInput(question: message.text)
+            }
         } else {
             self.see_info(index: indexPath.row)
         }
@@ -342,6 +345,11 @@ class ChatViewController: JSQMessagesViewController {
     
     func quotient(a: Int, b: Int) -> Int {
         return ~(~(a/b))
+    }
+    
+    func writeQuestionToInput(question: String) {
+        self.inputToolbar.contentView?.textView?.text = question+" "
+        self.inputToolbar.contentView!.textView!.becomeFirstResponder()
     }
     
 }

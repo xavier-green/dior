@@ -19,7 +19,21 @@ class FavouritesViewController: UIViewController, UITableViewDelegate,UITableVie
         dismiss(animated: true, completion: nil)
     }
     
+    @IBOutlet var switchButton: UISwitch!
+    
     @IBOutlet var favourite_questions_view: UITableView!
+    
+    func switchFav() {
+        if switchButton.isOn {
+            print("switching off")
+            self.switchButton.setOn(false, animated: true)
+            favourites.write_to_favourites(favourites_bool: "false")
+        } else {
+            print("switching on")
+            self.switchButton.setOn(true, animated: true)
+            favourites.write_to_favourites(favourites_bool: "true")
+        }
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -32,6 +46,11 @@ class FavouritesViewController: UIViewController, UITableViewDelegate,UITableVie
         navigationController?.navigationBar.barTintColor = UIColor(colorLiteralRed: 87/255, green: 93/255, blue: 102/255, alpha: 1)
         navigationController?.navigationBar.tintColor = UIColor.white
         navigationController?.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.white, NSFontAttributeName: UIFont.systemFont(ofSize: 22)]
+//        self.switchButton.addTarget(self, action: #selector(self.switchFav), for: .touchUpInside)
+        if !favourites.read_file_favourites() {
+            self.switchButton.setOn(false, animated: false)
+        }
+        self.switchButton.addTarget(self, action: #selector(self.switchFav), for: .valueChanged)
     }
     
     func hideKeyboardWhenTappedAround() {

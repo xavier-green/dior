@@ -12,11 +12,13 @@ class Favourites {
     
     var writePath: URL
     var exceptionalPath: URL
+    var favouritesPath: URL
     
     init() {
         let documents = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0]
         writePath = NSURL(fileURLWithPath: documents).appendingPathComponent("file.plist")!
         exceptionalPath = NSURL(fileURLWithPath: documents).appendingPathComponent("transac.plist")!
+        favouritesPath = NSURL(fileURLWithPath: documents).appendingPathComponent("fav.plist")!
     }
     
     func read_file() -> [String] {
@@ -50,6 +52,28 @@ class Favourites {
             try transaction_level.write(to: exceptionalPath, atomically: true, encoding: String.Encoding.utf8)
         } catch {
             print("COuldnt write transaction level to file...")
+        }
+    }
+    
+    func read_file_favourites() -> Bool {
+        print("Reading favourites settings")
+        do {
+            let favourites_bool = try String(contentsOf: favouritesPath)
+            print(favourites_bool)
+            if favourites_bool == "true" {
+                return true
+            }
+            return false
+        } catch {
+            return true
+        }
+    }
+    
+    func write_to_favourites(favourites_bool: String) {
+        do {
+            try favourites_bool.write(to: favouritesPath, atomically: true, encoding: String.Encoding.utf8)
+        } catch {
+            print("COuldnt write favourites settings to file...")
         }
     }
     
