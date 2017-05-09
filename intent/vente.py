@@ -8,6 +8,7 @@ foo = SourceFileLoader("sql.tables", "../sql/tables.py").load_module()
 from copy import copy
 
 from sql.request import query
+from intent.mise_en_forme import affichage_euros
 
 # Import de toutes les tables utilisées
 from sql.tables import item, sale, boutique, country, division, retail, theme, department, zone
