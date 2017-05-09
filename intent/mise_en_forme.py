@@ -12,7 +12,10 @@ def affichage_euros(montant):
 	>> "12 000 000 &euro"
 	"""
 	montant = str(montant)
-	somme, centimes = montant.split(".")
+	if "." in montant:
+		somme, centimes = montant.split(".")
+	else:
+		somme, centimes = [montant, "0"]
 	n = len(somme) % 3
 	milliers = [somme[i+n:i+3+n] for i in range(0, len(somme)-n, 3)]
 	centimes = "" if (centimes == "00" or centimes == "0") else "," + centimes
