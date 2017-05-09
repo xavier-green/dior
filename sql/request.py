@@ -140,7 +140,6 @@ class query(object):
 
 	def write(self):
 		p = subprocess.run('sqlcmd -l 10 -S 10.148.102.166\DEV2012 -U REP_SQL_CHATBOT -P ChatBoT1984! -d Reporting_CDS -W -w 999 -s # -Q'.split() + [self.request], stdout=subprocess.PIPE, universal_newlines=True)
-'.split() + [self.request], stdout=subprocess.PIPE, universal_newlines=True)
 		if "Error" in p.stdout:
 			raise Exception("Error during SQL query : \n"+p.stdout)
 		out = p.stdout.splitlines()[:-2]
