@@ -6,6 +6,7 @@ import sys
 sys.path.append('/usr/local/Cellar/python3/3.6.0/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages')
 import datetime
 import time
+from calendar import monthrange
 
 jours = ["Lundi","Lu","Lun","Mardi","Mercredi","Mer","Me","Jeudi","Jeu","Je","Vendredi","Ven","Ve","Samedi","Sam","Sa","Dimanche","Dim","Di"]
 mois = ["Janvier","Janv","Jan","Février","Févr","Fév","Mars","Avril","Avr","Mai","Juin","Jun","Juillet","Juil","Jul","Août","Aoû","Septembre","Sept","Sep","Octobre","Oct","Novembre","Nov","Décembre","Déc"]
@@ -271,4 +272,6 @@ class DateExtractor(object):
 
 datex = DateExtractor()
 #print(datex.getPrevious("20160510",7))
-print(datex.extract_numerical("wtd, qui a conclu le plus de ventes à Ginza"))
+print(datex.extract_numerical("ou vend on le plus de bags hier"))
+
+
