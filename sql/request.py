@@ -84,15 +84,15 @@ class query(object):
 		where = "WHERE " if len(self.wcount) == 0 else "AND "
 		self.wcount.append(table.alias + column)
 
-		self.request += where + table_date + ' >= ' + start + '\nAND ' + table_date + ' <= ' + end + '\n'
-		
+		self.request += where + table_date + ' >= ' + start + '\nAND ' + table_date + ' < ' + end + '\n'
+
 	def whereNotJDAandOTH(self):
-		
+
 		where = "WHERE " if len(self.wcount) == 0 else "AND "
 		self.wcount.append("ZO.ZONE_Code")
-		
+
 		self.request += where + "ZO.ZONE_Code NOT IN ('JDA', 'OTH')\n"
-	
+
 	# whereComparaison(sale, prix, ">", 35000)
 	def whereComparaison(self, table, column, comparaison, description):
 		assert table in self.joined_tables, "Vous faites appel à la table " + table.name + " absente de la requête, utilisez JOIN pour l'ajouter"
@@ -141,7 +141,7 @@ class query(object):
 	def write(self):
 		# Vérification que les colonnes SELECTed sont bien JOINed
 		#assert set(self.selected_tables) < set(self.joined_tables), "Erreur : Vous avez SELECT un élément d'une table que vous n'avez pas JOIN"
-		
+
 		sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
 		sock.connect('/tmp/request.sock')
 		sock.sendall(bytes(self.request, 'utf-8'))
