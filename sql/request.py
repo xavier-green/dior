@@ -133,9 +133,9 @@ class query(object):
 		assert table in self.joined_tables,  "Vous faites appel à la table " + table.name + " absente de la requête, utilisez JOIN pour l'ajouter"
 		assert column in table.columns, "La table " + table.name + " ne possède pas d'attribut " + table.prefix + column
 		if self.grouped_by:
-			self.request += ","+self.proprify_columns(table, column, 1)
+			self.request += ","+self.proprify_columns(table, [column], 1)
 		else:
-			self.request += "GROUP BY " + self.proprify_columns(table, column, 1)
+			self.request += "GROUP BY " + self.proprify_columns(table, [column], 1)
 			self.grouped_by = True
 
 
