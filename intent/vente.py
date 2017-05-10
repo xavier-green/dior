@@ -112,27 +112,37 @@ class Vente(object):
 
 		# List in what categories we will be looking
 		columns_requested = []
+		division_seen_produit = False
+		department_seen_produit = False
+		retail_seen_produit = False
+		theme_seen_produit = False
+		produit_seen_produit = False
 		for produit in self.items :
 			for produit_key in produit:
-				if produit_key == "division":
+				if produit_key == "division" and not division_seen_produit :
 					column_groupby = (division, "Description")
 					columns_requested.append((division, "Description"))
+					division_seen_produit = True
 					break
-				elif produit_key == "departement":
+				elif produit_key == "departement" and not department_seen_produit:
 					column_groupby = (department, "Description")
 					columns_requested.append((department, "Description"))
+					department_seen_produit = True
 					break
-				elif produit_key == "groupe":
+				elif produit_key == "groupe" and not retail_seen_produit:
 					column_groupby = (retail, "Description")
 					columns_requested.append((retail, "Description"))
+					retail_seen_produit = True
 					break
-				elif produit_key == "theme":
+				elif produit_key == "theme" and not theme_seen_produit:
 					column_groupby = (theme, "Description")
 					columns_requested.append((theme, "Description"))
+					theme_seen_produit = True
 					break
-				if produit_key == "produit":
+				if produit_key == "produit" and not produit_seen_produit:
 					column_groupby = (item, "Description")
 					columns_requested.append((item, "Description"))
+					produit_seen_produit = True
 					break
 		columns_requested.append(Quantity)
 
