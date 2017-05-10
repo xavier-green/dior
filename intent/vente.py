@@ -1,4 +1,4 @@
-"""
+﻿"""
 from importlib.machinery import SourceFileLoader
 
 foo = SourceFileLoader("sql.request", "../sql/request.py").load_module()
@@ -8,6 +8,9 @@ foo = SourceFileLoader("sql.tables", "../sql/tables.py").load_module()
 from copy import copy
 
 from sql.request import query
+
+from intent.mise_en_forme import affichage_euros, affichage_date
+
 
 # Import de toutes les tables utilisées
 from sql.tables import item, sale, boutique, country, division, retail, theme, department, zone
@@ -160,7 +163,7 @@ class Vente(object):
 
 		product_query.join(sale, item, "Style", "Code")
 
-		if len(self.boutiques) > 0 or exceptionnal_query or croissance_query:
+		if len(self.boutiques) > 0 or exceptionnal_query or croissance_query or location_query:
 			product_query.join(sale, boutique, "Location", "Code")
 
 		if len(self.countries) > 0:
@@ -243,7 +246,7 @@ class Vente(object):
 
 		if not croissance_query:
 			if len(self.numerical_dates) > 0:
-				product_query.wheredate(sale, 'DateNumYYYYMMDD', self.numerical_dates[0])
+				product_query.wheredate(sale, 'DateNumYYYYMMDD', self.numerical_dates[0][0])
 			else:
 				product_query.wheredate(sale, 'DateNumYYYYMMDD') # par défaut sur les 7 derniers jours
 
@@ -302,7 +305,7 @@ class Vente(object):
 			product_query.orderby(sale, "Std_RP_WOTax_REF", "DESC")
 
 			query_result = product_query.write().split('\n')
-			start_date = self.numerical_dates[0] if len(self.numerical_dates) > 0 else '20170225'
+			start_date = self.numerical_dates[0][0] if len(self.numerical_dates) > 0 else '20170225'
 
 
 			result = "Il y a eu %i ventes exceptionnelles (supérieures à %s)" %(len(query_result)-1, affichage_euros(self.seuil_exc))
@@ -317,7 +320,7 @@ class Vente(object):
 				if n > 0 and n < 4:
 					colonnes = ligne.split('#')
 					item_desc, item_prix, item_date, item_lieu = colonnes
-					result += "%s vendu à %s le %s à %s\n" % (item_desc, affichage_euros(item_prix), item_date, item_lieu)
+					result += "%s vendu à %s le %s à %s\n" % (item_desc, affichage_euros(item_prix), affichage_date(item_date), item_lieu)
 
 			print("***************")
 			return [product_query.request, result]
@@ -361,8 +364,8 @@ class Vente(object):
 		elif croissance_query:
 			second_query = copy(product_query)
 			if len(self.numerical_dates) > 1:
-				product_query.wheredate(sale, 'DateNumYYYYMMDD', self.numerical_dates[0])
-				second_query.wheredate(sale, 'DateNumYYYYMMDD', self.numerical_dates[1], self.numerical_dates[0])
+				product_query.wheredate(sale, 'DateNumYYYYMMDD', self.numerical_dates[0][0], self.numerical_dates[0][1])
+				second_query.wheredate(sale, 'DateNumYYYYMMDD', self.numerical_dates[1][0], self.numerical_dates[1][1])
 			else:
 				product_query.wheredate(sale, 'DateNumYYYYMMDD') # par défaut sur les 7 derniers jours
 				second_query.wheredate(sale, 'DateNumYYYYMMDD', "20170218", "20170225") # TODO : à changer
@@ -378,8 +381,8 @@ class Vente(object):
 				print("Croissance calculée, ", croissance)
 				result = "La croissance est de %.2f pourcent " %(croissance)
 
-			start_date = self.numerical_dates[0] if len(self.numerical_dates) > 0 else '20170225'
-			second_start_date = self.numerical_dates[1] if len(self.numerical_dates) > 1 else '20170218'
+			start_date = self.numerical_dates[0][0] if len(self.numerical_dates) > 0 else '20170225'
+			second_start_date = self.numerical_dates[1][0] if len(self.numerical_dates) > 1 else '20170218'
 
 			result += "du %s au %s par rapport au %s au %s " %(start_date, "20170304", second_start_date, start_date)
 			result += "pour " + ', '.join(produit_selected) + " " if len(produit_selected) > 0 else ''
@@ -407,7 +410,7 @@ class Vente(object):
 					break
 			print(details_items)
 
-			start_date = self.numerical_dates[0] if len(self.numerical_dates) > 0 else '20170225'
+			start_date = self.numerical_dates[0][0] if len(self.numerical_dates) > 0 else '20170225'
 
 			result = "Il y a eu " + str(somme) + " ventes en lien avec " + " et/ou ".join(produit_selected) + " "
 			result += MDorFP
@@ -417,29 +420,6 @@ class Vente(object):
 
 			print("***************")
 			return [product_query.request, result, details_items]
-
-	def append_details(self, text):
-		resp = text[:]+";;"
-		if (len(self.cities)>0 or len(self.countries)>0):
-			resp += "Avec un critère géographique ("
-			if len(self.cities)>0:
-				resp += ",".join(self.cities)+","
-			if len(self.countries)>0:
-				resp += ",".join(self.countries)+","
-			if resp[-1]==",":
-				resp = resp[:-1]
-			resp += ");;"
-		if len(self.nationalities)>0:
-			resp += "Avec un critère de nationalité ("+",".join(self.nationalities)
-			if resp[-1]==",":
-				resp = resp[:-1]
-			resp += ");;"
-		if len(self.dates)>0:
-			resp += "Avec un critère de date ("+",".join(self.dates)
-			if resp[-1]==",":
-				resp = resp[:-1]
-			resp += ");;"
-		return resp
 
 """
 data = {
