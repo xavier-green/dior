@@ -186,5 +186,5 @@ class ProductExtractor(object):
         return copy
 
 #itm = ProductExtractor()
-itm = ProductExtractor(produit_path='/Users/xav/Downloads/products.csv',division_path='/Users/xav/Desktop/DTY/Dior/rest/data/Divisions.csv',departement_path='/Users/xav/Desktop/DTY/Dior/rest/data/Departements.csv',groupe_path='/Users/xav/Desktop/DTY/Dior/rest/data/Groupe.csv',theme_path='/Users/xav/Desktop/DTY/Dior/rest/data/Themes.csv')
-print(itm.extract("combien de rose des vents avons nous vendu depuis"))
+#itm = ProductExtractor(produit_path='/Users/xav/Downloads/products.csv',division_path='/Users/xav/Desktop/DTY/Dior/rest/data/Divisions.csv',departement_path='/Users/xav/Desktop/DTY/Dior/rest/data/Departements.csv',groupe_path='/Users/xav/Desktop/DTY/Dior/rest/data/Groupe.csv',theme_path='/Users/xav/Desktop/DTY/Dior/rest/data/Themes.csv')
+#print(itm.extract("combien de rose des vents avons nous vendu depuis"))
