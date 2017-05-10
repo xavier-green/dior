@@ -117,30 +117,31 @@ class Vente(object):
 		retail_seen_produit = False
 		theme_seen_produit = False
 		produit_seen_produit = False
+		column_groupby = []
 		for produit in self.items :
 			for produit_key in produit:
 				if produit_key == "division" and not division_seen_produit :
-					column_groupby = (division, "Description")
+					column_groupby += [(division, "Description")]
 					columns_requested.append((division, "Description"))
 					division_seen_produit = True
 					break
 				elif produit_key == "departement" and not department_seen_produit:
-					column_groupby = (department, "Description")
+					column_groupby += [(department, "Description")]
 					columns_requested.append((department, "Description"))
 					department_seen_produit = True
 					break
 				elif produit_key == "groupe" and not retail_seen_produit:
-					column_groupby = (retail, "Description")
+					column_groupby += [(retail, "Description")]
 					columns_requested.append((retail, "Description"))
 					retail_seen_produit = True
 					break
 				elif produit_key == "theme" and not theme_seen_produit:
-					column_groupby = (theme, "Description")
+					column_groupby += [(theme, "Description")]
 					columns_requested.append((theme, "Description"))
 					theme_seen_produit = True
 					break
 				if produit_key == "produit" and not produit_seen_produit:
-					column_groupby = (item, "Description")
+					column_groupby += [(item, "Description")]
 					columns_requested.append((item, "Description"))
 					produit_seen_produit = True
 					break
@@ -336,7 +337,8 @@ class Vente(object):
 			return [product_query.request, result]
 
 		elif margin_query:
-			product_query.groupby(column_groupby[0], column_groupby[1])
+			for col in column_groupby:
+				product_query.groupby(col[0], col[1])
 			query_result = product_query.write().split('\n')
 
 			somme = 0
@@ -403,7 +405,8 @@ class Vente(object):
 			return [product_query.request, result]
 
 		else:
-			product_query.groupby(column_groupby[0], column_groupby[1])
+			for col in column_groupby:
+				product_query.groupby(col[0], col[1])
 			query_result = product_query.write().split('\n')
 
 			somme = 0
