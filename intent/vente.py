@@ -421,10 +421,11 @@ class Vente(object):
 			print(details_items)
 
 			start_date = self.numerical_dates[0][0] if len(self.numerical_dates) > 0 else '20170225'
+			end_date = self.numerical_dates[0][1] if len(self.numerical_dates) > 0 else '20170225'
 
 			result = "Il y a eu " + str(somme) + " ventes en lien avec " + " et/ou ".join(produit_selected) + " "
 			result += MDorFP
-			result += "du " + start_date + " au " + "20170304 "
+			result += "du " + start_date + " au " + end_date
 			result += "dans les boutiques de " + ', '.join([b for b in self.cities]) + " " if len(self.cities) > 0 else ''
 			result += "dans le pays " + ", ".join([p for p in self.countries]) + " " if len(self.cities) == 0 and len(self.countries) > 0 else ''
 
