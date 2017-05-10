@@ -24,12 +24,20 @@ class ProductExtractor(object):
         "nom", "collection", "endroit", "ete", "md", "fp", "mark", "down", "full", "price", "markdown", "fullprice"
     ]
     
-    def __init__(self, produit_path='data/products.csv', division_path='data/Divisions.csv', departement_path='data/Departements.csv', groupe_path='data/Groupe.csv', theme_path='data/Themes.csv', n_max=3):
+    def __init__(self, produit_path='data/products.csv', division_path='data/Divisions.csv', 
+        departement_path='data/Departements.csv', groupe_path='data/Groupe.csv', theme_path='data/Themes.csv', 
+        family_path='data/family.csv', color_path='data/color.csv', material_path='data/material.csv', 
+        shape_path='data/shape.csv', n_max=3):
+
         self.produit = pd.read_csv(produit_path,names=['Produit']).dropna().drop_duplicates()
         self.division = pd.read_csv(division_path,names=['Division']).dropna().drop_duplicates()
         self.departement = pd.read_csv(departement_path,names=['Departement']).dropna().drop_duplicates()
         self.groupe = pd.read_csv(groupe_path,names=['Groupe']).dropna().drop_duplicates()
         self.theme = pd.read_csv(theme_path,names=['Theme']).dropna().drop_duplicates()
+        self.famille = pd.read_csv(family_path,names=['Famille'], encoding = "ISO-8859-1").dropna().drop_duplicates()
+        self.color = pd.read_csv(color_path,names=['Color'], encoding = "ISO-8859-1").dropna().drop_duplicates()
+        self.material = pd.read_csv(material_path,names=['Material'], encoding = "ISO-8859-1").dropna().drop_duplicates()
+        self.shape = pd.read_csv(shape_path,names=['Shape'], encoding = "ISO-8859-1").dropna().drop_duplicates()
         self.order = [
             {"division": {
                 "file": self.division,
@@ -39,13 +47,29 @@ class ProductExtractor(object):
                 "file": self.departement,
                 "column": self.departement.Departement
             }},
-            {"groupe": {
-                "file": self.groupe,
-                "column": self.groupe.Groupe
+            {"famille": {
+                "file": self.famille,
+                "column": self.famille.Famille
+            }},
+            {"color": {
+                "file": self.color,
+                "column": self.color.Color
+            }},
+            {"material": {
+                "file": self.material,
+                "column": self.material.Material
+            }},
+            {"shape": {
+                "file": self.shape,
+                "column": self.shape.Shape
             }},
             {"theme": {
                 "file": self.theme,
                 "column": self.theme.Theme
+            }},
+            {"groupe": {
+                "file": self.groupe,
+                "column": self.groupe.Groupe
             }},
             {"produit": {
                 "file": self.produit,
@@ -186,5 +210,26 @@ class ProductExtractor(object):
         return copy
 
 #itm = ProductExtractor()
-#itm = ProductExtractor(produit_path='/Users/xav/Downloads/products.csv',division_path='/Users/xav/Desktop/DTY/Dior/rest/data/Divisions.csv',departement_path='/Users/xav/Desktop/DTY/Dior/rest/data/Departements.csv',groupe_path='/Users/xav/Desktop/DTY/Dior/rest/data/Groupe.csv',theme_path='/Users/xav/Desktop/DTY/Dior/rest/data/Themes.csv')
-#print(itm.extract("combien de rose des vents avons nous vendu depuis"))
+itm = ProductExtractor(produit_path='/Users/xav/Downloads/products.csv',
+    division_path='/Users/xav/Desktop/DTY/Dior/rest/data/Divisions.csv',
+    departement_path='/Users/xav/Desktop/DTY/Dior/rest/data/Departements.csv',
+    groupe_path='/Users/xav/Desktop/DTY/Dior/rest/data/Groupe.csv',
+    theme_path='/Users/xav/Desktop/DTY/Dior/rest/data/Themes.csv',
+    family_path='/Users/xav/Desktop/DTY/Dior/rest/data/family.csv', 
+    color_path='/Users/xav/Desktop/DTY/Dior/rest/data/color.csv', 
+    material_path='/Users/xav/Desktop/DTY/Dior/rest/data/material.csv', 
+    shape_path='/Users/xav/Desktop/DTY/Dior/rest/data/shape.csv')
+print(itm.extract("combien de bags en croco avons nous vendu depuis"))
+
+
+
+
+
+
+
+
+
+
+
+
+
