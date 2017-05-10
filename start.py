@@ -18,10 +18,6 @@ from extraction.product import ProductExtractor
 print("Importing boutique class")
 from extraction.boutique import extract_boutique
 
-print("Importing sql files")
-from sql.answer import answer
-ans = answer()
-
 print("Importing training data")
 from data import intent_data
 data = intent_data.intentData.data
@@ -130,7 +126,7 @@ def process_sentence(sentence,seuil=None):
 	print("+++++++++++++++++++")
 	print(answer[1])
 	print("+++++++++++++++++++")
-	
+
 	# if len(answer) > 2:
 	# 	print(answer[2])
 	# 	detail = []
@@ -141,7 +137,7 @@ def process_sentence(sentence,seuil=None):
 
 	resp_detail = []
 	if len(answer) > 2 and answer[2] != "No details":
-		print(answer[2])
+		print("There are details :", answer[2])
 		for liste in answer[2]:
 			resp_detail.append({
 				'item': str(liste[0].rstrip().lstrip()),

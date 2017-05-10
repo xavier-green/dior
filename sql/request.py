@@ -84,7 +84,8 @@ class query(object):
 		where = "WHERE " if len(self.wcount) == 0 else "AND "
 		self.wcount.append(table.alias + column)
 
-		self.request += where + table_date + ' >= ' + start + '\nAND ' + table_date + ' <= ' + end + '\n'
+
+		self.request += where + table_date + ' >= ' + start + '\nAND ' + table_date + ' < ' + end + '\n'
 
 	def whereNotJDAandOTH(self):
 
@@ -143,6 +144,7 @@ class query(object):
 		if "Error" in p.stdout:
 			raise Exception("Error during SQL query : \n"+p.stdout)
 		out = p.stdout.splitlines()[:-2]
+
 		out.pop(1)
 		return("\n".join(out))
 

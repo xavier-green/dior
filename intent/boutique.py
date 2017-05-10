@@ -6,6 +6,7 @@ foo = SourceFileLoader("sql.tables", "../sql/tables.py").load_module()
 
 """
 
+from intent.mise_en_forme import affichage_euros, affichage_date
 from sql.request import query
 
 # Import de toutes les tables utilisées
@@ -27,21 +28,31 @@ class Boutique(object):
 		response_base = self.build_query()
 		print(response_base)
 		response_complete = response_base[1]
-		return [response_base[0],response_complete]
+
+		details_query = response_base[2] if len(response_base) > 2 else "No details"
+		return [response_base[0],response_complete, details_query]
 
 
 	def build_query(self):
 
-		# Table sale sur laquelle sera faite la jointure
+		"""
+		Creation de la query secondaire pour un join futur
+		"""
+
 		sale_table = query(sale, ['*'])
+
 		sale_table.join(sale, zone, 'Zone', 'Code')
 		sale_table.whereNotJDAandOTH()
 
 		if len(self.numerical_dates) > 0:
-			sale_table.wheredate(sale, 'DateNumYYYYMMDD', self.numerical_dates[0])
+			sale_table.wheredate(sale, 'DateNumYYYYMMDD', self.numerical_dates[0][0], self.numerical_dates[0][1])
 		else:
 			sale_table.wheredate(sale, 'DateNumYYYYMMDD') # par défaut sur les 7 derniers jours
 
+
+		"""
+		Jointure avec la vraie query
+		"""
 		# On détermine si la requête porte sur une boutique, un pays, une zone, ...
 		if "zone" in self.sentence.lower():
 			boutique_query = query(zone, ['Description', 'count(*)', ("sum", sale, "Std_RP_WOTax_REF")], 'TOP 7')
@@ -56,6 +67,11 @@ class Boutique(object):
 			scale_cible = "boutiques"
 			boutique_query.join_custom(boutique, sale_table.request, sale, "Code", "Location")
 
+
+
+		"""
+		Jointures
+		"""
 
 		if len(self.countries) > 0 and scale_cible != "pays":
 			boutique_query.join(sale, country, "Country", "Code")
@@ -79,6 +95,10 @@ class Boutique(object):
 					boutique_query.join(sale, item,"Style","Code")
 					produit_selected.append("le produit " + produit[produit_key])
 
+		"""
+		Conditions
+		"""
+
 		for produit in self.items :
 			for produit_key in produit:
 				if produit_key == "division":
@@ -95,6 +115,10 @@ class Boutique(object):
 		for pays in self.countries :
 			boutique_query.where(country, "Description_FR", pays)
 
+		"""
+		Finitions
+		"""
+
 		# On n'oublie pas le GROUP BY, nécessaire ici vu qu'on prend à la fois une colonne et un count(*)
 		if scale_cible == 'pays':
 			boutique_query.groupby(country, 'Description')
@@ -105,20 +129,20 @@ class Boutique(object):
 
 		boutique_query.orderby(None, ('sum', sale, 'Std_RP_WOTax_REF'), " DESC")
 
+
+		"""
+		Traitement de la réponse
+		"""
+
 		# La requête est terminée, on utilise le résultat
 		result = boutique_query.write()
 		print("***************")
 		print(result)
-		reponse = "Voici les " + scale_cible + " ayant eu les meilleures ventes "
-		start_date = self.numerical_dates[0] if len(self.numerical_dates) > 0 else '20170225'
-		reponse += "du " + start_date + " au " + "20170304 "
-		reponse += "pour " + ', '.join(produit_selected) + " " if len(produit_selected) > 0 else ''
-		reponse += "dans le pays " + ", ".join([p for p in self.countries]) + " " if len(self.cities) == 0 and len(self.countries) > 0 else ''
-		reponse += " : \n"
+
+		reponse = "Voici les " + scale_cible + " ayant eu les meilleures ventes : \n"
 
 		liste_resultat = result.split("\n")
-		n = 0
-		for ligne in liste_resultat:
+		for n, ligne in enumerate(liste_resultat):
 			if n == 0:
 				pass
 			else:
@@ -127,32 +151,29 @@ class Boutique(object):
 				nombre_ventes = colonnes[1]
 				montant_ventes = colonnes[2]
 				reponse += nom + " avec " + nombre_ventes + " ventes pour un montant de " + affichage_euros(montant_ventes) + " HT ; \n"
-			n += 1
 
-		return [boutique_query.request,reponse]
 
-	def append_details(self, text):
-		resp = text[:]+";;"
-		if (len(self.cities)>0 or len(self.countries)>0):
-			resp += "Avec un critère géographique ("
-			if len(self.cities)>0:
-				resp += ",".join(self.cities)+","
-			if len(self.countries)>0:
-				resp += ",".join(self.countries)+","
-			if resp[-1]==",":
-				resp = resp[:-1]
-			resp += ");;"
-		if len(self.nationalities)>0:
-			resp += "Avec un critère de nationalité ("+",".join(self.nationalities)
-			if resp[-1]==",":
-				resp = resp[:-1]
-			resp += ");;"
-		if len(self.dates)>0:
-			resp += "Avec un critère de date ("+",".join(self.dates)
-			if resp[-1]==",":
-				resp = resp[:-1]
-			resp += ");;"
-		return resp
+		"""
+		Ajout des détails
+		"""
+
+		start_date = self.numerical_dates[0][0] if len(self.numerical_dates) > 0 else '20170225'
+		end_date = self.numerical_dates[0][1] if len(self.numerical_dates) > 0 else '20170304'
+
+		details = []
+		details.append(["Du", affichage_date(start_date)])
+		details.append(["Au", affichage_date(end_date)])
+
+		if len(self.countries) > 0:
+			details.append(["Pays", ", ".join(self.countries)])
+
+		for produit in self.items :
+			for key in produit:
+				details.append(["%s trouvé dans" %(produit[key]), key])
+
+		print("Details de boutique :", details)
+
+		return [boutique_query.request, reponse, details]
 
 """
 data = {
