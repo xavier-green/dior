@@ -26,7 +26,8 @@ class Vendeur(object):
 	def build_answer(self):
 		response_base = self.build_query()
 		response_complete = response_base[1]
-		return [response_base[0],response_complete]
+		details_query = response_base[2] if len(response_base) > 2 else "No details"
+		return [response_base[0],response_complete, details_query]
 
 
 	def build_query(self):
@@ -128,13 +129,7 @@ class Vendeur(object):
 		result = seller_query.write()
 		print("***************")
 		print(result)
-		reponse = "Voici les 3 meilleurs vendeurs "
-		start_date = affichage_date(self.numerical_dates[0][0]) if len(self.numerical_dates) > 0 else affichage_date('20170225')
-		reponse += "du " + start_date + " au " + affichage_date("20170304") + " "
-		reponse += "pour " + categorie_produit + ', '.join(produit_selected) + " " if len(produit_selected) > 0 else ''
-		reponse += "de la boutique de " + ', '.join([b for b in self.cities]) + " " if len(self.cities) > 0 else ''
-		reponse += "dans le pays " + ", ".join([p for p in self.countries]) + " " if len(self.cities) == 0 and len(self.countries) > 0 else ''
-		reponse += " : \n"
+		reponse = "Voici les meilleurs vendeurs : \n"
 
 		liste_resultat = result.split("\n")
 		for n, ligne in enumerate(liste_resultat):
@@ -144,7 +139,30 @@ class Vendeur(object):
 				nom_vendeur, nombre_ventes, montant_ventes = ligne.split('|')
 				reponse += nom_vendeur + " avec " + nombre_ventes + " ventes pour un montant de " + affichage_euros(montant_ventes) + " HT ; \n"
 
-		return [seller_query.request,reponse]
+		"""
+		Ajout des détails
+		"""
+
+		start_date = self.numerical_dates[0][0] if len(self.numerical_dates) > 0 else '20170225'
+		end_date = self.numerical_dates[0][1] if len(self.numerical_dates) > 0 else '20170304'
+
+		details = []
+		details.append(["Du", affichage_date(start_date)])
+		details.append(["Au", affichage_date(end_date)])
+
+		if len(self.cities) > 0:
+			details.append(["Boutiques", ", ".join(self.cities)])
+		elif len(self.countries) > 0:
+			details.append(["Pays", ", ".join(self.countries)])
+
+		for produit in self.items :
+			for key in produit:
+				details.append(["%s trouvé dans" %(produit[key]), key])
+
+		print("Details vendeurs :", details)
+
+
+		return [seller_query.request,reponse, details]
 
 """
 data = {
