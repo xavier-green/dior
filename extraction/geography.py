@@ -9,13 +9,79 @@ import numpy as np
 import re
 
 class WordClassification(object):
-    
-    def __init__(self, word2vec_model, threshold=0.14):
+
+    def __init__(self, word2vec_model, threshold=0.14, uzone_path='data/uzone.csv', zone_path='data/zone.csv', 
+        subzone_path='data/szone.csv', country_path='data/country.csv', state_path='data/state.csv'):
+
         self.cities = ["Paris","London","Tokyo","NewYork","Seoul","Dubai","Madrid","Ginza"]
         self.countries = ["EtatsUnis","Espagne","Japon","Chine","France","Emirats","Suisse","Amerique"]
         self.nationalities = ["Russe","Francais","Americain","Chinois"]
         self.word2vec_model = word2vec_model
         self.threshold = threshold
+
+        self.uzone = pd.read_csv(uzone_path,names=['Uzone']).dropna().drop_duplicates()
+        self.zone = pd.read_csv(zone_path,names=['Zone']).dropna().drop_duplicates()
+        self.count = pd.read_csv(country_path,names=['Country']).dropna().drop_duplicates()
+        self.subzone = pd.read_csv(subzone_path,names=['Subzone']).dropna().drop_duplicates()
+        self.state = pd.read_csv(state_path,names=['State']).dropna().drop_duplicates()
+        
+        self.order = [
+            {"uzone": {
+                "file": self.uzone,
+                "column": self.uzone.Uzone
+            }},
+            {"zone": {
+                "file": self.zone,
+                "column": self.zone.Zone
+            }},
+            {"subzone": {
+                "file": self.subzone,
+                "column": self.subzone.Subzone
+            }},
+            {"country": {
+                "file": self.count,
+                "column": self.count.Country
+            }},
+            {"state": {
+                "file": self.state,
+                "column": self.state.State
+            }}
+        ]
+        print("Cleaning csv ...")
+        self.clean_csv()
+
+    def removeRowWithSpecialCharacterAndNumbers(self, w):
+        pattern = re.compile('^[a-zA-Z-\' ]+$')
+        return pattern.match(w) != None
+    
+    def removShortStrings(self, x):
+        return " "+" ".join([w.lower() for w in x.split(" ")if len(w)>2]).rstrip().lstrip()+" "
+    
+    def low(self, x):
+        return " "+x.lower().rstrip().lstrip()+" "
+
+    def cleaned_csv(self, file, column):
+        file = file[column.apply(self.removeRowWithSpecialCharacterAndNumbers)]
+        column = column.apply(self.removShortStrings)
+        column = column.apply(self.low)
+        file = file.drop_duplicates()
+        empties = column != ""
+        file = file[empties]
+        return file,column
+        
+    def clean_csv(self):
+
+        for item_category in self.order:
+            for key in item_category:
+                file = item_category[key]["file"]
+                column = item_category[key]["column"]
+                item_category[key]["file"],item_category[key]["column"] = self.cleaned_csv(file, column)
+
+    def csv_contains(self, w, csv_file, csv_column):
+        return csv_file[csv_column.str.contains(" "+w.rstrip().lstrip()+" ")]
+    
+    def get_product(self, sentence, csv_file, csv_column):
+        return len(self.csv_contains(sentence, csv_file, csv_column))>0
         
     def cos(self, a, b):
         return np.dot(a,b)/(np.linalg.norm(a)*np.linalg.norm(b))
@@ -52,10 +118,17 @@ class WordClassification(object):
                 #print(score)
                 scores[idx] = score
                 if (score > self.threshold):
+                    self.match_in_csv(term)
                     found.append(term)
                     #found.append({term: score})
 
         return found
+
+    def match_in_csv(self, term):
+        for category in self.order:
+            for key in category:
+                if self.get_product(term, category[key]["file"], category[key]["column"]):
+                    print(term," se trouve bien dans ",key)
     
     def find_similar_city(self, text):
         return self.find_similar(self.cities,text)
