@@ -256,7 +256,7 @@ class Vente(object):
 
 		if not croissance_query:
 			if len(self.numerical_dates) > 0:
-				product_query.wheredate(sale, 'DateNumYYYYMMDD', self.numerical_dates[0][0])
+				product_query.wheredate(sale, 'DateNumYYYYMMDD', self.numerical_dates[0][0], end=self.numerical_dates[0][1])
 			else:
 				product_query.wheredate(sale, 'DateNumYYYYMMDD') # par défaut sur les 7 derniers jours
 

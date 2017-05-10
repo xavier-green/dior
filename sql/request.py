@@ -52,6 +52,7 @@ class query(object):
 		# Stock les tables utilisées dans la requête, et le nombre de where
 		self.joined_tables = [None, table]
 		self.wcount = []
+		self.grouped_by = False
 
 	# Pour faire une jointure entre deux tables sous la condition t1.join1 = t2.join2
 	# Attention à l'ordre des join, ils doivent correspondrent à leurs tables respectives
@@ -131,7 +132,12 @@ class query(object):
 	def groupby(self, table, column):
 		assert table in self.joined_tables,  "Vous faites appel à la table " + table.name + " absente de la requête, utilisez JOIN pour l'ajouter"
 		assert column in table.columns, "La table " + table.name + " ne possède pas d'attribut " + table.prefix + column
-		self.request += "GROUP BY " + self.proprify_columns(table, [column], 1) + '\n'
+		if self.grouped_by:
+			self.request += ","+self.proprify_columns(table, column, 1)
+		else:
+			self.request += "GROUP BY " + self.proprify_columns(table, column, 1)
+			self.grouped_by = True
+
 
 	def orderby(self, table, column, desc=""):
 		if table:
