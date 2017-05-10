@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+﻿from flask import Flask, render_template
 from flask import request, jsonify
 from flask import jsonify
 
@@ -18,10 +18,6 @@ from extraction.product import ProductExtractor
 print("Importing boutique class")
 from extraction.boutique import extract_boutique
 
-print("Importing sql files")
-from sql.answer import answer
-ans = answer()
-
 print("Importing training data")
 from data import intent_data
 data = intent_data.intentData.data
@@ -30,7 +26,7 @@ print("Importing fasttext model")
 import sys
 sys.path.append('/usr/local/Cellar/python3/3.6.0/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages')
 import fasttext
-model_fasttext_path = 'wiki.fr.bin'
+model_fasttext_path = 'D:/dior/wiki.fr.bin'
 model_fasttext = fasttext.load_model(model_fasttext_path)
 
 print("Importing responses")
@@ -141,7 +137,7 @@ def process_sentence(sentence,seuil=None):
 
 	resp_detail = []
 	if len(answer) > 2 and answer[2] != "No details":
-		print(answer[2])
+		print("There are details :", answer[2])
 		for liste in answer[2]:
 			resp_detail.append({
 				'item': str(liste[0].rstrip().lstrip()),

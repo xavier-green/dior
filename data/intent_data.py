@@ -84,6 +84,9 @@ class intentData():
                 "Dans quel pays les crocos s'écoulent-ils le mieux",
                 "Donne-moi ma meilleure boutique du Japon",
                 "Quelle boutique vend le plus de roses des vents",
+                "Où vend-on le plus de bags",
+                "Quelle boutique vend le plus de souliers",
+                "Où est-ce que l'on vend beaucoup de jewelry"
             ]
         }, "vendeur": {
             "examples" : ["Qui est le meilleur vendeur",

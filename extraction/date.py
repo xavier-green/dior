@@ -6,6 +6,7 @@ import sys
 sys.path.append('/usr/local/Cellar/python3/3.6.0/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages')
 import datetime
 import time
+from calendar import monthrange
 
 jours = ["Lundi","Lu","Lun","Mardi","Mercredi","Mer","Me","Jeudi","Jeu","Je","Vendredi","Ven","Ve","Samedi","Sam","Sa","Dimanche","Dim","Di"]
 mois = ["Janvier","Janv","Jan","Février","Févr","Fév","Mars","Avril","Avr","Mai","Juin","Jun","Juillet","Juil","Jul","Août","Aoû","Septembre","Sept","Sep","Octobre","Oct","Novembre","Nov","Décembre","Déc"]
@@ -54,6 +55,26 @@ chiffres = {
     "dix":10,
     "quinze":15,
     "vingt":20
+}
+
+date_words = {
+    "mois":-30,
+    "semaine":-7,
+    "semaines":-7,
+    "année":-365,
+    "années":-365,
+    "annee":-365,
+    "annees":-365,
+    "an":-365,
+    "ans":-365,
+    "jour":-1,
+    "jours":-1,
+    "trimestre":-90,
+    "semestre":-120,
+    "semestres":-120,
+    "hier":-1,
+    "avant-hier":-2,
+    "aujourd'hui":0
 }
 
 class DateExtractor(object):
@@ -251,4 +272,5 @@ class DateExtractor(object):
 
 datex = DateExtractor()
 #print(datex.getPrevious("20160510",7))
-print(datex.extract_numerical("wtd, qui a conclu le plus de ventes à Ginza"))
+
+print(datex.extract_numerical("ou vend on le plus de bags hier"))

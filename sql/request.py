@@ -1,4 +1,4 @@
-# coding=utf-8
+﻿# coding=utf-8
 
 import subprocess, csv
 
@@ -84,7 +84,8 @@ class query(object):
 		where = "WHERE " if len(self.wcount) == 0 else "AND "
 		self.wcount.append(table.alias + column)
 
-		self.request += where + table_date + ' >= ' + start + '\nAND ' + table_date + ' <= ' + end + '\n'
+
+		self.request += where + table_date + ' >= ' + start + '\nAND ' + table_date + ' < ' + end + '\n'
 
 	def whereNotJDAandOTH(self):
 
@@ -139,10 +140,13 @@ class query(object):
 		self.request += "ORDER BY " + self.proprify_columns(table, [column], 1) + ' ' + desc + '\n'
 
 	def write(self):
+		print('REQUETE', self.request, '\n')
 		p = subprocess.run('sqlcmd -l 10 -S 10.148.102.166\DEV2012 -U REP_SQL_CHATBOT -P ChatBoT1984! -d Reporting_CDS -W -w 999 -s # -Q'.split() + [self.request], stdout=subprocess.PIPE, universal_newlines=True)
+		print('STDOUT:', p.stdout)		
 		if "Error" in p.stdout:
 			raise Exception("Error during SQL query : \n"+p.stdout)
 		out = p.stdout.splitlines()[:-2]
+
 		out.pop(1)
 		return("\n".join(out))
 
