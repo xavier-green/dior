@@ -11,8 +11,7 @@ import numpy as np
 from sklearn.pipeline import Pipeline
 import sys
 import re
-sys.path.append('/usr/local/Cellar/python3/3.6.0/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages')
-import fasttext
+
 from stop_words import get_stop_words
 stop_words_old = get_stop_words('fr')
 not_stop_words = ["ou","où","qui","quand","quel","quelle","quelle"]
@@ -21,6 +20,8 @@ from sklearn import neighbors
 from sklearn.externals import joblib
 from sklearn.feature_extraction.text import TfidfTransformer
 from sklearn.svm import SVC
+
+import urllib.request
 
 def tokenize(text):
     stripped_punctuation = re.sub(r'[-_;,.?!]',' ',text.lower())
@@ -32,28 +33,26 @@ def tokenize(text):
     #print("left: "+' '.join(str(x) for x in cleaned))
     return cleaned
 
+def getWord2vecVector(word):
+    vec = urllib.request.urlopen("http://vps397505.ovh.net:5000/soleil").read()
+    return [float(x) for x in vec.decode("utf-8").replace("[\n  ","").replace("\n]\n","").split(", \n  ")]
+
 class Word2VecVectorizer(object):
-    def __init__(self, word2vec_model):
-        self.word2vec_model = word2vec_model
-        self.dim = word2vec_model.dim
     
     def fit(self, X, y):
         return self 
 
     def transform(self, X):
         return np.array([
-            np.mean([self.word2vec_model[w]
-                 for w in tokenize(words) if w in self.word2vec_model.words] or
-                [np.zeros(self.dim)], axis=0)
+            np.mean([getWord2vecVector(w)
+                 for w in tokenize(words)], axis=0)
             for words in X
         ])
 
 class intentModel(object):
 
-    def __init__(self, fasttext_model):
-        self.word2vec_model = fasttext_model
-        self.trained_model = None
-        self.world = WordClassification(self.word2vec_model)
+    def __init__(self):
+        self.world = WordClassification()
         self.datex = DateExtractor()
         self.itm = ProductExtractor()
         self.boutique = extract_boutique('data/Boutiques.csv')
@@ -75,7 +74,7 @@ class intentModel(object):
         X, y = np.array(X), np.array(y)
         print("Done setting up X and y")
         word2vec = Pipeline([
-            ("word2vec vectorizer", Word2VecVectorizer(self.word2vec_model)),
+            ("word2vec vectorizer", Word2VecVectorizer()),
             ('tfidf', TfidfTransformer(use_idf=False)),
             ('SVM',SVC(kernel="linear"))])
             # ("knn neighbours", neighbors.KNeighborsClassifier(15, weights='distance'))])
