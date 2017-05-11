@@ -83,32 +83,34 @@ def process_sentence(sentence,seuil=None):
 	dates_extracted,sentence = datex.extract(sentence)
 	boutiques_extracted,sentence = bouti.extract(sentence)
 	items_extracted = word.extract(sentence)
-	geo_extracted['dates'] = dates_extracted
-	geo_extracted['numerical_dates'] = numerical_dates_extracted
-	geo_extracted['intent'] = intent_extracted
-	geo_extracted['items'] = items_extracted
-	geo_extracted['boutiques'] = boutiques_extracted
-	geo_extracted['sentence'] = sentence
-	geo_extracted['seuil'] = seuil
+	json = {
+		'dates': dates_extracted,
+		'geo': geo_extracted
+		'numerical_dates': numerical_dates_extracted,
+		'intent': intent_extracted,
+		'boutiques': boutiques_extracted,
+		'sentence': sentence,
+		'seuil': seuil
+	}
 
 	print('data extracted:')
-	print(geo_extracted)
+	print(json)
 
 	if intent_extracted == 'vente':
 		print("Detected it's a sale \n")
-		produit = Vente(geo_extracted)
+		produit = Vente(json)
 		answer = produit.build_answer()
 	elif intent_extracted == 'vendeur':
 		print("Vous avez demandé des informations au sujet du staff \n")
-		vendeur = Vendeur(geo_extracted)
+		vendeur = Vendeur(json)
 		answer = vendeur.build_answer()
 	elif intent_extracted == 'stock':
 		print("Vous avez demandé des informations au sujet du stock \n")
-		my_stock = Stock(geo_extracted)
+		my_stock = Stock(json)
 		answer = my_stock.build_answer()
 	elif intent_extracted == 'boutique':
 		print("Vous avez demandé des informations au sujet d'une boutique \n")
-		boutique = Boutique(geo_extracted)
+		boutique = Boutique(json)
 		answer = boutique.build_answer()
 	else:
 		answer = ["","Bonjour, malheureusement je n'ai pas saisi votre requête. Pouvez-vous reformuler ?"]

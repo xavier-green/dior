@@ -21,9 +21,8 @@ import math
 class Vente(object):
 
 	def __init__(self, data):
-		self.cities = data['cities']
-		self.countries = data['countries']
-		self.nationalities = data['nationalities']
+		self.geo = date['geo']
+		# self.nationalities = data['nationalities']
 		self.dates = data['dates']
 		self.numerical_dates = data['numerical_dates']
 		self.items = data['items']
@@ -174,14 +173,40 @@ class Vente(object):
 
 		product_query.join(sale, item, "Style", "Code")
 
-		if len(self.boutiques) > 0 or exceptionnal_query or croissance_query or location_query or len(self.cities) > 0:
-			product_query.join(sale, boutique, "Location", "Code")
 
-		if len(self.countries) > 0:
-			product_query.join(sale, country, "Country", "Code")
+		# GEOGRAPHY Extraction
 
-		if nationality_query:
-			product_query.join(sale, country, "Cust_Nationality", "Code_ISO")
+		uzone_joined = False
+		zone_joined = False
+		subzone_joined = False
+		country_joined = False
+		state_joined = False
+
+		product_query.join(sale, zone, "Zone", "Code")
+
+		for geo_table,geo_item in self.geo:
+			if geo_table == "uzone" and not uzone_joined:
+				product_query.join(zone, uzone, "uzone", "Code")
+				uzone_joined = True
+			else if geo_table == "zone" and not zone_joined:
+				zone_joined = True
+			else if geo_table == "subzone" and not subzone_joined:
+				product_query.join(zone, sub_zone, "Code", "Zone")
+				subzone_joined = True
+			else if geo_table == "country" and not country_joined:
+				product_query.join(sale, country, "Country", "Code")
+				country_joined = True
+			# else if geo_table == "state" and not state_joined:
+			# 	state_joined = True
+
+		# if len(self.boutiques) > 0 or exceptionnal_query or croissance_query or location_query or len(self.cities) > 0:
+		# 	product_query.join(sale, boutique, "Location", "Code")
+
+		# if len(self.countries) > 0:
+		# 	product_query.join(sale, country, "Country", "Code")
+
+		# if nationality_query:
+		# 	product_query.join(sale, country, "Cust_Nationality", "Code_ISO")
 
 		division_seen = False
 		department_seen = False
@@ -244,12 +269,23 @@ class Vente(object):
 			else:
 				product_query.whereComparaison(sale, "Country", "=", "CO.COUN_Code")
 
-		for ville in self.cities :
-			product_query.where(boutique, "Description", ville)
 
-		if len(self.cities) == 0:
-			for pays in self.countries :
-				product_query.where(country, "Description_FR", pays)
+		for geo_table,geo_item in self.geo:
+			if geo_table == "uzone" and not uzone_joined:
+				product_query.where(uzone, "description_FR", geo_item)
+			else if geo_table == "zone" and not zone_joined:
+				product_query.where(zone, "Description", geo_item)
+			else if geo_table == "subzone" and not subzone_joined:
+				product_query.where(subzone, "Description", geo_item)
+			else if geo_table == "country" and not country_joined:
+				product_query.where(country, "Description_FR", geo_item)
+
+		# for ville in self.cities :
+		# 	product_query.where(boutique, "Description", ville)
+
+		# if len(self.cities) == 0:
+		# 	for pays in self.countries :
+		# 		product_query.where(country, "Description_FR", pays)
 
 		if len(self.boutiques) > 0:
 			for _boutique in self.boutiques :

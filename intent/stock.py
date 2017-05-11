@@ -13,9 +13,8 @@ from sql.tables import item, sale, boutique, country, division, retail, theme, d
 class Stock(object):
 
 	def __init__(self, data):
-		self.cities = data['cities']
-		self.countries = data['countries']
-		self.nationalities = data['nationalities']
+		self.geo = date['geo']
+		# self.nationalities = data['nationalities']
 		self.dates = data['dates']
 		self.numerical_dates = data['numerical_dates']
 		self.items = data['items']
@@ -54,11 +53,28 @@ class Stock(object):
 		if len(self.items) > 0:
 			stock_query.join(stock_daily, item, "Style", "Code") # jselointure sur ITEM_Code = STOC_Style
 
-		if len(self.cities) > 0:
-			stock_query.join(stock_daily, boutique, "Location", "Code") # jointure sur STOC_Location = LOCA_Code
+		# GEOGRAPHY Extraction
 
-		elif len(self.countries) > 0:
-			stock_query.join(stock_daily, country, "Country", "Code") # jointure sur STOC_Country = COUN_Code
+		uzone_joined = False
+		zone_joined = False
+		subzone_joined = False
+		country_joined = False
+		state_joined = False
+
+		stock_query.join(sale, zone, "Zone", "Code")
+
+		for geo_table,geo_item in self.geo:
+			if geo_table == "uzone" and not uzone_joined:
+				stock_query.join(zone, uzone, "uzone", "Code")
+				uzone_joined = True
+			else if geo_table == "zone" and not zone_joined:
+				zone_joined = True
+			else if geo_table == "subzone" and not subzone_joined:
+				stock_query.join(zone, sub_zone, "Code", "Zone")
+				subzone_joined = True
+			else if geo_table == "country" and not country_joined:
+				stock_query.join(sale, country, "Country", "Code")
+				country_joined = True
 
 		"""
 		Conditions
@@ -70,12 +86,15 @@ class Stock(object):
 				stock_query.where(item, "Description", produit[produit_key])
 				liste_item.append(produit[produit_key])
 
-		for ville in self.cities :
-			stock_query.where(boutique, "Description", ville)
-
-		if len(self.cities) == 0:
-			for pays in self.countries :
-				stock_query.where(country, "Description_FR", pays)
+		for geo_table,geo_item in self.geo:
+			if geo_table == "uzone" and not uzone_joined:
+				stock_query.where(uzone, "description_FR", geo_item)
+			else if geo_table == "zone" and not zone_joined:
+				stock_query.where(zone, "Description", geo_item)
+			else if geo_table == "subzone" and not subzone_joined:
+				stock_query.where(subzone, "Description", geo_item)
+			else if geo_table == "country" and not country_joined:
+				stock_query.where(country, "Description_FR", geo_item)
 
 
 		"""

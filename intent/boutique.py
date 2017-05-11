@@ -16,9 +16,8 @@ from sql.tables import item, sale, boutique, country, division, retail, theme, d
 class Boutique(object):
 
 	def __init__(self, data):
-		self.cities = data['cities']
-		self.countries = data['countries']
-		self.nationalities = data['nationalities']
+		self.geo = date['geo']
+		# self.nationalities = data['nationalities']
 		self.dates = data['dates']
 		self.numerical_dates = data['numerical_dates']
 		self.items = data['items']
@@ -73,8 +72,28 @@ class Boutique(object):
 		Jointures
 		"""
 
-		if len(self.countries) > 0 and scale_cible != "pays":
-			boutique_query.join(sale, country, "Country", "Code")
+		# GEOGRAPHY Extraction
+
+		uzone_joined = False
+		zone_joined = False
+		subzone_joined = False
+		country_joined = False
+		state_joined = False
+
+		boutique_query.join(sale, zone, "Zone", "Code")
+
+		for geo_table,geo_item in self.geo:
+			if geo_table == "uzone" and not uzone_joined:
+				boutique_query.join(zone, uzone, "uzone", "Code")
+				uzone_joined = True
+			else if geo_table == "zone" and not zone_joined:
+				zone_joined = True
+			else if geo_table == "subzone" and not subzone_joined:
+				boutique_query.join(zone, sub_zone, "Code", "Zone")
+				subzone_joined = True
+			else if geo_table == "country" and not country_joined:
+				boutique_query.join(sale, country, "Country", "Code")
+				country_joined = True
 
 		produit_selected = []
 		for produit in self.items :
@@ -112,8 +131,15 @@ class Boutique(object):
 				elif produit_key == "produit":
 					boutique_query.where(item, "Description", produit[produit_key])
 
-		for pays in self.countries :
-			boutique_query.where(country, "Description_FR", pays)
+		for geo_table,geo_item in self.geo:
+			if geo_table == "uzone" and not uzone_joined:
+				boutique_query.where(uzone, "description_FR", geo_item)
+			else if geo_table == "zone" and not zone_joined:
+				boutique_query.where(zone, "Description", geo_item)
+			else if geo_table == "subzone" and not subzone_joined:
+				boutique_query.where(subzone, "Description", geo_item)
+			else if geo_table == "country" and not country_joined:
+				boutique_query.where(country, "Description_FR", geo_item)
 
 		"""
 		Finitions

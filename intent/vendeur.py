@@ -15,9 +15,8 @@ foo = SourceFileLoader("sql.tables", "../sql/tables.py").load_module()
 class Vendeur(object):
 
 	def __init__(self, data):
-		self.cities = data['cities']
-		self.countries = data['countries']
-		self.nationalities = data['nationalities']
+		self.geo = date['geo']
+		# self.nationalities = data['nationalities']
 		self.numerical_dates = data['numerical_dates']
 		self.dates = data['dates']
 		self.items = data['items']
@@ -56,13 +55,28 @@ class Vendeur(object):
 
 		seller_query.join_custom(staff, sale_table.request, sale, "Code", "Staff") # jointure sur STAFF_Code = SALE_Staff
 
-		# S'il y a une ville, on fait JOIN sur la table des boutiques
-			# On n'a pas moyen de savoir où travaille un vendeur donc on cherche dans SALE
-		if len(self.cities) > 0:
-			seller_query.join(sale, boutique, "Location", "Code") # jointure sur SALE_Location = LOCA_Code
+		# GEOGRAPHY Extraction
 
-		elif len(self.countries) > 0:
-			seller_query.join(sale, country, "Country", "Code") # jointure sur SALE_Country = COUN_Code
+		uzone_joined = False
+		zone_joined = False
+		subzone_joined = False
+		country_joined = False
+		state_joined = False
+
+		seller_query.join(sale, zone, "Zone", "Code")
+
+		for geo_table,geo_item in self.geo:
+			if geo_table == "uzone" and not uzone_joined:
+				seller_query.join(zone, uzone, "uzone", "Code")
+				uzone_joined = True
+			else if geo_table == "zone" and not zone_joined:
+				zone_joined = True
+			else if geo_table == "subzone" and not subzone_joined:
+				seller_query.join(zone, sub_zone, "Code", "Zone")
+				subzone_joined = True
+			else if geo_table == "country" and not country_joined:
+				seller_query.join(sale, country, "Country", "Code")
+				country_joined = True
 
 		categorie_produit = ''
 		produit_selected = []
@@ -107,12 +121,15 @@ class Vendeur(object):
 				elif produit_key == "produit":
 					seller_query.where(item, "Description", produit[produit_key])
 
-		for ville in self.cities :
-			seller_query.where(boutique, "Description", ville)
-
-		if len(self.cities) == 0:
-			for pays in self.countries :
-				seller_query.where(country, "Description_FR", pays)
+		for geo_table,geo_item in self.geo:
+			if geo_table == "uzone" and not uzone_joined:
+				seller_query.where(uzone, "description_FR", geo_item)
+			else if geo_table == "zone" and not zone_joined:
+				seller_query.where(zone, "Description", geo_item)
+			else if geo_table == "subzone" and not subzone_joined:
+				seller_query.where(subzone, "Description", geo_item)
+			else if geo_table == "country" and not country_joined:
+				seller_query.where(country, "Description_FR", geo_item)
 
 
 		"""

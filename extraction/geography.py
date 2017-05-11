@@ -132,8 +132,7 @@ class WordClassification(object):
             #print(score)
             scores[idx] = score
             if (score > self.threshold):
-                self.match_in_csv(term)
-                found.append(term)
+                found += self.match_in_csv(term)
                 #found.append({term: score})
 
         return found
@@ -142,7 +141,9 @@ class WordClassification(object):
         for category in self.order:
             for key in category:
                 if self.get_product(term, category[key]["file"], category[key]["column"]):
-                    print(term," se trouve bien dans ",key)
+                    print(term," se trouve bien dans ",key)`
+                    return [(key,term)]
+        return []
     
     def find_similar_city(self, text):
         return self.find_similar(self.cities,text)
@@ -166,14 +167,14 @@ class WordClassification(object):
         return cloned_text
     
     def find_similar_words(self, text):
-        json = {
-            "cities": self.find_similar_city(text),
-            "countries": self.find_similar_country(text),
-            "nationalities": self.find_similar_nationality(text)
-        }
-        for key in json:
-            for word in json[key]:
-                text = text.replace(word,'')
+        # json = {
+        #     "cities": self.find_similar_city(text),
+        #     "countries": self.find_similar_country(text),
+        #     "nationalities": self.find_similar_nationality(text)
+        # }
+        json = self.find_similar_city(text)+self.find_similar_country(text)+self.find_similar_nationality(text)
+        for table,word in json:
+            text = text.replace(word,'')
         return (json,text)
 
 # world = WordClassification()
