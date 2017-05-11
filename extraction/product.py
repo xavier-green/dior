@@ -10,23 +10,23 @@ stop_words = [x for x in stop_words_old if x not in not_stop_words]
 import re
 from textblob import TextBlob
 from textblob_fr import PatternTagger, PatternAnalyzer
-from nltk.util import ngrams 
+from nltk.util import ngrams
 
 class ProductExtractor(object):
-    
+
     authorized = [
         "JJ","NN","NNS","NN-JJ","JJ-NN","NN-NN","NNS-NNS","NNS-NN","NN-NNS","NNS-JJ","JJ-NNS","NNS-IN-NNS","NN-IN-NN","NN-IN-NNS","JJ-IN-NNS","NNS-IN-JJ","JJ-IN-NN","NN-IN-JJ","NN-NN-NN"
     ]
-    
+
     not_replace = [
-        "geo", "nat", "date", "prix", "vente", "stock", "boutique","part", "couleur", "matière", "francais", "moyen", 
-        "jours", "couverture", "article", "new", "mix", "type", "cruise", "zone", "clients", "gros", "grands", "top", 
+        "geo", "nat", "date", "prix", "vente", "stock", "boutique","part", "couleur", "matière", "francais", "moyen",
+        "jours", "couverture", "article", "new", "mix", "type", "cruise", "zone", "clients", "gros", "grands", "top",
         "nom", "collection", "endroit", "ete", "md", "fp", "mark", "down", "full", "price", "markdown", "fullprice"
     ]
-    
-    def __init__(self, produit_path='data/products.csv', division_path='data/Divisions.csv', 
-        departement_path='data/Departements.csv', groupe_path='data/Groupe.csv', theme_path='data/Themes.csv', 
-        family_path='data/family.csv', color_path='data/color.csv', material_path='data/material.csv', 
+
+    def __init__(self, produit_path='data/products.csv', division_path='data/Divisions.csv',
+        departement_path='data/Departements.csv', groupe_path='data/Groupe.csv', theme_path='data/Themes.csv',
+        family_path='data/family.csv', color_path='data/color.csv', material_path='data/material.csv',
         shape_path='data/shape.csv', n_max=3):
 
         self.produit = pd.read_csv(produit_path,names=['Produit']).dropna().drop_duplicates()
@@ -79,21 +79,21 @@ class ProductExtractor(object):
         print("Cleaning csv ...")
         self.clean_csv()
         self.n_max = n_max
-    
+
     def removeRowWithSpecialCharacterAndNumbers(self, w):
         pattern = re.compile('^[a-zA-Z-\' ]+$')
         return pattern.match(w) != None
-    
+
     def removShortStrings(self, x):
         return " "+" ".join([w.lower() for w in x.split(" ")if len(w)>2]).rstrip().lstrip()+" "
-    
+
     # def clean_product_csv(self):
     #     self.produit = self.produit[self.produit.Produit.apply(self.removeRowWithSpecialCharacterAndNumbers)]
     #     self.produit['Produit'] = self.produit.Produit.apply(self.removShortStrings)
     #     self.produit = self.produit.drop_duplicates()
     #     empties = self.produit['Produit'] != ""
     #     self.produit = self.produit[empties]
-    
+
     def low(self, x):
         return " "+x.lower().rstrip().lstrip()+" "
 
@@ -105,19 +105,19 @@ class ProductExtractor(object):
         empties = column != ""
         file = file[empties]
         return file,column
-        
+
     # def clean_division_csv(self):
     #     self.division["Division"] = self.division.Division.apply(self.low)
-    
+
     # def clean_departement_csv(self):
     #     self.departement["Departement"] = self.departement.Departement.apply(self.low)
-        
+
     # def clean_groupe_csv(self):
     #     self.groupe["Groupe"] = self.groupe.Groupe.apply(self.low)
-        
+
     # def clean_theme_csv(self):
     #     self.theme["Theme"] = self.theme.Theme.apply(self.low)
-        
+
     def clean_csv(self):
 
         for item_category in self.order:
@@ -131,14 +131,14 @@ class ProductExtractor(object):
         # self.clean_departement_csv()
         # self.clean_groupe_csv()
         # self.clean_theme_csv()
-    
+
     def csv_contains(self, w, csv_file, csv_column):
         #print(self.csv[self.csv.Produit.str.contains(" "+w.rstrip().lstrip()+" ")])
         return csv_file[csv_column.str.contains(" "+w.rstrip().lstrip()+" ")]
-    
+
     def get_product(self, sentence, csv_file, csv_column):
         return len(self.csv_contains(sentence, csv_file, csv_column))>0
-    
+
     def aggressive_tokenize(self, text):
         min_length = 3
         words = map(lambda word: word.lower(), text.split(" "));
@@ -153,7 +153,7 @@ class ProductExtractor(object):
         for a in t:
             d[a[0].lower()] = a[1]
         return d
-    
+
     def extract(self, sentence):
         results = []
         pattern = re.compile('^[a-zA-Z0-9 ]')
@@ -170,7 +170,7 @@ class ProductExtractor(object):
                     print("extraction en cours pour "+key)
                     results, sentence = self.extract_N(sentence, tags_dict, orde[key], key, results, i)
         return results
-        
+
     def extract_N(self, sentence, tags_dict, csv, bdd, prev_results, n):
         prev_results_copy = prev_results[:]
         sentence_tokens = sentence.split(" ")
@@ -199,7 +199,7 @@ class ProductExtractor(object):
             for key in el:
                 sentence = sentence.replace(el[key],'')
         return (ok_products+[a for a in prev_results_copy if a != ''],sentence)
-    
+
     def clean_text(self, text):
         copy = text[:].lower()
         to_replace = self.extract(text)
@@ -209,27 +209,15 @@ class ProductExtractor(object):
                 copy = copy.replace(w[key], "ITEM")
         return copy
 
+
 #itm = ProductExtractor()
 #itm = ProductExtractor(produit_path='/Users/xav/Downloads/products.csv',
     # division_path='/Users/xav/Desktop/DTY/Dior/rest/data/Divisions.csv',
     # departement_path='/Users/xav/Desktop/DTY/Dior/rest/data/Departements.csv',
     # groupe_path='/Users/xav/Desktop/DTY/Dior/rest/data/Groupe.csv',
     # theme_path='/Users/xav/Desktop/DTY/Dior/rest/data/Themes.csv',
-    # family_path='/Users/xav/Desktop/DTY/Dior/rest/data/family.csv', 
-    # color_path='/Users/xav/Desktop/DTY/Dior/rest/data/color.csv', 
-    # material_path='/Users/xav/Desktop/DTY/Dior/rest/data/material.csv', 
+    # family_path='/Users/xav/Desktop/DTY/Dior/rest/data/family.csv',
+    # color_path='/Users/xav/Desktop/DTY/Dior/rest/data/color.csv',
+    # material_path='/Users/xav/Desktop/DTY/Dior/rest/data/material.csv',
     # shape_path='/Users/xav/Desktop/DTY/Dior/rest/data/shape.csv')
 #print(itm.extract("combien de bags en croco avons nous vendu depuis"))
-
-
-
-
-
-
-
-
-
-
-
-
-

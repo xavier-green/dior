@@ -17,6 +17,8 @@ print("Importing item class")
 from extraction.product import ProductExtractor
 print("Importing boutique class")
 from extraction.boutique import extract_boutique
+print("Importing glossaire")
+from extraction.glossaire import translate_with_glossaire
 
 print("Importing training data")
 from data import intent_data
@@ -77,6 +79,7 @@ bouti = extract_boutique('data/Boutiques.csv')
 def process_sentence(sentence,seuil=None):
 	copy = sentence[:]
 	sentence = sentence.lower()
+	sentence = translate_with_glossaire(sentence)
 	global model_fasttext
 	if model_fasttext is None:
 		model_fasttext = fasttext.load_model(model_fasttext_path)
