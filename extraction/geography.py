@@ -13,7 +13,8 @@ from textblob import TextBlob
 from textblob_fr import PatternTagger, PatternAnalyzer
 from nltk.util import ngrams
 
-import urllib.request
+from urllib.request import quote
+from urllib.request import urlopen
 
 def getWord2vecVector(word):
     print("Getting vector for "+word)
