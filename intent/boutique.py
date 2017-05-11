@@ -6,7 +6,7 @@ foo = SourceFileLoader("sql.tables", "../sql/tables.py").load_module()
 
 """
 
-from mise_en_forme import affichage_euros, affichage_date
+from intent.mise_en_forme import affichage_euros, affichage_date
 # sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'sql'))
 from sql.request import query
 

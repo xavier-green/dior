@@ -34,6 +34,7 @@ def tokenize(text):
     return cleaned
 
 def getWord2vecVector(word):
+    print("Getting vector for "+word)
     vec = urllib.request.urlopen("http://vps397505.ovh.net:5000/"+word).read()
     return [float(x) for x in vec.decode("utf-8").replace("[\n  ","").replace("\n]\n","").split(", \n  ")]
 
@@ -52,9 +53,13 @@ class Word2VecVectorizer(object):
 class intentModel(object):
 
     def __init__(self):
+        print("importing geo extractor")
         self.world = WordClassification()
+        print("importing date extractor")
         self.datex = DateExtractor()
+        print("importing item extractor")
         self.itm = ProductExtractor()
+        print("importing boutique extractor")
         self.boutique = extract_boutique('data/Boutiques.csv')
 
     def remove_variables(self, text):

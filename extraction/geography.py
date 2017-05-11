@@ -16,6 +16,7 @@ from nltk.util import ngrams
 import urllib.request
 
 def getWord2vecVector(word):
+    print("Getting vector for "+word)
     vec = urllib.request.urlopen("http://vps397505.ovh.net:5000/"+word).read()
     return [float(x) for x in vec.decode("utf-8").replace("[\n  ","").replace("\n]\n","").split(", \n  ")]
 
