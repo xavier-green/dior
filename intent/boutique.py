@@ -7,10 +7,11 @@ foo = SourceFileLoader("sql.tables", "../sql/tables.py").load_module()
 """
 
 from mise_en_forme import affichage_euros, affichage_date
-from sql.request import query
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'sql'))
+from request import query
 
 # Import de toutes les tables utilisées
-from sql.tables import item, sale, boutique, country, division, retail, theme, department, zone, sub_zone, uzone
+from tables import item, sale, boutique, country, division, retail, theme, department, zone, sub_zone, uzone
 
 class Boutique(object):
 
