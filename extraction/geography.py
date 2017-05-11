@@ -17,7 +17,7 @@ import urllib.request
 
 def getWord2vecVector(word):
     print("Getting vector for "+word)
-    vec = urllib.request.urlopen("http://vps397505.ovh.net/"+word).read()
+    vec = urllib.request.urlopen("http://vps397505.ovh.net/"+word.encode("utf-8")).read()
     return [float(x) for x in vec.decode("utf-8").replace("[\n  ","").replace("\n]\n","").split(", \n  ")]
 
 class WordClassification(object):
