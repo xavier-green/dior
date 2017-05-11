@@ -34,7 +34,7 @@ def tokenize(text):
     return cleaned
 
 def getWord2vecVector(word):
-    vec = urllib.request.urlopen("http://vps397505.ovh.net:5000/soleil").read()
+    vec = urllib.request.urlopen("http://vps397505.ovh.net:5000/"+word).read()
     return [float(x) for x in vec.decode("utf-8").replace("[\n  ","").replace("\n]\n","").split(", \n  ")]
 
 class Word2VecVectorizer(object):
