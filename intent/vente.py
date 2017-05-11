@@ -451,7 +451,7 @@ class Vente(object):
 			for n, ligne in enumerate(query_result):
 				if n > 0:
 					colonnes = ligne.split('#')
-					prix_ventes = colonnes[len(colonnes)]
+					prix_ventes = colonnes[len(colonnes)-1]
 					somme += float(prix_ventes)
 				if n > 0 and n < 10:
 					details_items.append(colonnes)
