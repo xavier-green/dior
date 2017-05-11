@@ -21,7 +21,8 @@ from sklearn.externals import joblib
 from sklearn.feature_extraction.text import TfidfTransformer
 from sklearn.svm import SVC
 
-import urllib.request
+from urllib.request import quote
+from urllib.request import urlopen
 
 def tokenize(text):
     stripped_punctuation = re.sub(r'[-_;,.?!]',' ',text.lower())
@@ -35,7 +36,9 @@ def tokenize(text):
 
 def getWord2vecVector(word):
     print("Getting vector for "+word)
-    vec = urllib.request.urlopen("http://vps397505.ovh.net/"+word.encode("utf-8")).read()
+    url = "vps397505.ovh.net/"+word
+    url = quote(url.encode('utf8'))
+    vec = urlopen("http://"+url).read()
     return [float(x) for x in vec.decode("utf-8").replace("[\n  ","").replace("\n]\n","").split(", \n  ")]
 
 class Word2VecVectorizer(object):
