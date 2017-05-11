@@ -18,7 +18,7 @@ glossaire_1G = {
     "jo":"jewellery",
     "joaillerie":"jewellery",
     "horlo":"watches",
-    "CJ":"custom jewellery",
+    "cj":"custom jewellery",
     "parapluie":"umbrellas",
     "parapluies":"umbrellas",
     "lunette":"eyewear",
