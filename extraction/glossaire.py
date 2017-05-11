@@ -18,7 +18,7 @@ glossaire_1G = {
     "jo":"jewellery",
     "joaillerie":"jewellery",
     "horlo":"watches",
-    "CJ":"custom jewellery",
+    "cj":"custom jewellery",
     "parapluie":"umbrellas",
     "parapluies":"umbrellas",
     "lunette":"eyewear",
@@ -55,8 +55,8 @@ glossaire_1G = {
 
 glossaire_2G = {
     "time pieces":"watches",
-    "demi mesure":"Mesure-1/2 mesure",
-    "petite maro":"SLG",
+    "demi mesure":"mesure-1/2 mesure",
+    "petite maro":"slg",
     "fashion jo":"custom jewellery",
     "fashion joaillerie":"custom jewellery",
     "haute horlo":"high horology",
@@ -67,7 +67,7 @@ glossaire_2G = {
 
 glossaire_3G = {
     "linge de maison":"home linens",
-    "small leather goods":"SLG"
+    "small leather goods":"slg"
 }
 
 glossaire_4G = {
