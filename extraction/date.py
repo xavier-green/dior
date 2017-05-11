@@ -48,7 +48,7 @@ month_words = {
 }
 week_words = {
     "week":1,
-    "weeks":1
+    "weeks":1,
     "semaine":1,
     "semaines":1,
     "wtd":-1
