@@ -55,6 +55,10 @@ class ProductExtractor(object):
                 "file": self.color,
                 "column": self.color.Color
             }},
+            {"groupe": {
+                "file": self.groupe,
+                "column": self.groupe.Groupe
+            }},
             {"material": {
                 "file": self.material,
                 "column": self.material.Material
@@ -66,10 +70,6 @@ class ProductExtractor(object):
             {"theme": {
                 "file": self.theme,
                 "column": self.theme.Theme
-            }},
-            {"groupe": {
-                "file": self.groupe,
-                "column": self.groupe.Groupe
             }},
             {"produit": {
                 "file": self.produit,

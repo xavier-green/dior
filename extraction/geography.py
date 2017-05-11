@@ -170,7 +170,6 @@ class WordClassification(object):
                 text = text.replace(word,'')
         return (json,text)
 
-
 # world = WordClassification(model_fasttext)
 # print(world.find_similar_words("La semaine dernière, qui a conclu le plus de ventes à madrid"))
 # print(world.find_similar_words("Les américains achètent-ils plus que les japonais"))
