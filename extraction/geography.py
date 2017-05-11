@@ -2,9 +2,6 @@
 
 import sys
 sys.path.append('/usr/local/Cellar/python3/3.6.0/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages')
-# import fasttext
-# model_fasttext_path = '/Users/xav/Downloads/wiki.fr/wiki.fr.bin'
-# model_fasttext = fasttext.load_model(model_fasttext_path)
 import numpy as np
 import re
 import pandas as pd
@@ -14,17 +11,28 @@ not_stop_words = ["ou","où","qui","quand","quel","quelle","quelle"]
 stop_words = [x for x in stop_words_old if x not in not_stop_words]
 from textblob import TextBlob
 from textblob_fr import PatternTagger, PatternAnalyzer
-from nltk.util import ngrams 
+from nltk.util import ngrams
+
+from urllib.request import quote
+from urllib.request import urlopen
+
+def getWord2vecVector(word):
+    if word.strip() != "":
+        print("Getting vector for "+word)
+        url = "vps397505.ovh.net/"+word
+        url = quote(url.encode('utf8'))
+        vec = urlopen("http://"+url).read()
+        return [float(x) for x in vec.decode("utf-8").replace("[\n  ","").replace("\n]\n","").split(", \n  ")]
+    return np.zeros(300)
 
 class WordClassification(object):
 
-    def __init__(self, word2vec_model, threshold=0.14, uzone_path='data/uzone.csv', zone_path='data/zone.csv', 
+    def __init__(self, threshold=0.14, uzone_path='data/uzone.csv', zone_path='data/zone.csv', 
         subzone_path='data/szone.csv', country_path='data/country.csv', state_path='data/state.csv'):
 
         self.cities = ["Paris","London","Tokyo","NewYork","Seoul","Dubai","Madrid","Ginza"]
         self.countries = ["EtatsUnis","Espagne","Japon","Chine","France","Emirats","Suisse","Amerique"]
         self.nationalities = ["Russe","Francais","Americain","Chinois"]
-        self.word2vec_model = word2vec_model
         self.threshold = threshold
 
         self.uzone = pd.read_csv(uzone_path,names=['Uzone']).dropna().drop_duplicates()
@@ -106,11 +114,10 @@ class WordClassification(object):
         
         total_comparison_corpus = similar_classed
 
-        C = np.zeros((len(total_comparison_corpus),self.word2vec_model.dim))
+        C = np.zeros((len(total_comparison_corpus),300))
 
         for idx, term in enumerate(total_comparison_corpus):
-            if term.lower() in self.word2vec_model.words:
-                C[idx,:] = self.word2vec_model[term.lower()]
+            C[idx,:] = getWord2vecVector(term)
         #print(C)
 
 
@@ -119,16 +126,15 @@ class WordClassification(object):
         found=[]
 
         for idx, term in enumerate(tokens):
-            if term in self.word2vec_model.words:
-                vec = self.word2vec_model[term]
-                cosines = self.cos(C,vec)
-                score = np.mean(cosines)
-                #print(score)
-                scores[idx] = score
-                if (score > self.threshold):
-                    self.match_in_csv(term)
-                    found.append(term)
-                    #found.append({term: score})
+            vec = getWord2vecVector(term)
+            cosines = self.cos(C,vec)
+            score = np.mean(cosines)
+            #print(score)
+            scores[idx] = score
+            if (score > self.threshold):
+                self.match_in_csv(term)
+                found.append(term)
+                #found.append({term: score})
 
         return found
 
@@ -170,7 +176,7 @@ class WordClassification(object):
                 text = text.replace(word,'')
         return (json,text)
 
-# world = WordClassification(model_fasttext)
+# world = WordClassification()
 # print(world.find_similar_words("La semaine dernière, qui a conclu le plus de ventes à madrid"))
 # print(world.find_similar_words("Les américains achètent-ils plus que les japonais"))
 # print(world.find_similar_words("Quelle part de russes dans les achats de Lady Dior"))

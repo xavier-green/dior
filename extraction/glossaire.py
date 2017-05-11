@@ -94,7 +94,7 @@ def glossaire_NG(text, glossaire, n):
 
 def translate_with_glossaire(text):
     print("Question initiale :", text)
-    response = glossaire_NG(response, glossaire_4G, 4)
+    response = glossaire_NG(text, glossaire_4G, 4)
     response = glossaire_NG(response, glossaire_3G, 3)
     response = glossaire_NG(response, glossaire_2G, 2)
     response = glossaire_NG(response, glossaire_1G, 1)

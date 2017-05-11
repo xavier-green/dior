@@ -21,7 +21,8 @@ from sklearn.externals import joblib
 from sklearn.feature_extraction.text import TfidfTransformer
 from sklearn.svm import SVC
 
-import urllib.request
+from urllib.request import quote
+from urllib.request import urlopen
 
 def tokenize(text):
     stripped_punctuation = re.sub(r'[-_;,.?!]',' ',text.lower())
@@ -34,8 +35,13 @@ def tokenize(text):
     return cleaned
 
 def getWord2vecVector(word):
-    vec = urllib.request.urlopen("http://vps397505.ovh.net:5000/soleil").read()
-    return [float(x) for x in vec.decode("utf-8").replace("[\n  ","").replace("\n]\n","").split(", \n  ")]
+    if word.strip() != "":
+        print("Getting vector for "+word)
+        url = "vps397505.ovh.net/"+word
+        url = quote(url.encode('utf8'))
+        vec = urlopen("http://"+url).read()
+        return [float(x) for x in vec.decode("utf-8").replace("[\n  ","").replace("\n]\n","").split(", \n  ")]
+    return np.zeros(300)
 
 class Word2VecVectorizer(object):
     
@@ -52,9 +58,13 @@ class Word2VecVectorizer(object):
 class intentModel(object):
 
     def __init__(self):
+        print("importing geo extractor")
         self.world = WordClassification()
+        print("importing date extractor")
         self.datex = DateExtractor()
+        print("importing item extractor")
         self.itm = ProductExtractor()
+        print("importing boutique extractor")
         self.boutique = extract_boutique('data/Boutiques.csv')
 
     def remove_variables(self, text):
