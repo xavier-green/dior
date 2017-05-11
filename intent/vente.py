@@ -52,6 +52,7 @@ class Vente(object):
 		croissance_query = False
 		margin_query = False
 		nationality_query = False
+		quantity_query = False
 		touriste = False
 
 		first_word = self.sentence.split(" ")[0]
@@ -90,6 +91,9 @@ class Vente(object):
 		if ('touriste' in self.sentence.lower()) or ('foreign' in self.sentence.lower()):
 			nationality_query = True
 			touriste = True
+
+		if ('quantite' in self.sentence.lower()) or ('nombre' in self.sentence.lower()):
+			quantity_query = True
 
 		if (not croissance_query and not exceptionnal_query) and len(self.items) == 0:
 			return "Veuillez préciser un produit svp"
@@ -163,10 +167,11 @@ class Vente(object):
 		elif croissance_query:
 			product_query = query(sale, [("sum", sale, 'Std_RP_WOTax_REF')])
 		elif margin_query:
-			product_query = query(sale, columns_requested+[("sum", sale, 'Std_RP_WOTax_REF'),("sum", sale, 'Unit_Avg_Cost_REF')])
-		else:
+			product_query = query(sale, columns_requested + [("sum", sale, 'Std_RP_WOTax_REF'),("sum", sale, 'Unit_Avg_Cost_REF')])
+		elif quantity_query:
 			product_query = query(sale, columns_requested)
-
+		else:
+			product_query = query(sale, columns_requested + [("sum", sale, 'Std_RP_WOTax_REF')])
 
 		"""
 		On fait les join
@@ -404,7 +409,7 @@ class Vente(object):
 			print("***************")
 			return [product_query.request, result]
 
-		else:
+		elif quantity_query:
 			for col in column_groupby:
 				product_query.groupby(col[0], col[1])
 			query_result = product_query.write().split('\n')
@@ -427,6 +432,38 @@ class Vente(object):
 			end_date = self.numerical_dates[0][1] if len(self.numerical_dates) > 0 else '20170225'
 
 			result = "Il y a eu " + str(somme) + " ventes en lien avec " + " et/ou ".join(produit_selected) + " "
+			result += MDorFP
+			result += "du " + start_date + " au " + end_date
+			result += "dans les boutiques de " + ', '.join([b for b in self.cities]) + " " if len(self.cities) > 0 else ''
+			result += "dans le pays " + ", ".join([p for p in self.countries]) + " " if len(self.cities) == 0 and len(self.countries) > 0 else ''
+
+			print("***************")
+			return [product_query.request, result, details_items]
+
+
+		else:
+			for col in column_groupby:
+				product_query.groupby(col[0], col[1])
+			query_result = product_query.write().split('\n')
+
+			somme = 0
+			details_items = []
+			for n, ligne in enumerate(query_result):
+				if n > 0:
+					colonnes = ligne.split('#')
+					prix_ventes = colonnes[len(colonnes)]
+					somme += float(prix_ventes)
+				if n > 0 and n < 10:
+					details_items.append(colonnes)
+				if n == 10:
+					details_items.append("...")
+					break
+			print(details_items)
+
+			start_date = self.numerical_dates[0][0] if len(self.numerical_dates) > 0 else '20170225'
+			end_date = self.numerical_dates[0][1] if len(self.numerical_dates) > 0 else '20170225'
+
+			result = "Il y a eu " + affichage_euros(str(somme)) + " HT de CA en lien avec " + " et/ou ".join(produit_selected) + " "
 			result += MDorFP
 			result += "du " + start_date + " au " + end_date
 			result += "dans les boutiques de " + ', '.join([b for b in self.cities]) + " " if len(self.cities) > 0 else ''
