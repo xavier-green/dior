@@ -77,17 +77,17 @@ class Vente(object):
 				print("Sale specific to exceptionnal sales, default seuil at 5k")
 				exceptionnal_query = True
 
-		if ('margin' in self.sentence.lower()):
+		if ('margin' in self.sentence.lower()) or ('marge' in self.sentence.lower()):
 			margin_query = True
 
-		if ('croissance' in self.sentence.lower()):
+		if ('croissance' in self.sentence.lower()) or ('trend' in self.sentence.lower()):
 			print("Sale specific to a croissance")
 			croissance_query = True
 
 		if ('local' in self.sentence.lower() or 'locaux' in self.sentence.lower()):
 			nationality_query = True
 
-		if ('touriste' in self.sentence.lower()):
+		if ('touriste' in self.sentence.lower()) or ('foreign' in self.sentence.lower()):
 			nationality_query = True
 			touriste = True
 
