@@ -15,7 +15,12 @@ day_words = {
     "jours":1,
     "hier":1,
     "avant-hier":2,
-    "aujourd'hui":0
+    "aujourd'hui":0,
+    "day":1,
+    "today":0,
+    "yesterday":1,
+    "day before yesterday":2,
+    "daily":1
 }
 year_words = {
     "année":1,
@@ -24,57 +29,83 @@ year_words = {
     "annees":1,
     "an":1,
     "ans":1,
-    "ytd":-1
+    "ytd":-1,
+    "year":1,
+    "years":1,
+    "yearly":1,
 }
 month_words = {
     "mois":1,
     "trimestre":3,
     "trimestres":3,
-    "semestre":4,
-    "semestres":4,
-    "mtd":-1
+    "semestre":6,
+    "semestres":6,
+    "mtd":-1,
+    "month":1,
+    "months":1,
+    "quarter":3,
+    "semester":6
 }
 week_words = {
+    "week":1,
+    "weeks":1
     "semaine":1,
     "semaines":1,
     "wtd":-1
 }
-previous_words = ["il y a","depuis","ce","cette","dernier","derniers","derniere","dernieres"]
-post_words = ["dernier","derniers","derniere","dernière"]
+previous_words = ["il y a","depuis","ce","cette","dernier","derniers","derniere","dernieres", "last", "previous"]
+post_words = ["dernier","derniers","derniere","dernière", "précédente", "précédent", "precedente", "precedent", "last"]
 
 chiffres = {
     "un":1,
+    "one":1,
     "deux":2,
+    "two":2,
     "trois":3,
+    "three":3,
     "quatre":4,
+    "four":4,
     "cinq":5,
+    "five":5,
     "six":6,
     "sept":7,
+    "seven":7,
     "huit":8,
+    "height":8,
     "neuf":9,
+    "nine":9,
     "dix":10,
+    "ten":10,
     "quinze":15,
     "vingt":20
 }
 
 date_words = {
     "mois":-30,
+    "month":-30,
     "semaine":-7,
     "semaines":-7,
+    "week":-7,
     "année":-365,
     "années":-365,
     "annee":-365,
     "annees":-365,
     "an":-365,
     "ans":-365,
+    "year":-365,
     "jour":-1,
     "jours":-1,
+    "day":-1,
     "trimestre":-90,
-    "semestre":-120,
-    "semestres":-120,
+    "quarter":-90,
+    "semestre":-180,
+    "semestres":-180,
+    "semester":-180,
     "hier":-1,
+    "yesterday":-1,
     "avant-hier":-2,
-    "aujourd'hui":0
+    "aujourd'hui":0,
+    "today":0
 }
 
 class DateExtractor(object):
@@ -129,7 +160,7 @@ class DateExtractor(object):
         current_date = datetime.datetime.strptime(date_string, dateFormat)
         previous_date = current_date + datetime.timedelta(days=minus)
         return previous_date.strftime(dateFormat)
-    
+
     def getCurrentDate(self):
         return {
             "day": int(time.strftime("%d")),
@@ -149,7 +180,7 @@ class DateExtractor(object):
             endDate = datetime.datetime(newYear, 12, 31, 12, 00)
         endDate = endDate.strftime(dateFormat)
         return [startDate,endDate]
-    
+
     def mois(self, remove=1,dateFormat="%Y%m%d",toDate=False):
         currentDate = self.getCurrentDate()
         newMonth = currentDate["month"] - remove
@@ -157,7 +188,7 @@ class DateExtractor(object):
         if (newMonth<=0):
             newMonth += 12
             year -= 1
-        last_m, last_day = monthrange(year, newMonth) 
+        last_m, last_day = monthrange(year, newMonth)
         startDate = datetime.datetime(year, newMonth, 1, 12, 00)
         startDate = startDate.strftime(dateFormat)
         if toDate:
@@ -173,7 +204,7 @@ class DateExtractor(object):
         year = currentDate["year"]
         if (newWeek<=0):
             newWeek += 52
-            year -= 1 
+            year -= 1
         stime = time.strptime('{} {} 1'.format(year, newWeek), '%Y %W %w')
         sDay,sMonth = stime.tm_mday,stime.tm_mon
         etime = time.strptime('{} {} 1'.format(year, newWeek+1), '%Y %W %w')
@@ -186,7 +217,7 @@ class DateExtractor(object):
             endDate = datetime.datetime(year, eMonth, eDay, 12, 00)
         endDate = endDate.strftime(dateFormat)
         return [startDate,endDate]
-    
+
     def jour(self, remove=1,dateFormat="%Y%m%d"):
         currentDate = self.getCurrentDate()
         newDay = currentDate["day"] - remove
@@ -226,7 +257,7 @@ class DateExtractor(object):
                 "function": self.annee
             },
         }
-        
+
         for key in order:
             for date_word in order[key]["words"]:
                 try:
