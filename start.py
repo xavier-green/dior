@@ -27,9 +27,6 @@ data = intent_data.intentData.data
 print("Importing fasttext model")
 import sys
 sys.path.append('/usr/local/Cellar/python3/3.6.0/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages')
-import fasttext
-model_fasttext_path = 'D:/dior/wiki.fr.bin'
-model_fasttext = fasttext.load_model(model_fasttext_path)
 
 print("Importing responses")
 from response import Response
@@ -45,7 +42,7 @@ print("Importing treetagger")
 
 print("Training model")
 
-intent_model = intentModel(model_fasttext)
+intent_model = intentModel()
 intent_model.train(data)
 #intent_model.predict("prix ht de la rose des vents")
 
@@ -71,7 +68,7 @@ class Logs(admin.BaseView):
 
 app = Flask("test", template_folder='D:/dior/templates')
 
-world = WordClassification(model_fasttext)
+world = WordClassification()
 datex = DateExtractor()
 word = ProductExtractor()
 bouti = extract_boutique('data/Boutiques.csv')
@@ -80,9 +77,6 @@ def process_sentence(sentence,seuil=None):
 	copy = sentence[:]
 	sentence = sentence.lower()
 	sentence = translate_with_glossaire(sentence)
-	global model_fasttext
-	if model_fasttext is None:
-		model_fasttext = fasttext.load_model(model_fasttext_path)
 	intent_extracted = intent_model.predict(sentence)
 	geo_extracted,sentence = world.find_similar_words(sentence)
 	numerical_dates_extracted = datex.extract_numerical(sentence)
@@ -161,7 +155,6 @@ def vector_get(sentence):
 
 @app.route('/', methods=["POST"]) # same but getting the sentence via POST
 def vector_post():
-	global model_fasttext
 	sentence = request.json.get("sentence", None)
 	seuil = request.json.get("seuil", None)
 	return process_sentence(sentence,seuil=seuil)
