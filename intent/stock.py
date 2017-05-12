@@ -67,12 +67,12 @@ class Stock(object):
 			if geo_table == "uzone" and not uzone_joined:
 				stock_query.join(zone, uzone, "uzone", "Code")
 				uzone_joined = True
-			else if geo_table == "zone" and not zone_joined:
+			elif geo_table == "zone" and not zone_joined:
 				zone_joined = True
-			else if geo_table == "subzone" and not subzone_joined:
+			elif geo_table == "subzone" and not subzone_joined:
 				stock_query.join(zone, sub_zone, "Code", "Zone")
 				subzone_joined = True
-			else if geo_table == "country" and not country_joined:
+			elif geo_table == "country" and not country_joined:
 				stock_query.join(sale, country, "Country", "Code")
 				country_joined = True
 
@@ -89,11 +89,11 @@ class Stock(object):
 		for geo_table,geo_item in self.geo:
 			if geo_table == "uzone" and not uzone_joined:
 				stock_query.where(uzone, "description_FR", geo_item)
-			else if geo_table == "zone" and not zone_joined:
+			elif geo_table == "zone" and not zone_joined:
 				stock_query.where(zone, "Description", geo_item)
-			else if geo_table == "subzone" and not subzone_joined:
+			elif geo_table == "subzone" and not subzone_joined:
 				stock_query.where(subzone, "Description", geo_item)
-			else if geo_table == "country" and not country_joined:
+			elif geo_table == "country" and not country_joined:
 				stock_query.where(country, "Description_FR", geo_item)
 
 
