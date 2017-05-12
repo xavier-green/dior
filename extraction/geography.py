@@ -155,12 +155,12 @@ class WordClassification(object):
     def get_cleaned(self,text):
         result = self.find_similar_city(text)+self.find_similar_country(text)
         cloned_text = '%s' % text
-        for element in result:
+        for table,element in result:
             print("GEO replacing: "+element)
             cloned_text = cloned_text.replace(element,"GEO")
 
         result = self.find_similar_nationality(text)
-        for element in result:
+        for table,element in result:
             print("NAT replacing: "+element)
             cloned_text = cloned_text.replace(element,"NAT")
         #print("cleaned text: ",cloned_text)
