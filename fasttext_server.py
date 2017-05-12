@@ -10,7 +10,7 @@ import numpy as np
 app = Flask(__name__)
 
 import fasttext
-model_fasttext_path = '/Users/xav/Downloads/wiki.fr/wiki.fr.bin'
+model_fasttext_path = 'wiki.fr.bin'
 model_fasttext = fasttext.load_model(model_fasttext_path)
 
 @app.route('/<string:sentence>', methods=["GET"])
