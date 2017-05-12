@@ -396,7 +396,7 @@ class Vente(object):
 				if n > 0 and n < 10:
 					details_items.append(colonnes)
 				if n == 10:
-					details_items.append("...")
+					details_items.append(["...", "..."])
 					break
 			real_items = []
 			margins = []
@@ -463,7 +463,7 @@ class Vente(object):
 				if n > 0 and n < 10:
 					details_items.append(colonnes)
 				if n == 10:
-					details_items.append("...")
+					details_items.append(["...", "..."])
 					break
 			print(details_items)
 
@@ -512,7 +512,7 @@ class Vente(object):
 				if n > 0 and n < 10:
 					details.append([categorie + " " + colonnes[0], affichage_euros(colonnes[len(colonnes)-1])])
 				if n == 10:
-					details.append("...")
+					details.append(["...", "..."])
 					break
 			print(details)
 
@@ -539,7 +539,7 @@ class Vente(object):
 				if n > 0 and n < 10:
 					details.append(colonnes)
 				if n == 10:
-					details.append("...")
+					details.append(["...", "..."])
 					break
 			print(details)
 
