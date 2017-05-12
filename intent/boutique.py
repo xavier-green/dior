@@ -43,7 +43,6 @@ class Boutique(object):
 
 		sale_table = query(sale, ['*'])
 
-		sale_table.join(sale, zone, 'Zone', 'Code')
 		sale_table.whereNotJDAandOTH()
 
 		if len(self.numerical_dates) > 0:
@@ -77,24 +76,7 @@ class Boutique(object):
 
 		# GEOGRAPHY Extraction
 
-		uzone_joined = False
-		zone_joined = False
-		subzone_joined = False
-		country_joined = False
-		state_joined = False
-
-		for geo_table,geo_item in self.geo:
-			if geo_table == "uzone" and not uzone_joined:
-				boutique_query.join(zone, uzone, "uzone", "Code")
-				uzone_joined = True
-			elif geo_table == "zone" and not zone_joined:
-				zone_joined = True
-			elif geo_table == "subzone" and not subzone_joined:
-				boutique_query.join(zone, sub_zone, "Code", "Zone")
-				subzone_joined = True
-			elif geo_table == "country" and not country_joined:
-				boutique_query.join(sale, country, "Country", "Code")
-				country_joined = True
+		boutique_query = geography_joins(boutique_query, self.geo)
 
 		produit_selected = []
 		for produit in self.items :
@@ -132,15 +114,7 @@ class Boutique(object):
 				elif produit_key == "produit":
 					boutique_query.where(item, "Description", produit[produit_key])
 
-		for geo_table,geo_item in self.geo:
-			if geo_table == "uzone":
-				boutique_query.where(uzone, "description_FR", geo_item)
-			elif geo_table == "zone":
-				boutique_query.where(zone, "Description", geo_item)
-			elif geo_table == "subzone":
-				boutique_query.where(subzone, "Description", geo_item)
-			elif geo_table == "country":
-				boutique_query.where(country, "Description_FR", geo_item)
+		boutique_query = geography_select(boutique_query, self.geo)
 
 		"""
 		Finitions

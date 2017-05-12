@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+﻿# -*- coding: utf-8 -*-
 
 import sys
 sys.path.append('/usr/local/Cellar/python3/3.6.0/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages')
@@ -27,8 +27,8 @@ def getWord2vecVector(word):
 
 class WordClassification(object):
 
-    def __init__(self, threshold=0.14, uzone_path='../data/uzone.csv', zone_path='../data/zone.csv', 
-        subzone_path='../data/szone.csv', country_path='../data/country.csv', state_path='../data/state.csv'):
+    def __init__(self, threshold=0.14, uzone_path='data/uzone.csv', zone_path='data/zone.csv', 
+        subzone_path='data/szone.csv', country_path='data/country.csv', state_path='data/state.csv'):
 
         self.cities = ["Paris","London","Tokyo","NewYork","Seoul","Dubai","Madrid","Ginza"]
         self.countries = ["EtatsUnis","Espagne","Japon","Chine","France","Emirats","Suisse","Amerique", "Asia", "Asie", "Europe", "Etats Unis"]
