@@ -85,7 +85,7 @@ def process_sentence(sentence,seuil=None):
 	items_extracted = word.extract(sentence)
 	json = {
 		'dates': dates_extracted,
-		'geo': geo_extracted
+		'geo': geo_extracted,
 		'numerical_dates': numerical_dates_extracted,
 		'intent': intent_extracted,
 		'boutiques': boutiques_extracted,
