@@ -18,7 +18,7 @@ from urllib.request import urlopen
 
 def getWord2vecVector(word):
     if word.strip() != "":
-        print("Getting vector for "+word)
+        # print("Getting vector for "+word)
         url = "vps397505.ovh.net/"+word
         url = quote(url.encode('utf8'))
         vec = urlopen("http://"+url).read()
@@ -27,11 +27,11 @@ def getWord2vecVector(word):
 
 class WordClassification(object):
 
-    def __init__(self, threshold=0.14, uzone_path='data/uzone.csv', zone_path='data/zone.csv', 
-        subzone_path='data/szone.csv', country_path='data/country.csv', state_path='data/state.csv'):
+    def __init__(self, threshold=0.14, uzone_path='../data/uzone.csv', zone_path='../data/zone.csv', 
+        subzone_path='../data/szone.csv', country_path='../data/country.csv', state_path='../data/state.csv'):
 
         self.cities = ["Paris","London","Tokyo","NewYork","Seoul","Dubai","Madrid","Ginza"]
-        self.countries = ["EtatsUnis","Espagne","Japon","Chine","France","Emirats","Suisse","Amerique"]
+        self.countries = ["EtatsUnis","Espagne","Japon","Chine","France","Emirats","Suisse","Amerique", "Asia", "Asie", "Europe", "Etats Unis"]
         self.nationalities = ["Russe","Francais","Americain","Chinois"]
         self.threshold = threshold
 
@@ -129,7 +129,7 @@ class WordClassification(object):
             vec = getWord2vecVector(term)
             cosines = self.cos(C,vec)
             score = np.mean(cosines)
-            #print(score)
+            print(term,"=",score)
             scores[idx] = score
             if (score > self.threshold):
                 found += self.match_in_csv(term)
@@ -138,6 +138,7 @@ class WordClassification(object):
         return found
 
     def match_in_csv(self, term):
+        print("match for",term,"?")
         for category in self.order:
             for key in category:
                 if self.get_product(term, category[key]["file"], category[key]["column"]):
@@ -177,8 +178,8 @@ class WordClassification(object):
             text = text.replace(word,'')
         return (json,text)
 
-# world = WordClassification()
-# print(world.find_similar_words("La semaine dernière, qui a conclu le plus de ventes à madrid"))
+world = WordClassification()
+print(world.find_similar_words("La semaine dernière, qui a conclu le plus de ventes en america"))
 # print(world.find_similar_words("Les américains achètent-ils plus que les japonais"))
 # print(world.find_similar_words("Quelle part de russes dans les achats de Lady Dior"))
 # print(world.find_similar_words("Cette semaine, combien y a-t-il eu de clients marocains"))
