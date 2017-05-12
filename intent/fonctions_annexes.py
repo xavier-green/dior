@@ -30,8 +30,9 @@ def what_products(list_of_dict):
 				print("Erreur, un item n'a pas de catégorie connue !")
 	return products_requested
 
-def query_products(list_of_dict, has_been_seen = {}):
+def query_products(list_of_dict):
 	products_requested = what_products(list_of_dict)
+	has_been_seen = {}
 	columns_products = []
 	for table, column, table_name, product_name in products_requested:
 		if not (table_name in has_been_seen and has_been_seen[table_name]):
@@ -39,10 +40,11 @@ def query_products(list_of_dict, has_been_seen = {}):
 			has_been_seen[table_name] = True
 	return columns_products
 
-def sale_join_products(query, list_of_dict, has_been_seen = {}):
+def sale_join_products(query, list_of_dict):
 	print("JOINING PRODUCTS")
 	print("================")
 	products_requested = what_products(list_of_dict)
+	has_been_seen = {}
 	for table, column, table_name, product_name in products_requested:
 		print("Trying to join", table.name)
 		if not (table_name in has_been_seen and has_been_seen[table_name]):
