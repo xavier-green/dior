@@ -50,7 +50,8 @@ glossaire_1G = {
     "objet":"objects",
     "objets":"objects",
     "mobilier":"furniture",
-    "mobiliers":"furniture"
+    "mobiliers":"furniture",
+    "pap":"ready to wear"
 }
 
 glossaire_2G = {
@@ -67,7 +68,8 @@ glossaire_2G = {
 
 glossaire_3G = {
     "linge de maison":"home linens",
-    "small leather goods":"slg"
+    "small leather goods":"slg",
+    "pret a porter": "ready to wear"
 }
 
 glossaire_4G = {
