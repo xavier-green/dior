@@ -378,7 +378,7 @@ class Vente(object):
 					nombre_ventes = colonnes[len(colonnes)-1]
 					somme += int(nombre_ventes)
 				if n > 0 and n < 10:
-					details.append(categorie + " " + colonnes[0], colonnes[len(colonnes)-1])
+					details.append([categorie + " " + colonnes[0], colonnes[len(colonnes)-1]])
 				if n == 10:
 					details.append(["...", "..."])
 					break
