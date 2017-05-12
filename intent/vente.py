@@ -491,7 +491,7 @@ class Vente(object):
 					prix_ventes = colonnes[len(colonnes)-1]
 					somme += float(prix_ventes)
 				if n > 0 and n < 10:
-					details_items.append([produit_selected[n-1], colonnes[len(colonnes)-1])
+					details_items.append([produit_selected[n-1], colonnes[len(colonnes)-1]])
 				if n == 10:
 					details_items.append("...")
 					break
