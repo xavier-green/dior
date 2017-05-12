@@ -25,14 +25,14 @@ def query_products(list_of_dict, has_been_seen = {}):
 	products_requested = what_products(list_of_dict)
 	columns_products = []
 	for table, column, table_name, product_name in products_requested:
-		if table_name in has_been_seen and not has_been_seen[table_name]:
-			pass
-
+		if not (table_name in has_been_seen and has_been_seen[table_name]):
+			columns_products.append((table, column))
+			has_been_seen[table_name] = True
 
 def sale_join_products(query, list_of_dict, has_been_seen = {}):
 	products_requested = what_products(list_of_dict)
 	for table, column, table_name, product_name in products_requested:
-		if table_name in has_been_seen and not has_been_seen[table_name]:
+		if not (table_name in has_been_seen and has_been_seen[table_name]):
 			query.join(sale, table, table_name, "Code")
 			has_been_seen[table_name] = True
 	return query
