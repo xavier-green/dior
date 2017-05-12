@@ -34,7 +34,7 @@ class Vendeur(object):
 		Initialisation de la query
 		"""
 
-		seller_query = query(staff, ['Name', 'count(*)', ("sum", sale, "Std_RP_WOTax_REF")], 'TOP 3')
+		seller_query = query(staff, ['Name', 'count(*)', ("sum", sale, "RG_Net_Amount_WOTax_REF", sale, "MD_Net_Amount_WOTax_REF")], 'TOP 3')
 
 
 		"""
@@ -136,7 +136,7 @@ class Vendeur(object):
 
 		# On n'oublie pas le GROUP BY, nécessaire ici vu qu'on prend à la fois une colonne et un count(*)
 		seller_query.groupby(staff, 'Name')
-		seller_query.orderby(None, ('sum', sale, 'Std_RP_WOTax_REF'), " DESC")
+		seller_query.orderby(None, ("sum", sale, "RG_Net_Amount_WOTax_REF", sale, "MD_Net_Amount_WOTax_REF"), " DESC")
 
 
 		"""
