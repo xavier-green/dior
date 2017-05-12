@@ -21,8 +21,8 @@ from sklearn.externals import joblib
 from sklearn.feature_extraction.text import TfidfTransformer
 from sklearn.svm import SVC
 
-from urllib.request import quote
-from urllib.request import urlopen
+import json
+import requests
 
 def tokenize(text):
     stripped_punctuation = re.sub(r'[-_;,.?!]',' ',text.lower())

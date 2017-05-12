@@ -35,8 +35,8 @@ def getWord2vecVector(words):
 
 class WordClassification(object):
 
-    def __init__(self, threshold=0.12, uzone_path='../data/uzone.csv', zone_path='../data/zone.csv', 
-        subzone_path='../data/szone.csv', country_path='../data/country.csv', state_path='../data/state.csv'):
+    def __init__(self, threshold=0.12, uzone_path='data/uzone.csv', zone_path='data/zone.csv', 
+        subzone_path='data/szone.csv', country_path='data/country.csv', state_path='data/state.csv'):
 
         self.cities = ["Paris","London","Tokyo","NewYork","Seoul","Dubai","Madrid","Ginza"]
         self.countries = ["EtatsUnis","Espagne","Japon","Chine","France","Emirats","Suisse","Amerique", "Asia", "Asie", "europe", "Etats Unis"]
@@ -145,7 +145,7 @@ class WordClassification(object):
         for idx, vec in enumerate(token_vecs):
             cosines = self.cos(C,vec)
             score = np.mean(cosines)
-            print(tokens[idx],"=",score)
+            # print(tokens[idx],"=",score)
             scores[idx] = score
             if (score > self.threshold):
                 found += self.match_in_csv(tokens[idx])
