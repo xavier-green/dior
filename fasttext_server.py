@@ -21,5 +21,17 @@ def vector_get(sentence):
 		return jsonify(model_fasttext[sentence])
 	return jsonify(np.zeros(model_fasttext.dim).tolist())
 
+@app.route('/', methods=["POST"]) # same but getting the sentence via POST
+def vector_post():
+	print("new post from: "+request.remote_addr)
+	words = request.json.get("words", None)
+	vectors = []
+	for word in words:
+		if word in model_fasttext.words:
+			vectors.append(model_fasttext[sentence])
+		else:
+			vectors.append(np.zeros(model_fasttext.dim).tolist())
+	return jsonify(vectors)
+
 if __name__ == "__main__":
 	app.run(host="0.0.0.0",threaded=True)
