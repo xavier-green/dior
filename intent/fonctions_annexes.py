@@ -44,6 +44,7 @@ def sale_join_products(query, list_of_dict, has_been_seen = {}):
 	for table, column, table_name, product_name in products_requested:
 		if not (table_name in has_been_seen and has_been_seen[table_name]):
 			query.join(sale, table, table_name, "Code")
+			print("JOINING", table.name)
 			has_been_seen[table_name] = True
 	return query
 

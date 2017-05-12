@@ -360,9 +360,10 @@ class Vente(object):
 			return [product_query.request, result]
 
 		elif quantity_query:
-			print(column_groupby)
+			print("============================================")
+			print("column_groupby :", column_groupby)
 			for col in column_groupby:
-				print(col)
+				print("col :", col)
 				product_query.groupby(col[0], col[1])
 			query_result = product_query.write().split('\n')
 
