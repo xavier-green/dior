@@ -16,7 +16,7 @@ from sql.tables import item, sale, boutique, country, division, retail, theme, d
 class Boutique(object):
 
 	def __init__(self, data):
-		self.geo = date['geo']
+		self.geo = data['geo']
 		# self.nationalities = data['nationalities']
 		self.dates = data['dates']
 		self.numerical_dates = data['numerical_dates']

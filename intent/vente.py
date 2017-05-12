@@ -21,7 +21,7 @@ import math
 class Vente(object):
 
 	def __init__(self, data):
-		self.geo = date['geo']
+		self.geo = data['geo']
 		# self.nationalities = data['nationalities']
 		self.dates = data['dates']
 		self.numerical_dates = data['numerical_dates']

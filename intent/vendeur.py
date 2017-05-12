@@ -15,7 +15,7 @@ foo = SourceFileLoader("sql.tables", "../sql/tables.py").load_module()
 class Vendeur(object):
 
 	def __init__(self, data):
-		self.geo = date['geo']
+		self.geo = data['geo']
 		# self.nationalities = data['nationalities']
 		self.numerical_dates = data['numerical_dates']
 		self.dates = data['dates']
