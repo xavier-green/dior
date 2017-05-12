@@ -10,6 +10,7 @@ from copy import copy
 from sql.request import query
 
 from intent.mise_en_forme import affichage_euros, affichage_date
+from intent.gestion_dates import today, last_monday
 
 
 # Import de toutes les tables utilisées
@@ -361,7 +362,7 @@ class Vente(object):
 			product_query.orderby(sale, (sale, "RG_Net_Amount_WOTax_REF", sale, "MD_Net_Amount_WOTax_REF"), "DESC")
 
 			query_result = product_query.write().split('\n')
-			start_date = self.numerical_dates[0][0] if len(self.numerical_dates) > 0 else '20170225'
+			start_date = self.numerical_dates[0][0] if len(self.numerical_dates) > 0 else last_monday()
 
 
 			result = "Il y a eu %i ventes exceptionnelles (supérieures à %s)" %(len(query_result)-1, affichage_euros(self.seuil_exc))
@@ -466,8 +467,8 @@ class Vente(object):
 					break
 			print(details_items)
 
-			start_date = self.numerical_dates[0][0] if len(self.numerical_dates) > 0 else '20170225'
-			end_date = self.numerical_dates[0][1] if len(self.numerical_dates) > 0 else '20170225'
+			start_date = self.numerical_dates[0][0] if len(self.numerical_dates) > 0 else last_monday()
+			end_date = self.numerical_dates[0][1] if len(self.numerical_dates) > 0 else today()
 
 			result = "Il y a eu " + str(somme) + " ventes en lien avec " + " et/ou ".join(produit_selected) + " "
 			result += MDorFP
@@ -510,8 +511,8 @@ class Vente(object):
 					break
 			print(details_items)
 
-			start_date = self.numerical_dates[0][0] if len(self.numerical_dates) > 0 else '20170225'
-			end_date = self.numerical_dates[0][1] if len(self.numerical_dates) > 0 else '20170225'
+			start_date = self.numerical_dates[0][0] if len(self.numerical_dates) > 0 else last_monday()
+			end_date = self.numerical_dates[0][1] if len(self.numerical_dates) > 0 else today()
 
 			result = "Il y a eu " + affichage_euros(str(somme)) + " HT de CA en lien avec " + " et/ou ".join(produit_selected) + " "
 			result += MDorFP
@@ -540,8 +541,8 @@ class Vente(object):
 					break
 			print(details_items)
 
-			start_date = self.numerical_dates[0][0] if len(self.numerical_dates) > 0 else '20170225'
-			end_date = self.numerical_dates[0][1] if len(self.numerical_dates) > 0 else '20170225'
+			start_date = self.numerical_dates[0][0] if len(self.numerical_dates) > 0 else last_monday()
+			end_date = self.numerical_dates[0][1] if len(self.numerical_dates) > 0 else today()
 
 			result = "Il y a eu " + affichage_euros(str(somme)) + " HT de CA en lien avec " + " et/ou ".join(produit_selected) + " "
 			result += MDorFP

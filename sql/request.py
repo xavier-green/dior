@@ -1,8 +1,9 @@
 ﻿# coding=utf-8
 
-import datetime
+
 import subprocess, csv
 import time
+from intent.gestion_dates import last_monday, today
 
 class query(object):
 
@@ -88,16 +89,9 @@ class query(object):
 
 	# TODO pour la vraie BDD : mettre end = time.strftime("%Y%m%d") pour avoir le current_date
 	# Default week-to-date
-	def wheredate(self, table, column, start="", end=time.strftime("%Y%m%d")):
+	def wheredate(self, table, column, start=last_monday(), end=today()):
 		assert table in self.joined_tables, "Vous faites appel à la table " + table.name + " absente de la requête, utilisez JOIN pour l'ajouter"
 		assert column in table.columns, "La table " + table.name + " ne possède pas d'attribut " + table.prefix + column
-
-		if start == "":
-			today = datetime.date.today()
-			weekday = today.weekday()
-			week_delta = datetime.timedelta(days=weekday) if weekday != 0 else datetime.timedelta(days=weekday, weeks=1)
-			start_date = today - week_delta
-			start = start_date.strftime("%Y%m%d")
 
 		table_date = self.proprify_columns(table, [column], 1)
 		where = "WHERE " if len(self.wcount) == 0 else "AND "
