@@ -57,7 +57,7 @@ class Vente(object):
 		first_word = self.sentence.split(" ")[0]
 		question = self.sentence.lower()
 
-		if ('Où' in self.sentence) or ('où' in self.sentence) or ('ou' in first_word) or ('Ou' in first_word) or ('dans quel pays' in self.sentence.lower()) or ('a quel endroit' in self.sentence.lower()):
+		if ('Où' in self.sentence) or ('où' in self.sentence) or (first_word == "ou") or (first_word == "Ou") or ('dans quel pays' in self.sentence.lower()) or ('a quel endroit' in self.sentence.lower()):
 			print("Sale specific to a location")
 			location_query = True
 
