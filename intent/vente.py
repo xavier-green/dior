@@ -274,13 +274,13 @@ class Vente(object):
 
 
 		for geo_table,geo_item in self.geo:
-			if geo_table == "uzone" and not uzone_joined:
+			if geo_table == "uzone":
 				product_query.where(uzone, "description_FR", geo_item)
-			elif geo_table == "zone" and not zone_joined:
+			elif geo_table == "zone":
 				product_query.where(zone, "Description", geo_item)
-			elif geo_table == "subzone" and not subzone_joined:
+			elif geo_table == "subzone":
 				product_query.where(subzone, "Description", geo_item)
-			elif geo_table == "country" and not country_joined:
+			elif geo_table == "country":
 				product_query.where(country, "Description_FR", geo_item)
 
 		# for ville in self.cities :

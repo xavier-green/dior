@@ -120,13 +120,13 @@ class Vendeur(object):
 					seller_query.where(item, "Description", produit[produit_key])
 
 		for geo_table,geo_item in self.geo:
-			if geo_table == "uzone" and not uzone_joined:
+			if geo_table == "uzone":
 				seller_query.where(uzone, "description_FR", geo_item)
-			elif geo_table == "zone" and not zone_joined:
+			elif geo_table == "zone":
 				seller_query.where(zone, "Description", geo_item)
-			elif geo_table == "subzone" and not subzone_joined:
+			elif geo_table == "subzone":
 				seller_query.where(subzone, "Description", geo_item)
-			elif geo_table == "country" and not country_joined:
+			elif geo_table == "country":
 				seller_query.where(country, "Description_FR", geo_item)
 
 
