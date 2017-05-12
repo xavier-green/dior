@@ -14,12 +14,14 @@ def affichage_euros(montant):
 	montant = str(montant)
 	if "." in montant:
 		somme, centimes = montant.split(".")
+	elif ',' in montant:
+		somme, centimes = montant.split(",")
 	else:
 		somme, centimes = [montant, "0"]
 	n = len(somme) % 3
 	en_tete = somme[0:n] + " " if n > 0 else ""
 	milliers = [somme[i+n:i+3+n] for i in range(0, len(somme)-n, 3)]
-	centimes = "" if (centimes == "00" or centimes == "0") else "," + centimes
+	centimes = "," + centimes[0:2] if (len(centimes) >= 2 and centimes != "00") else ""
 	return en_tete + " ".join(milliers) + centimes +' €'
 
 def affichage_date(date):

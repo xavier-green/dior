@@ -55,20 +55,21 @@ class Vente(object):
 		touriste = False
 
 		first_word = self.sentence.split(" ")[0]
+		question = self.sentence.lower()
 
 		if ('Où' in self.sentence) or ('où' in self.sentence) or ('ou' in first_word) or ('Ou' in first_word) or ('dans quel pays' in self.sentence.lower()) or ('a quel endroit' in self.sentence.lower()):
 			print("Sale specific to a location")
 			location_query = True
 
-		if ('couleur' in self.sentence.lower()):
+		if ('couleur' in question):
 			print("Sale specific to a colour")
 			colour_query = True
 
-		if ('prix' in self.sentence.lower()):
+		if ('prix' in question):
 			print("Sale specific to a price")
 			price_query = True
 
-		if ('exceptionnel' in self.sentence.lower()):
+		if ('exceptionnel' in question):
 			if self.seuil_exc:
 				print("Sale specific to exceptionnal sales")
 				exceptionnal_query = True
@@ -77,30 +78,30 @@ class Vente(object):
 				print("Sale specific to exceptionnal sales, default seuil at 5k")
 				exceptionnal_query = True
 
-		if ('margin' in self.sentence.lower()) or ('marge' in self.sentence.lower()):
+		if ('margin' in question) or ('marge' in question):
 			margin_query = True
 
-		if ('croissance' in self.sentence.lower()) or ('trend' in self.sentence.lower()):
+		if ('croissance' in question) or ('trend' in question):
 			print("Sale specific to a croissance")
 			croissance_query = True
 
-		if ('local' in self.sentence.lower() or 'locaux' in self.sentence.lower()):
+		if ('local' in question or 'locaux' in question):
 			nationality_query = True
 
-		if ('touriste' in self.sentence.lower()) or ('foreign' in self.sentence.lower()):
+		if ('touriste' in question) or ('foreign' in question):
 			nationality_query = True
 			touriste = True
 
-		if ('quantite' in self.sentence.lower()) or ('nombre' in self.sentence.lower()):
+		if ('quantite' in question) or ('nombre' in question) or ("combien" in question and not "pour combien" in question):
 			quantity_query = True
 
 		if (not croissance_query and not exceptionnal_query) and len(self.items) == 0:
 			return "Veuillez préciser un produit svp"
 
 		Quantity_requested = []
-		if 'fp' in self.sentence.lower() or ('full' in self.sentence.lower() and 'price' in self.sentence.lower()):
+		if 'fp' in question or ('full' in question and 'price' in question):
 			Quantity_requested.append('fp')
-		if 'md' in self.sentence.lower() or ('mark' in self.sentence.lower() and 'down' in self.sentence.lower()):
+		if 'md' in question or ('mark' in question and 'down' in question):
 			Quantity_requested.append('md')
 
 		if len(Quantity_requested) == 0 or len(Quantity_requested) == 2:
