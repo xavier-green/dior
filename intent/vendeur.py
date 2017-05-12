@@ -4,7 +4,7 @@ from intent.mise_en_forme import affichage_euros, affichage_date
 # Import de toutes les tables utilisées
 from sql.tables import staff, sale, boutique, country, item, zone, division, department, theme, retail, zone, uzone, sub_zone
 
-from intent.fonctions_annexes import geography_joins, geography_select
+from intent.fonctions_annexes import geography_joins, geography_select, sale_join_products, query_products, where_products, find_category, append_details_date
 
 """
 # Pour pouvoir importer les fichiers sql
@@ -125,8 +125,8 @@ class Vendeur(object):
 		print(result)
 		reponse = "Voici les 3 meilleurs vendeurs "
 
-		start_date = affichage_date(self.numerical_dates[0][0]) if len(self.numerical_dates) > 0 else affichage_date('20170225')
-		reponse += "du " + start_date + " au " + affichage_date("20170304") + " "
+		details = append_details_date([], self.numerical_dates)
+
 		reponse += "pour " + categorie_produit + ', '.join(produit_selected) + " " if len(produit_selected) > 0 else ''
 		reponse += "de la boutique " + ', '.join([b for b in self.boutiques]) + " " if len(self.boutiques) > 0 else ''
 		reponse += " : \n"
@@ -139,7 +139,7 @@ class Vendeur(object):
 				nom_vendeur, nombre_ventes, montant_ventes = ligne.split('|')
 				reponse += nom_vendeur + " avec " + nombre_ventes + " ventes pour un montant de " + affichage_euros(montant_ventes) + " HT ; \n"
 
-		return [seller_query.request,reponse]
+		return [seller_query.request,reponse, details]
 
 """
 data = {
