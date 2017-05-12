@@ -90,7 +90,8 @@ def process_sentence(sentence,seuil=None):
 		'intent': intent_extracted,
 		'boutiques': boutiques_extracted,
 		'sentence': sentence,
-		'seuil': seuil
+		'seuil': seuil,
+		'items': items_extracted
 	}
 
 	print('data extracted:')
