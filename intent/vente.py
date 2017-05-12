@@ -360,10 +360,7 @@ class Vente(object):
 			return [product_query.request, result]
 
 		elif quantity_query:
-			print("============================================")
-			print("column_groupby :", column_groupby)
 			for col in column_groupby:
-				print("col :", col)
 				product_query.groupby(col[0], col[1])
 			query_result = product_query.write().split('\n')
 
@@ -428,26 +425,29 @@ class Vente(object):
 				product_query.groupby(col[0], col[1])
 			query_result = product_query.write().split('\n')
 
-			somme = 0
-			details = []
+			details = append_details_date([], self.numerical_dates)
+
+			valeur = 0
+			quantite = 0
 			for n, ligne in enumerate(query_result):
+				if n == 0:
+					colonnes = ligne.split('#')
+					categorie = find_category(colonnes[0])
 				if n > 0:
 					colonnes = ligne.split('#')
 					prix_ventes = colonnes[len(colonnes)-1]
-					somme += float(prix_ventes)
+					quantite_ventes = colonnes[len(colonnes)-2]
+					valeur += float(prix_ventes)
+					quantite += int(quantite_ventes)
 				if n > 0 and n < 10:
-					details.append(colonnes)
+					details.append([categorie + ' ' + colonnes[0], "("+quantite_ventes+" vendu pour "+affichage_euros(prix_ventes)+" HT"])
 				if n == 10:
 					details.append(["...", "..."])
 					break
 			print(details)
 
-			start_date = self.numerical_dates[0][0] if len(self.numerical_dates) > 0 else last_monday()
-			end_date = self.numerical_dates[0][1] if len(self.numerical_dates) > 0 else today()
-
-			result = "Il y a eu " + affichage_euros(str(somme)) + " HT de CA en lien avec " + " et/ou ".join(produit_selected) + " "
+			result = "Il y a eu " + str(quantite) + " ventes pour un total de " + affichage_euros(str(valeur)) + " HT en lien avec " + " et/ou ".join(produit_selected) + " "
 			result += MDorFP
-			result += "du " + start_date + " au " + end_date
 			result += "dans les boutiques de " + ', '.join([b for b in self.boutiques]) if len(self.boutiques) > 0 else ''
 
 			print("***************")
