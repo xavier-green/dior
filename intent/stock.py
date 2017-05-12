@@ -186,14 +186,14 @@ class Stock(object):
 			product_query.whereNotJDAandOTH()
 
 			for geo_table,geo_item in self.geo:
-			if geo_table == "uzone" and not uzone_joined:
-				product_query.where(uzone, "description_FR", geo_item)
-			elif geo_table == "zone" and not zone_joined:
-				product_query.where(zone, "Description", geo_item)
-			elif geo_table == "subzone" and not subzone_joined:
-				product_query.where(subzone, "Description", geo_item)
-			elif geo_table == "country" and not country_joined:
-				product_query.where(country, "Description_FR", geo_item)
+				if geo_table == "uzone" and not uzone_joined:
+					product_query.where(uzone, "description_FR", geo_item)
+				elif geo_table == "zone" and not zone_joined:
+					product_query.where(zone, "Description", geo_item)
+				elif geo_table == "subzone" and not subzone_joined:
+					product_query.where(subzone, "Description", geo_item)
+				elif geo_table == "country" and not country_joined:
+					product_query.where(country, "Description_FR", geo_item)
 
 			if len(self.numerical_dates) > 0:
 				product_query.wheredate(sale, 'DateNumYYYYMMDD', self.numerical_dates[0][0], self.numerical_dates[0][1])
