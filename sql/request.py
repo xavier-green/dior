@@ -1,6 +1,8 @@
 ﻿# coding=utf-8
 
+import datetime
 import subprocess, csv
+import time
 
 class query(object):
 
@@ -84,10 +86,16 @@ class query(object):
 		jointure2 = self.proprify_columns(original_table, [join2], 1)
 		self.request += "JOIN (\n" + request_table + ") AS " + original_table.alias + " ON "  + jointure1 + " = " + jointure2 + "\n"
 
-	# à faire pour une vraie BDD : mettre end = time.strftime("%Y%m%d") pour avoir le current_date
-	def wheredate(self, table, column, start="20170225", end="20170304"):
+	# TODO pour la vraie BDD : mettre end = time.strftime("%Y%m%d") pour avoir le current_date
+	# Default week-to-date
+	def wheredate(self, table, column, start="", end=time.strftime("%Y%m%d")):
 		assert table in self.joined_tables, "Vous faites appel à la table " + table.name + " absente de la requête, utilisez JOIN pour l'ajouter"
 		assert column in table.columns, "La table " + table.name + " ne possède pas d'attribut " + table.prefix + column
+
+		if start == "":
+			week_delta = datetime.timedelta(days=weekday, weeks=1)
+			start = "20170225"
+
 
 		table_date = self.proprify_columns(table, [column], 1)
 		where = "WHERE " if len(self.wcount) == 0 else "AND "

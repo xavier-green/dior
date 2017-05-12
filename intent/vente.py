@@ -457,7 +457,7 @@ class Vente(object):
 			for n, ligne in enumerate(query_result):
 				if n > 0:
 					colonnes = ligne.split('#')
-					nombre_ventes = colonnes[len(colonnes)-2]
+					nombre_ventes = colonnes[len(colonnes)-1]
 					somme += float(nombre_ventes)
 				if n > 0 and n < 10:
 					details_items.append(colonnes)
@@ -486,12 +486,15 @@ class Vente(object):
 			somme = 0
 			details_items = []
 			for n, ligne in enumerate(query_result):
-				if n > 0:
+				if n == 0:
+					colonnes = ligne.split('#')
+					categorie = colonnes[0]
+				elif n > 0:
 					colonnes = ligne.split('#')
 					prix_ventes = colonnes[len(colonnes)-1]
 					somme += float(prix_ventes)
 				if n > 0 and n < 10:
-					details_items.append([produit_selected[n-1], colonnes[len(colonnes)-1]])
+					details_items.append([categorie + " " + colonnes[0], colonnes[len(colonnes)-1]])
 				if n == 10:
 					details_items.append("...")
 					break
