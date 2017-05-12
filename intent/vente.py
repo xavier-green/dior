@@ -52,6 +52,7 @@ class Vente(object):
 		margin_query = False
 		nationality_query = False
 		quantity_query = False
+		netsale_query = False
 		touriste = False
 
 		first_word = self.sentence.split(" ")[0]
@@ -91,6 +92,9 @@ class Vente(object):
 		if ('touriste' in question) or ('foreign' in question):
 			nationality_query = True
 			touriste = True
+
+		if ('net sale' in question) or ('pour combien' in question):
+			netsale_query = True
 
 		if ('quantite' in question) or ('nombre' in question) or ("combien" in question and not "pour combien" in question):
 			quantity_query = True
@@ -170,6 +174,8 @@ class Vente(object):
 			product_query = query(sale, columns_requested + [("sum", sale, "RG_Net_Amount_WOTax_REF", sale, "MD_Net_Amount_WOTax_REF"),("sum", sale, 'Unit_Avg_Cost_REF')])
 		elif quantity_query:
 			product_query = query(sale, columns_requested)
+		elif quantity_query:
+			product_query = query(sale, columns_requested + [("sum", sale, "RG_Net_Amount_WOTax_REF", sale, "MD_Net_Amount_WOTax_REF")])
 		else:
 			product_query = query(sale, columns_requested + [("sum", sale, "RG_Net_Amount_WOTax_REF", sale, "MD_Net_Amount_WOTax_REF")])
 
@@ -451,10 +457,10 @@ class Vente(object):
 			for n, ligne in enumerate(query_result):
 				if n > 0:
 					colonnes = ligne.split('#')
-					nombre_ventes = colonnes[1]
+					nombre_ventes = colonnes[len(colonnes)-2]
 					somme += float(nombre_ventes)
 				if n > 0 and n < 10:
-					details_items.append(colonnes)
+					details_items.append([colonnes)
 				if n == 10:
 					details_items.append("...")
 					break
@@ -471,6 +477,36 @@ class Vente(object):
 			print("***************")
 			return [product_query.request, result, details_items]
 
+
+		elif netsale_query:
+			for col in column_groupby:
+				product_query.groupby(col[0], col[1])
+			query_result = product_query.write().split('\n')
+
+			somme = 0
+			details_items = []
+			for n, ligne in enumerate(query_result):
+				if n > 0:
+					colonnes = ligne.split('#')
+					prix_ventes = colonnes[len(colonnes)-1]
+					somme += float(prix_ventes)
+				if n > 0 and n < 10:
+					details_items.append([produit_selected[n-1], colonnes[len(colonnes)-1])
+				if n == 10:
+					details_items.append("...")
+					break
+			print(details_items)
+
+			start_date = self.numerical_dates[0][0] if len(self.numerical_dates) > 0 else '20170225'
+			end_date = self.numerical_dates[0][1] if len(self.numerical_dates) > 0 else '20170225'
+
+			result = "Il y a eu " + affichage_euros(str(somme)) + " HT de CA en lien avec " + " et/ou ".join(produit_selected) + " "
+			result += MDorFP
+			result += "du " + start_date + " au " + end_date
+			result += "dans les boutiques de " + ', '.join([b for b in self.boutiques]) if len(self.boutiques) > 0 else ''
+
+			print("***************")
+			return [product_query.request, result, details_items]
 
 		else:
 			for col in column_groupby:
