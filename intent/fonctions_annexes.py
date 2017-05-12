@@ -26,7 +26,7 @@ def query_products(list_of_dict, has_been_seen = {}):
 	columns_products = []
 	for table, column, table_name, product_name in products_requested:
 		if table_name in has_been_seen and not has_been_seen[table_name]:
-			columns_product()
+			pass
 
 
 def sale_join_products(query, list_of_dict, has_been_seen = {}):
