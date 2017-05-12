@@ -10,6 +10,8 @@ from sql.request import query
 # Import de toutes les tables utilisées
 from sql.tables import item, sale, boutique, country, division, retail, theme, department, zone, stock_daily, zone, uzone, sub_zone
 
+from intent.fonctions_annexes import geography_joins, geography_select
+
 class Stock(object):
 
 	def __init__(self, data):
@@ -55,26 +57,7 @@ class Stock(object):
 
 		# GEOGRAPHY Extraction
 
-		uzone_joined = False
-		zone_joined = False
-		subzone_joined = False
-		country_joined = False
-		state_joined = False
-
-		stock_query.join(sale, zone, "Zone", "Code")
-
-		for geo_table,geo_item in self.geo:
-			if geo_table == "uzone" and not uzone_joined:
-				stock_query.join(zone, uzone, "uzone", "Code")
-				uzone_joined = True
-			elif geo_table == "zone" and not zone_joined:
-				zone_joined = True
-			elif geo_table == "subzone" and not subzone_joined:
-				stock_query.join(zone, sub_zone, "Code", "Zone")
-				subzone_joined = True
-			elif geo_table == "country" and not country_joined:
-				stock_query.join(sale, country, "Country", "Code")
-				country_joined = True
+		stock_query = geography_joins(stock_query, self.geo)
 
 		"""
 		Conditions
@@ -86,15 +69,7 @@ class Stock(object):
 				stock_query.where(item, "Description", produit[produit_key])
 				liste_item.append(produit[produit_key])
 
-		for geo_table,geo_item in self.geo:
-			if geo_table == "uzone":
-				stock_query.where(uzone, "description_FR", geo_item)
-			elif geo_table == "zone":
-				stock_query.where(zone, "Description", geo_item)
-			elif geo_table == "subzone":
-				stock_query.where(subzone, "Description", geo_item)
-			elif geo_table == "country":
-				stock_query.where(country, "Description_FR", geo_item)
+		stock_query = geography_select(stock_query, self.geo)
 
 
 		"""
@@ -144,26 +119,7 @@ class Stock(object):
 				product_query.join(sale, item, "Style", "Code") # jointure sur ITEM_Code = SALE_Style
 			product_query.join(sale, boutique, "Location", "Code") # jointure sur SALE_Location = LOCA_Code
 			
-			uzone_joined = False
-			zone_joined = False
-			subzone_joined = False
-			country_joined = False
-			state_joined = False
-
-			product_query.join(sale, zone, "Zone", "Code")
-
-			for geo_table,geo_item in self.geo:
-				if geo_table == "uzone" and not uzone_joined:
-					product_query.join(zone, uzone, "uzone", "Code")
-					uzone_joined = True
-				elif geo_table == "zone" and not zone_joined:
-					zone_joined = True
-				elif geo_table == "subzone" and not subzone_joined:
-					product_query.join(zone, sub_zone, "Code", "Zone")
-					subzone_joined = True
-				elif geo_table == "country" and not country_joined:
-					product_query.join(sale, country, "Country", "Code")
-					country_joined = True
+			product_query = geography_joins(product_query, self.geo)
 
 			# Maintenant que toutes les jointures sont faites, on passe aux conditions
 			for produit in self.items :
@@ -185,15 +141,7 @@ class Stock(object):
 
 			product_query.whereNotJDAandOTH()
 
-			for geo_table,geo_item in self.geo:
-				if geo_table == "uzone":
-					product_query.where(uzone, "description_FR", geo_item)
-				elif geo_table == "zone":
-					product_query.where(zone, "Description", geo_item)
-				elif geo_table == "subzone":
-					product_query.where(subzone, "Description", geo_item)
-				elif geo_table == "country":
-					product_query.where(country, "Description_FR", geo_item)
+			product_query = geography_select(product_query, self.geo)
 
 			if len(self.numerical_dates) > 0:
 				product_query.wheredate(sale, 'DateNumYYYYMMDD', self.numerical_dates[0][0], self.numerical_dates[0][1])

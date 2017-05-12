@@ -11,7 +11,7 @@ from sql.request import query
 
 from intent.mise_en_forme import affichage_euros, affichage_date
 from intent.gestion_dates import today, last_monday
-from intent.fonctions_annexes import geography_joins
+from intent.fonctions_annexes import geography_joins, geography_select
 
 
 # Import de toutes les tables utilisées
@@ -255,15 +255,7 @@ class Vente(object):
 				product_query.whereComparaison(sale, "Country", "=", "CO.COUN_Code")
 
 
-		for geo_table,geo_item in self.geo:
-			if geo_table == "uzone":
-				product_query.where(uzone, "description_FR", geo_item)
-			elif geo_table == "zone":
-				product_query.where(zone, "Description", geo_item)
-			elif geo_table == "subzone":
-				product_query.where(subzone, "Description", geo_item)
-			elif geo_table == "country":
-				product_query.where(country, "Description_FR", geo_item)
+		product_query = geography_select(product_query, self.geo)
 
 		# for ville in self.cities :
 		# 	product_query.where(boutique, "Description", ville)
