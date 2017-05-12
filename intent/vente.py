@@ -94,10 +94,10 @@ class Vente(object):
 			nationality_query = True
 			touriste = True
 
-		if ('net sale' in question) or ('pour combien' in question):
+		if ('net sale' in question) or ('pour combien' in question) or ('valeur' in question):
 			netsale_query = True
 
-		if ('quantite' in question) or ('nombre' in question) or ("combien" in question and not "pour combien" in question):
+		if ('quantite' in question) or ('volume' in question) or ('nombre' in question) or ("combien" in question and not "pour combien" in question):
 			quantity_query = True
 
 		if (not croissance_query and not exceptionnal_query) and len(self.items) == 0:
