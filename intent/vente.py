@@ -370,7 +370,7 @@ class Vente(object):
 				if n > 0:
 					colonnes = ligne.split('#')
 					nombre_ventes = colonnes[len(colonnes)-1]
-					somme += float(nombre_ventes)
+					somme += int(nombre_ventes)
 				if n > 0 and n < 10:
 					details.append(colonnes)
 				if n == 10:
