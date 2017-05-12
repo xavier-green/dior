@@ -95,7 +95,7 @@ class query(object):
 		if start == "":
 			today = datetime.date.today()
 			weekday = today.weekday()
-			week_delta = datetime.timedelta(days=weekday, weeks=1)
+			week_delta = datetime.timedelta(days=weekday)
 			start_date = today - week_delta
 			start = start_date.strftime("%Y%m%d")
 

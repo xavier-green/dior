@@ -489,12 +489,22 @@ class Vente(object):
 				if n == 0:
 					colonnes = ligne.split('#')
 					categorie = colonnes[0]
+					if categorie[0:4] == "DEPT":
+						categorie = "Departement"
+					elif categorie[0:4] == "DIVI":
+						categorie = "Division"
+					elif categorie[0:4] == "ITEM":
+						categorie = "Produit"
+					elif categorie[0:4] == "GROU":
+						categorie = "Groupe Retail"
+					else:
+						categorie = categorie[0:4]
 				elif n > 0:
 					colonnes = ligne.split('#')
 					prix_ventes = colonnes[len(colonnes)-1]
 					somme += float(prix_ventes)
 				if n > 0 and n < 10:
-					details_items.append([categorie + " " + colonnes[0], colonnes[len(colonnes)-1]])
+					details_items.append([categorie + " " + colonnes[0], affichage_euros(colonnes[len(colonnes)-1])])
 				if n == 10:
 					details_items.append("...")
 					break
