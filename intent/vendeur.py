@@ -4,6 +4,8 @@ from intent.mise_en_forme import affichage_euros, affichage_date
 # Import de toutes les tables utilisées
 from sql.tables import staff, sale, boutique, country, item, zone, division, department, theme, retail, zone, uzone, sub_zone
 
+from intent.fonctions_annexes import geography_joins, geography_select
+
 """
 # Pour pouvoir importer les fichiers sql
 from importlib.machinery import SourceFileLoader
@@ -46,7 +48,6 @@ class Vendeur(object):
 		sale_table = query(sale, ['*'])
 
 		# Retirer les éléments de JDA et OTH
-		sale_table.join(sale, zone, 'Zone', 'Code')
 		sale_table.whereNotJDAandOTH()
 
 		if len(self.numerical_dates) > 0:
@@ -58,24 +59,7 @@ class Vendeur(object):
 
 		# GEOGRAPHY Extraction
 
-		uzone_joined = False
-		zone_joined = False
-		subzone_joined = False
-		country_joined = False
-		state_joined = False
-
-		for geo_table,geo_item in self.geo:
-			if geo_table == "uzone" and not uzone_joined:
-				seller_query.join(zone, uzone, "uzone", "Code")
-				uzone_joined = True
-			elif geo_table == "zone" and not zone_joined:
-				zone_joined = True
-			elif geo_table == "subzone" and not subzone_joined:
-				seller_query.join(zone, sub_zone, "Code", "Zone")
-				subzone_joined = True
-			elif geo_table == "country" and not country_joined:
-				seller_query.join(sale, country, "Country", "Code")
-				country_joined = True
+		seller_query = geography_joins(seller_query, self.geo)
 
 		categorie_produit = ''
 		produit_selected = []
@@ -120,15 +104,7 @@ class Vendeur(object):
 				elif produit_key == "produit":
 					seller_query.where(item, "Description", produit[produit_key])
 
-		for geo_table,geo_item in self.geo:
-			if geo_table == "uzone":
-				seller_query.where(uzone, "description_FR", geo_item)
-			elif geo_table == "zone":
-				seller_query.where(zone, "Description", geo_item)
-			elif geo_table == "subzone":
-				seller_query.where(subzone, "Description", geo_item)
-			elif geo_table == "country":
-				seller_query.where(country, "Description_FR", geo_item)
+		seller_query = geography_select(seller_query, self.geo)
 
 
 		"""

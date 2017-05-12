@@ -13,6 +13,9 @@ from sql.request import query
 # Import de toutes les tables utilisées
 from sql.tables import item, sale, boutique, country, division, retail, theme, department, zone, sub_zone, uzone
 
+
+from intent.fonctions_annexes import geography_joins, geography_select
+
 class Boutique(object):
 
 	def __init__(self, data):

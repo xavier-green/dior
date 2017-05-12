@@ -63,3 +63,23 @@ def geography_joins(query, data):
 			country_joined = True
 
 	return query
+
+def geography_select(query, data):
+	for geo_table,geo_item in data:
+		if geo_table == "uzone":
+			query.where(uzone, "description_FR", geo_item)
+		elif geo_table == "zone":
+			query.where(zone, "Description", geo_item)
+		elif geo_table == "subzone":
+			query.where(subzone, "Description", geo_item)
+		elif geo_table == "country":
+			query.where(country, "Description_FR", geo_item)
+	return query
+
+
+
+
+
+
+
+
