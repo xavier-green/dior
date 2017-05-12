@@ -21,6 +21,7 @@ class Vendeur(object):
 		self.dates = data['dates']
 		self.items = data['items']
 		self.sentence = data['sentence']
+		self.boutiques = data['boutiques']
 
 	def build_answer(self):
 		response_base = self.build_query()
@@ -151,8 +152,7 @@ class Vendeur(object):
 		start_date = affichage_date(self.numerical_dates[0][0]) if len(self.numerical_dates) > 0 else affichage_date('20170225')
 		reponse += "du " + start_date + " au " + affichage_date("20170304") + " "
 		reponse += "pour " + categorie_produit + ', '.join(produit_selected) + " " if len(produit_selected) > 0 else ''
-		reponse += "de la boutique de " + ', '.join([b for b in self.cities]) + " " if len(self.cities) > 0 else ''
-		reponse += "dans le pays " + ", ".join([p for p in self.countries]) + " " if len(self.cities) == 0 and len(self.countries) > 0 else ''
+		reponse += "de la boutique " + ', '.join([b for b in self.boutiques]) + " " if len(self.boutiques) > 0 else ''
 		reponse += " : \n"
 
 		liste_resultat = result.split("\n")
