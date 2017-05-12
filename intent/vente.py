@@ -367,12 +367,15 @@ class Vente(object):
 			details = append_details_date([], self.numerical_dates)
 			somme = 0
 			for n, ligne in enumerate(query_result):
+				if n == 0:
+					colonnes = ligne.split('#')
+					categorie = find_category(colonnes[0])
 				if n > 0:
 					colonnes = ligne.split('#')
 					nombre_ventes = colonnes[len(colonnes)-1]
 					somme += int(nombre_ventes)
 				if n > 0 and n < 10:
-					details.append(colonnes)
+					details.append(categorie + " " + colonnes[0], colonnes[len(colonnes)-1])
 				if n == 10:
 					details.append(["...", "..."])
 					break
@@ -391,13 +394,9 @@ class Vente(object):
 				product_query.groupby(col[0], col[1])
 			query_result = product_query.write().split('\n')
 
-			start_date = self.numerical_dates[0][0] if len(self.numerical_dates) > 0 else last_monday()
-			end_date = self.numerical_dates[0][1] if len(self.numerical_dates) > 0 else today()
+			details = append_details_date([], self.numerical_dates)
 
 			somme = 0
-			details = []
-			details.append(["Du", affichage_date(start_date)])
-			details.append(["Au (non inclu)", affichage_date(end_date)])
 			for n, ligne in enumerate(query_result):
 				if n == 0:
 					colonnes = ligne.split('#')
