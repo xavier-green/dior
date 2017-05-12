@@ -161,17 +161,17 @@ class Vente(object):
 		elif location_query:
 			product_query = query(sale, [(boutique, 'Description'), 'count(*)'], top_distinct='DISTINCT TOP 5')
 		elif price_query:
-			product_query = query(sale, [(item, 'Description'), 'Std_RP_WOTax_REF'], top_distinct='DISTINCT TOP 1')
+			product_query = query(sale, [(item, 'Description'), (sale, "RG_Net_Amount_WOTax_REF", sale, "MD_Net_Amount_WOTax_REF")], top_distinct='DISTINCT TOP 1')
 		elif exceptionnal_query:
-			product_query = query(sale, [(item, 'Description'), 'Std_RP_WOTax_REF', "DateNumYYYYMMDD", (boutique, "Description")], top_distinct= 'DISTINCT')
+			product_query = query(sale, [(item, 'Description'), (sale, "RG_Net_Amount_WOTax_REF", sale, "MD_Net_Amount_WOTax_REF"), "DateNumYYYYMMDD", (boutique, "Description")], top_distinct= 'DISTINCT')
 		elif croissance_query:
-			product_query = query(sale, [("sum", sale, 'Std_RP_WOTax_REF')])
+			product_query = query(sale, [("sum", sale, "RG_Net_Amount_WOTax_REF", sale, "MD_Net_Amount_WOTax_REF")])
 		elif margin_query:
-			product_query = query(sale, columns_requested + [("sum", sale, 'Std_RP_WOTax_REF'),("sum", sale, 'Unit_Avg_Cost_REF')])
+			product_query = query(sale, columns_requested + [("sum", sale, "RG_Net_Amount_WOTax_REF", sale, "MD_Net_Amount_WOTax_REF"),("sum", sale, 'Unit_Avg_Cost_REF')])
 		elif quantity_query:
 			product_query = query(sale, columns_requested)
 		else:
-			product_query = query(sale, columns_requested + [("sum", sale, 'Std_RP_WOTax_REF')])
+			product_query = query(sale, columns_requested + [("sum", sale, "RG_Net_Amount_WOTax_REF", sale, "MD_Net_Amount_WOTax_REF")])
 
 		"""
 		On fait les join
@@ -354,8 +354,8 @@ class Vente(object):
 			return [product_query.request,result]
 
 		elif exceptionnal_query:
-			product_query.whereComparaison(sale, "Std_RP_WOTax_REF", ">", str(self.seuil_exc))
-			product_query.orderby(sale, "Std_RP_WOTax_REF", "DESC")
+			product_query.whereComparaison(sale, (sale, "RG_Net_Amount_WOTax_REF", sale, "MD_Net_Amount_WOTax_REF"), ">", str(self.seuil_exc))
+			product_query.orderby(sale, (sale, "RG_Net_Amount_WOTax_REF", sale, "MD_Net_Amount_WOTax_REF"), "DESC")
 
 			query_result = product_query.write().split('\n')
 			start_date = self.numerical_dates[0][0] if len(self.numerical_dates) > 0 else '20170225'
