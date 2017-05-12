@@ -15,23 +15,31 @@ from nltk.util import ngrams
 
 from urllib.request import quote
 from urllib.request import urlopen
+import json
+import requests
 
-def getWord2vecVector(word):
-    if word.strip() != "":
-        # print("Getting vector for "+word)
-        url = "vps397505.ovh.net/"+word
-        url = quote(url.encode('utf8'))
-        vec = urlopen("http://"+url).read()
-        return [float(x) for x in vec.decode("utf-8").replace("[\n  ","").replace("\n]\n","").split(", \n  ")]
-    return np.zeros(300)
+cache_corpus = {}
+
+def getWord2vecVector(words):
+    headers = {'content-type': "application/json",'cache-control': "no-cache"}
+    url = "http://vps397505.ovh.net/"
+    post_fields = {'words':[w.lower() for w in words]}
+    post_fields = json.dumps(post_fields)
+    # print(post_fields);
+    response = requests.request("POST", url, data=post_fields, headers=headers)
+    word_vec = response.text.replace("[\n  [\n    ","").replace("\n  ]\n]\n","").split("\n  ], \n  [\n")
+    final_vec = []
+    for word_v in word_vec:
+        final_vec.append([float(x) for x in word_v.split(", \n    ")])
+    return final_vec
 
 class WordClassification(object):
 
-    def __init__(self, threshold=0.14, uzone_path='data/uzone.csv', zone_path='data/zone.csv', 
-        subzone_path='data/szone.csv', country_path='data/country.csv', state_path='data/state.csv'):
+    def __init__(self, threshold=0.12, uzone_path='../data/uzone.csv', zone_path='../data/zone.csv', 
+        subzone_path='../data/szone.csv', country_path='../data/country.csv', state_path='../data/state.csv'):
 
         self.cities = ["Paris","London","Tokyo","NewYork","Seoul","Dubai","Madrid","Ginza"]
-        self.countries = ["EtatsUnis","Espagne","Japon","Chine","France","Emirats","Suisse","Amerique", "Asia", "Asie", "Europe", "Etats Unis"]
+        self.countries = ["EtatsUnis","Espagne","Japon","Chine","France","Emirats","Suisse","Amerique", "Asia", "Asie", "europe", "Etats Unis"]
         self.nationalities = ["Russe","Francais","Americain","Chinois"]
         self.threshold = threshold
 
@@ -116,8 +124,15 @@ class WordClassification(object):
 
         C = np.zeros((len(total_comparison_corpus),300))
 
-        for idx, term in enumerate(total_comparison_corpus):
-            C[idx,:] = getWord2vecVector(term)
+        if similar_classed[0] in cache_corpus:
+            print("Found corpus in cache")
+            corpus_vectors = cache_corpus[similar_classed[0]]
+        else:
+            corpus_vectors = getWord2vecVector(total_comparison_corpus)
+            cache_corpus[similar_classed[0]] = corpus_vectors
+
+        for idx, vec in enumerate(corpus_vectors):
+            C[idx,:] = vec
         #print(C)
 
 
@@ -125,14 +140,15 @@ class WordClassification(object):
         scores = [0.] * len(tokens)
         found=[]
 
-        for idx, term in enumerate(tokens):
-            vec = getWord2vecVector(term)
+        token_vecs = getWord2vecVector(tokens)
+
+        for idx, vec in enumerate(token_vecs):
             cosines = self.cos(C,vec)
             score = np.mean(cosines)
-            print(term,"=",score)
+            print(tokens[idx],"=",score)
             scores[idx] = score
             if (score > self.threshold):
-                found += self.match_in_csv(term)
+                found += self.match_in_csv(tokens[idx])
                 #found.append({term: score})
 
         return found
@@ -174,12 +190,13 @@ class WordClassification(object):
         #     "nationalities": self.find_similar_nationality(text)
         # }
         json = self.find_similar_city(text)+self.find_similar_country(text)+self.find_similar_nationality(text)
+        json = list(set(json))
         for table,word in json:
             text = text.replace(word,'')
         return (json,text)
 
 world = WordClassification()
-print(world.find_similar_words("La semaine dernière, qui a conclu le plus de ventes en america"))
+print(world.find_similar_words("La semaine dernière, qui a conclu le plus de ventes en japon"))
 # print(world.find_similar_words("Les américains achètent-ils plus que les japonais"))
 # print(world.find_similar_words("Quelle part de russes dans les achats de Lady Dior"))
 # print(world.find_similar_words("Cette semaine, combien y a-t-il eu de clients marocains"))
