@@ -211,19 +211,11 @@ class Stock(object):
 			res_sellthru = 'Le sellthru '
 			if len(self.boutiques) > 0:
 				res_sellthru += "dans la boutique " + ' '.join(self.boutiques) + ' '
-			if len(self.cities) > 0:
-				res_sellthru += "dans la ville "  + ' '.join(self.cities) + ' '
-			if len(self.countries) > 0:
-				res_sellthru += 'dans le pays ' + ' '.join(self.countries) + ' '
 			res_sellthru += "est de " + sellthru
 			return [stock_query.request + '\n' + product_query.request,res_sellthru ]
 			str_res_stock = 'Le stock '
 			if len(self.boutiques) > 0:
 				str_res_stock += "dans la boutique " + ' '.join(self.boutiques) + ' '
-			if len(self.cities) > 0:
-				str_res_stock += "dans la ville "  + ' '.join(self.cities) + ' '
-			if len(self.countries) > 0:
-				str_res_stock += 'dans le pays ' + ' '.join(self.countries) + ' '
 			res_sellthru += "est de " + str(res_stock)
 			return(stock_query.request, str_res_stock)
 		return(stock_query.request, res_stock)

@@ -188,9 +188,6 @@ class Boutique(object):
 		details.append(["Du", affichage_date(start_date)])
 		details.append(["Au", affichage_date(end_date)])
 
-		if len(self.countries) > 0:
-			details.append(["Pays", ", ".join(self.countries)])
-
 		for produit in self.items :
 			for key in produit:
 				details.append(["%s trouvé dans" %(produit[key]), key])
