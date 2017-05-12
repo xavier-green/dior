@@ -11,6 +11,7 @@ from sql.request import query
 
 from intent.mise_en_forme import affichage_euros, affichage_date
 from intent.gestion_dates import today, last_monday
+from intent.fonctions_annexes import geography_joins, sale_join_products
 
 
 # Import de toutes les tables utilisées
@@ -184,33 +185,7 @@ class Vente(object):
 		On fait les join
 		"""
 
-		product_query.join(sale, item, "Style", "Code")
-
-
-		# GEOGRAPHY Extraction
-
-		uzone_joined = False
-		zone_joined = False
-		subzone_joined = False
-		country_joined = False
-		state_joined = False
-
-		product_query.join(sale, zone, "Zone", "Code")
-
-		for geo_table,geo_item in self.geo:
-			if geo_table == "uzone" and not uzone_joined:
-				product_query.join(zone, uzone, "uzone", "Code")
-				uzone_joined = True
-			elif geo_table == "zone" and not zone_joined:
-				zone_joined = True
-			elif geo_table == "subzone" and not subzone_joined:
-				product_query.join(zone, sub_zone, "Code", "Zone")
-				subzone_joined = True
-			elif geo_table == "country" and not country_joined:
-				product_query.join(sale, country, "Country", "Code")
-				country_joined = True
-			# else if geo_table == "state" and not state_joined:
-			# 	state_joined = True
+		product_query = geography_joins(product_query, self.geo)
 
 		if len(self.boutiques) > 0 or exceptionnal_query or croissance_query or location_query > 0:
 			product_query.join(sale, boutique, "Location", "Code")
@@ -221,6 +196,7 @@ class Vente(object):
 		# if nationality_query:
 		# 	product_query.join(sale, country, "Cust_Nationality", "Code_ISO")
 
+		"""
 		division_seen = False
 		department_seen = False
 		retail_seen = False
@@ -244,6 +220,9 @@ class Vente(object):
 				elif produit_key == "produit" and not produit_seen:
 					# product_query.join(sale, item,"Style","Code")
 					produit_seen = True
+		"""
+
+		product_query = sale_join_products(product_query, self.items)
 
 		"""
 		On fait les conditions
