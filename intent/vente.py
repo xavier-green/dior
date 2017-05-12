@@ -11,7 +11,7 @@ from sql.request import query
 
 from intent.mise_en_forme import affichage_euros, affichage_date
 from intent.gestion_dates import today, last_monday
-from intent.fonctions_annexes import geography_joins, geography_select, sale_join_products, query_products, where_products, find_category
+from intent.fonctions_annexes import geography_joins, geography_select, sale_join_products, query_products, where_products, find_category, append_details_date
 
 # Import de toutes les tables utilisées
 from sql.tables import item, sale, boutique, country, division, retail, theme, department, zone, uzone, sub_zone
@@ -364,30 +364,26 @@ class Vente(object):
 				product_query.groupby(col[0], col[1])
 			query_result = product_query.write().split('\n')
 
+			details = append_details_date([], self.numerical_dates)
 			somme = 0
-			details_items = []
 			for n, ligne in enumerate(query_result):
 				if n > 0:
 					colonnes = ligne.split('#')
 					nombre_ventes = colonnes[len(colonnes)-1]
 					somme += float(nombre_ventes)
 				if n > 0 and n < 10:
-					details_items.append(colonnes)
+					details.append(colonnes)
 				if n == 10:
-					details_items.append(["...", "..."])
+					details.append(["...", "..."])
 					break
-			print(details_items)
-
-			start_date = self.numerical_dates[0][0] if len(self.numerical_dates) > 0 else last_monday()
-			end_date = self.numerical_dates[0][1] if len(self.numerical_dates) > 0 else today()
+			print(details)
 
 			result = "Il y a eu " + str(somme) + " ventes en lien avec " + " et/ou ".join(produit_selected) + " "
 			result += MDorFP
-			result += "du " + start_date + " au " + end_date
 			result += "dans les boutiques de " + ', '.join([b for b in self.boutiques]) + " " if len(self.boutiques) > 0 else ''
 
 			print("***************")
-			return [product_query.request, result, details_items]
+			return [product_query.request, result, details]
 
 
 		elif netsale_query:
