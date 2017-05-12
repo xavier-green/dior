@@ -1,8 +1,13 @@
-from sql.tables import item, sale, boutique, country, division, retail, theme, department, zone, uzone, sub_zone
+from sql.tables import item, sale, boutique, country, division, retail, theme, department, zone, uzone, sub_zone, family
 from intent.mise_en_forme import affichage_euros, affichage_date
 from intent.gestion_dates import today, last_monday
 
 def what_products(list_of_dict):
+	"""
+	Prend self.items en argument, qui est une liste de dictionnaires
+	Renvoit une liste de de quadruplets (table, colonne, nom_table, nom_produit)
+	"""
+
 	assert type(list_of_dict) is list, "Expected a list"
 	assert type(list_of_dict[0]) is dict, "Expected the list to contain dict"
 
@@ -62,7 +67,7 @@ def find_category(categorie):
 		resp = "Famille"
 	elif resp == "THEM":
 		resp = "Theme"
-	elif resp = "MOD_":
+	elif resp == "MOD_":
 		resp = "Modele"
 	return resp
 
