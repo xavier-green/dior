@@ -27,11 +27,14 @@ def vector_post():
 	words = request.json.get("words", None)
 	vectors = []
 	for word in words:
-		if word in model_fasttext.words:
-			vectors.append(model_fasttext[word])
+		if word.strip() != "":
+			if word in model_fasttext.words:
+				vectors.append(model_fasttext[word])
+			else:
+				vectors.append(np.zeros(model_fasttext.dim).tolist())
 		else:
 			vectors.append(np.zeros(model_fasttext.dim).tolist())
 	return jsonify(vectors)
 
 if __name__ == "__main__":
-	app.run(host="0.0.0.0",threaded=True)
+	app.run(host="0.0.0.0",port=80, threaded=True)
