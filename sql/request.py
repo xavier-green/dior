@@ -26,7 +26,7 @@ class query(object):
 					assert column_asked in table_asked.columns, "La table " + table_asked.name + " ne contient pas d'attribut " + table_asked.prefix + column_asked
 					response.append(table_asked.alias + '.' + table_asked.prefix + column_asked)
 			# Appliquer une méthode à une ou plusieurs colonnes, par exemple sum(a + b)
-			elif isinstance(c, tuple) and len(c) > 2
+			elif isinstance(c, tuple) and len(c) > 2:
 				if len(c)%2 == 1:
 					method = c[0]
 					method_columns = []
