@@ -11,7 +11,7 @@ from sql.request import query
 
 from intent.mise_en_forme import affichage_euros, affichage_date
 from intent.gestion_dates import today, last_monday
-from intent.fonctions_annexes import geography_joins, geography_select, sale_join_products
+from intent.fonctions_annexes import geography_joins, geography_select, sale_join_products, query_products, where_products
 
 # Import de toutes les tables utilisées
 from sql.tables import item, sale, boutique, country, division, retail, theme, department, zone, uzone, sub_zone
@@ -120,42 +120,9 @@ class Vente(object):
 			MDorFP = "en Mark Down "
 
 		# List in what categories we will be looking
-		columns_requested = []
-		division_seen_produit = False
-		department_seen_produit = False
-		retail_seen_produit = False
-		theme_seen_produit = False
-		produit_seen_produit = False
-		column_groupby = []
-		for produit in self.items :
-			for produit_key in produit:
-				if produit_key == "division" and not division_seen_produit :
-					column_groupby += [(division, "Description")]
-					columns_requested.append((division, "Description"))
-					division_seen_produit = True
-					break
-				elif produit_key == "departement" and not department_seen_produit:
-					column_groupby += [(department, "Description")]
-					columns_requested.append((department, "Description"))
-					department_seen_produit = True
-					break
-				elif produit_key == "groupe" and not retail_seen_produit:
-					column_groupby += [(retail, "Description")]
-					columns_requested.append((retail, "Description"))
-					retail_seen_produit = True
-					break
-				elif produit_key == "theme" and not theme_seen_produit:
-					column_groupby += [(theme, "Description")]
-					columns_requested.append((theme, "Description"))
-					theme_seen_produit = True
-					break
-				if produit_key == "produit" and not produit_seen_produit:
-					column_groupby += [(item, "Description")]
-					columns_requested.append((item, "Description"))
-					produit_seen_produit = True
-					break
+		columns_requested = query_products(self.items)
+		column_groupby = columns_requested
 		columns_requested.append(Quantity)
-
 
 		"""
 		On créé la query en fonction de la question
@@ -194,32 +161,6 @@ class Vente(object):
 
 		# if nationality_query:
 		# 	product_query.join(sale, country, "Cust_Nationality", "Code_ISO")
-
-		"""
-		division_seen = False
-		department_seen = False
-		retail_seen = False
-		theme_seen = False
-		produit_seen = False
-
-		for produit in self.items :
-			for produit_key in produit:
-				if produit_key == "division" and not division_seen:
-					product_query.join(sale, division,"Division","Code")
-					division_seen = True
-				elif produit_key == "departement" and not department_seen:
-					product_query.join(sale, department,"Department","Code")
-					department_seen = True
-				elif produit_key == "groupe" and not retail_seen:
-					product_query.join(sale, retail,"Group","Code")
-					retail_seen = True
-				elif produit_key == "theme" and not theme_seen:
-					product_query.join(sale, theme,"Theme","Code")
-					theme_seen = True
-				elif produit_key == "produit" and not produit_seen:
-					# product_query.join(sale, item,"Style","Code")
-					produit_seen = True
-		"""
 
 		product_query = sale_join_products(product_query, self.items)
 
