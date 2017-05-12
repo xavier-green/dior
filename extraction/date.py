@@ -177,7 +177,7 @@ class DateExtractor(object):
         if toDate:
             endDate = datetime.datetime(currentDate["year"], 12, 31, 12, 00)
         else:
-            endDate = datetime.datetime(newYear, 12, 31, 12, 00)
+            endDate = datetime.datetime(newYear, 12, 32, 12, 00)
         endDate = endDate.strftime(dateFormat)
         return [startDate,endDate]
 

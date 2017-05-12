@@ -211,8 +211,8 @@ class Vente(object):
 			# else if geo_table == "state" and not state_joined:
 			# 	state_joined = True
 
-		# if len(self.boutiques) > 0 or exceptionnal_query or croissance_query or location_query or len(self.cities) > 0:
-		# 	product_query.join(sale, boutique, "Location", "Code")
+		if len(self.boutiques) > 0 or exceptionnal_query or croissance_query or location_query or len(self.cities) > 0:
+			product_query.join(sale, boutique, "Location", "Code")
 
 		# if len(self.countries) > 0:
 		# 	product_query.join(sale, country, "Country", "Code")
