@@ -26,14 +26,22 @@ class query(object):
 					assert column_asked in table_asked.columns, "La table " + table_asked.name + " ne contient pas d'attribut " + table_asked.prefix + column_asked
 					response.append(table_asked.alias + '.' + table_asked.prefix + column_asked)
 			# Appliquer une méthode à une ou plusieurs colonnes, par exemple sum(a + b)
-			elif isinstance(c, tuple) and len(c) > 2 and len(c)%2 == 1:
-				method = c[0]
-				method_columns = []
-				for i in range(1, len(c), 2):
-					method_table = c[i]
-					method_column = c[i+1]
-					method_columns.append(method_table.alias + '.' + method_table.prefix + method_column)
-				response.append(method + '(' + ' + '.join(method_columns) + ')')
+			elif isinstance(c, tuple) and len(c) > 2
+				if len(c)%2 == 1:
+					method = c[0]
+					method_columns = []
+					for i in range(1, len(c), 2):
+						method_table = c[i]
+						method_column = c[i+1]
+						method_columns.append(method_table.alias + '.' + method_table.prefix + method_column)
+					response.append(method + '(' + ' + '.join(method_columns) + ')')
+				else:
+					method_columns = []
+					for i in range(len(c), 2):
+						method_table = c[i]
+						method_column = c[i+1]
+						method_columns.append(method_table.alias + '.' + method_table.prefix + method_column)
+					response.append(' + '.join(method_columns))
 			else:
 				assert False, "Il semblerait que les colonnes demandées n'appartiennent à aucune table"
 		# Pour les requêtes comme ORDER BY et GROUP BY qui demandent uniquement une colonne
@@ -148,7 +156,7 @@ class query(object):
 	def write(self):
 		print('REQUETE', self.request, '\n')
 		p = subprocess.run('sqlcmd -l 10 -S 10.148.102.166\DEV2012 -U REP_SQL_CHATBOT -P ChatBoT1984! -d Reporting_CDS -W -w 999 -s # -Q'.split() + [self.request], stdout=subprocess.PIPE, universal_newlines=True)
-		print('STDOUT:', p.stdout)		
+		print('STDOUT:', p.stdout)
 		if "Error" in p.stdout:
 			raise Exception("Error during SQL query : \n"+p.stdout)
 		out = p.stdout.splitlines()[:-2]
