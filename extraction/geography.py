@@ -141,7 +141,7 @@ class WordClassification(object):
         for category in self.order:
             for key in category:
                 if self.get_product(term, category[key]["file"], category[key]["column"]):
-                    print(term," se trouve bien dans ",key)`
+                    print(term," se trouve bien dans ",key)
                     return [(key,term)]
         return []
     
