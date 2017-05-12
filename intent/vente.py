@@ -121,6 +121,7 @@ class Vente(object):
 
 		# List in what categories we will be looking
 		columns_requested = query_products(self.items)
+		column_groupby = columns_requested
 		columns_requested.append(Quantity)
 
 		"""
