@@ -1,4 +1,6 @@
 from sql.tables import item, sale, boutique, country, division, retail, theme, department, zone, uzone, sub_zone
+from intent.mise_en_forme import affichage_euros, affichage_date
+from intent.gestion_dates import today, last_monday
 
 def what_products(list_of_dict):
 	assert type(list_of_dict) is list, "Expected a list"
@@ -46,6 +48,30 @@ def where_products(query, list_of_dict):
 		query.where(table, column, product_name)
 	return query
 
+def find_category(categorie):
+	resp = categorie[0:4]
+	if resp == "DEPT":
+		resp = "Departement"
+	elif resp == "DIVI":
+		resp = "Division"
+	elif resp == "ITEM":
+		resp = "Produit"
+	elif resp == "GROU":
+		resp = "Groupe Retail"
+	elif resp == "FAMI":
+		resp = "Famille"
+	elif resp == "THEM":
+		resp = "Theme"
+	elif resp = "MOD_":
+		resp = "Modele"
+	return resp
+
+def append_details_date(details, numerical_dates):
+	start_date = numerical_dates[0][0] if len(numerical_dates) > 0 else last_monday()
+	end_date = numerical_dates[0][1] if len(numerical_dates) > 0 else today()
+	details.append(["Du", affichage_date(start_date)])
+	details.append(["Au (non inclu)", affichage_date(end_date)])
+	return details
 
 
 

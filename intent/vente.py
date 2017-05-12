@@ -11,7 +11,7 @@ from sql.request import query
 
 from intent.mise_en_forme import affichage_euros, affichage_date
 from intent.gestion_dates import today, last_monday
-from intent.fonctions_annexes import geography_joins, geography_select, sale_join_products, query_products, where_products
+from intent.fonctions_annexes import geography_joins, geography_select, sale_join_products, query_products, where_products, find_category
 
 # Import de toutes les tables utilisées
 from sql.tables import item, sale, boutique, country, division, retail, theme, department, zone, uzone, sub_zone
@@ -405,17 +405,7 @@ class Vente(object):
 			for n, ligne in enumerate(query_result):
 				if n == 0:
 					colonnes = ligne.split('#')
-					categorie = colonnes[0]
-					if categorie[0:4] == "DEPT":
-						categorie = "Departement"
-					elif categorie[0:4] == "DIVI":
-						categorie = "Division"
-					elif categorie[0:4] == "ITEM":
-						categorie = "Produit"
-					elif categorie[0:4] == "GROU":
-						categorie = "Groupe Retail"
-					else:
-						categorie = categorie[0:4]
+					categorie = find_category(colonnes[0])
 				elif n > 0:
 					colonnes = ligne.split('#')
 					prix_ventes = colonnes[len(colonnes)-1]
