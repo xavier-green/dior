@@ -93,9 +93,11 @@ class query(object):
 		assert column in table.columns, "La table " + table.name + " ne possède pas d'attribut " + table.prefix + column
 
 		if start == "":
+			today = datetime.date.today()
+			weekday = today.weekday()
 			week_delta = datetime.timedelta(days=weekday, weeks=1)
-			start = "20170225"
-
+			start_date = today - week_delta
+			start = start_date.strftime("%Y%m%d")
 
 		table_date = self.proprify_columns(table, [column], 1)
 		where = "WHERE " if len(self.wcount) == 0 else "AND "
