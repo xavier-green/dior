@@ -86,7 +86,10 @@ class intentData():
                 "Quelle boutique vend le plus de roses des vents",
                 "Où vend-on le plus de bags",
                 "Quelle boutique vend le plus de souliers",
-                "Où est-ce que l'on vend beaucoup de jewelry"
+                "Où est-ce que l'on vend beaucoup de jewelry",
+                "Ou vend on le plus de art de la table",
+                "Ou a-t-on les meilleures ventes en joa",
+                "Quelle zone vend le plus de custom jewellery"
             ]
         }, "vendeur": {
             "examples" : ["Qui est le meilleur vendeur",
@@ -106,7 +109,9 @@ class intentData():
                 "La semaine dernière, qui a conclu le plus de ventes à Ginza",
                 "Aux Etats Unis, je veux mon vendeur le plus performant",
                 "Combien de vendeurs y a-t-il à Montaigne",
-                "Nombre de vendeurs au Moyen Orient"
+                "Nombre de vendeurs au Moyen Orient",
+                "Qui vend le plus de art de la table",
+                "Qui est le meilleur en vente de joa"
             ]
         }
     }
