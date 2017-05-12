@@ -19,6 +19,8 @@ def what_products(list_of_dict):
 				products_requested.append((item, "Description", "Style", produit[produit_key]))
 			elif produit_key == "family":
 				products_requested.append((family, "Description", "Family", produit[produit_key]))
+			else:
+				print("Erreur, un item n'a pas de catégorie connue !")
 	return products_requested
 
 def query_products(list_of_dict, has_been_seen = {}):
@@ -28,6 +30,7 @@ def query_products(list_of_dict, has_been_seen = {}):
 		if not (table_name in has_been_seen and has_been_seen[table_name]):
 			columns_products.append((table, column))
 			has_been_seen[table_name] = True
+	return columns_products
 
 def sale_join_products(query, list_of_dict, has_been_seen = {}):
 	products_requested = what_products(list_of_dict)
