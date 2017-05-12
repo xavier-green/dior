@@ -484,8 +484,13 @@ class Vente(object):
 				product_query.groupby(col[0], col[1])
 			query_result = product_query.write().split('\n')
 
+			start_date = self.numerical_dates[0][0] if len(self.numerical_dates) > 0 else last_monday()
+			end_date = self.numerical_dates[0][1] if len(self.numerical_dates) > 0 else today()
+
 			somme = 0
-			details_items = []
+			details = []
+			details.append(["Du", affichage_date(start_date)])
+			details.append(["Au (non inclu)", affichage_date(end_date)])
 			for n, ligne in enumerate(query_result):
 				if n == 0:
 					colonnes = ligne.split('#')
@@ -505,22 +510,19 @@ class Vente(object):
 					prix_ventes = colonnes[len(colonnes)-1]
 					somme += float(prix_ventes)
 				if n > 0 and n < 10:
-					details_items.append([categorie + " " + colonnes[0], affichage_euros(colonnes[len(colonnes)-1])])
+					details.append([categorie + " " + colonnes[0], affichage_euros(colonnes[len(colonnes)-1])])
 				if n == 10:
-					details_items.append("...")
+					details.append("...")
 					break
-			print(details_items)
+			print(details)
 
-			start_date = self.numerical_dates[0][0] if len(self.numerical_dates) > 0 else last_monday()
-			end_date = self.numerical_dates[0][1] if len(self.numerical_dates) > 0 else today()
 
 			result = "Il y a eu " + affichage_euros(str(somme)) + " HT de CA en lien avec " + " et/ou ".join(produit_selected) + " "
 			result += MDorFP
-			result += "du " + start_date + " au " + end_date
 			result += "dans les boutiques de " + ', '.join([b for b in self.boutiques]) if len(self.boutiques) > 0 else ''
 
 			print("***************")
-			return [product_query.request, result, details_items]
+			return [product_query.request, result, details]
 
 		else:
 			for col in column_groupby:
@@ -528,18 +530,18 @@ class Vente(object):
 			query_result = product_query.write().split('\n')
 
 			somme = 0
-			details_items = []
+			details = []
 			for n, ligne in enumerate(query_result):
 				if n > 0:
 					colonnes = ligne.split('#')
 					prix_ventes = colonnes[len(colonnes)-1]
 					somme += float(prix_ventes)
 				if n > 0 and n < 10:
-					details_items.append(colonnes)
+					details.append(colonnes)
 				if n == 10:
-					details_items.append("...")
+					details.append("...")
 					break
-			print(details_items)
+			print(details)
 
 			start_date = self.numerical_dates[0][0] if len(self.numerical_dates) > 0 else last_monday()
 			end_date = self.numerical_dates[0][1] if len(self.numerical_dates) > 0 else today()
@@ -550,7 +552,7 @@ class Vente(object):
 			result += "dans les boutiques de " + ', '.join([b for b in self.boutiques]) if len(self.boutiques) > 0 else ''
 
 			print("***************")
-			return [product_query.request, result, details_items]
+			return [product_query.request, result, details]
 
 """
 data = {
