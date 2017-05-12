@@ -28,7 +28,7 @@ def vector_post():
 	vectors = []
 	for word in words:
 		if word in model_fasttext.words:
-			vectors.append(model_fasttext[sentence])
+			vectors.append(model_fasttext[word])
 		else:
 			vectors.append(np.zeros(model_fasttext.dim).tolist())
 	return jsonify(vectors)
