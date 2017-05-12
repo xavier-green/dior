@@ -80,8 +80,6 @@ class Boutique(object):
 		country_joined = False
 		state_joined = False
 
-		boutique_query.join(sale, zone, "Zone", "Code")
-
 		for geo_table,geo_item in self.geo:
 			if geo_table == "uzone" and not uzone_joined:
 				boutique_query.join(zone, uzone, "uzone", "Code")

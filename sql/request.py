@@ -160,7 +160,6 @@ class query(object):
 		if "Error" in p.stdout:
 			raise Exception("Error during SQL query : \n"+p.stdout)
 		out = p.stdout.splitlines()[:-2]
-
 		out.pop(1)
 		return("\n".join(out))
 

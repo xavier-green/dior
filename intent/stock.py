@@ -8,7 +8,7 @@
 from sql.request import query
 
 # Import de toutes les tables utilisées
-from sql.tables import item, sale, boutique, country, division, retail, theme, department, zone, stock_daily
+from sql.tables import item, sale, boutique, country, division, retail, theme, department, zone, stock_daily, zone, uzone, sub_zone
 
 class Stock(object):
 
@@ -107,10 +107,6 @@ class Stock(object):
 			response = "Le stock concernant les mots-clés " + ", ".join(liste_item) + " est de " + res_stock
 			return(stock_query.request, response)
 
-
-
-
-
 		if 'NULL' in res_stock:
 			res_stock = 0
 		else:
@@ -138,8 +134,6 @@ class Stock(object):
 				MDorFP = "en Mark Down "
 
 			product_query = query(sale, [Quantity])
-			# Retirer Jardin D'avron et Others
-			product_query.join(sale, zone, 'Zone', 'Code')
 
 			if 'couleur' in self.sentence:
 				product_query = query(sale, ['Color','count(*)'], top_distinct='DISTINCT TOP 5')
@@ -149,10 +143,27 @@ class Stock(object):
 			if len(self.items) > 0:
 				product_query.join(sale, item, "Style", "Code") # jointure sur ITEM_Code = SALE_Style
 			product_query.join(sale, boutique, "Location", "Code") # jointure sur SALE_Location = LOCA_Code
+			
+			uzone_joined = False
+			zone_joined = False
+			subzone_joined = False
+			country_joined = False
+			state_joined = False
 
-			# S'il n'y a pas de ville, on s'intéresse au pays
-			if len(self.countries) > 0:
-				product_query.join(sale, country, "Country", "Code") # jointyre sur SALE_Country = COUN_Code
+			product_query.join(sale, zone, "Zone", "Code")
+
+			for geo_table,geo_item in self.geo:
+				if geo_table == "uzone" and not uzone_joined:
+					product_query.join(zone, uzone, "uzone", "Code")
+					uzone_joined = True
+				elif geo_table == "zone" and not zone_joined:
+					zone_joined = True
+				elif geo_table == "subzone" and not subzone_joined:
+					product_query.join(zone, sub_zone, "Code", "Zone")
+					subzone_joined = True
+				elif geo_table == "country" and not country_joined:
+					product_query.join(sale, country, "Country", "Code")
+					country_joined = True
 
 			# Maintenant que toutes les jointures sont faites, on passe aux conditions
 			for produit in self.items :
@@ -174,12 +185,15 @@ class Stock(object):
 
 			product_query.whereNotJDAandOTH()
 
-			for ville in self.cities :
-				product_query.where(boutique, "Description", ville)
-
-			if len(self.cities) == 0:
-				for pays in self.countries :
-					product_query.where(country, "Description_FR", pays)
+			for geo_table,geo_item in self.geo:
+			if geo_table == "uzone" and not uzone_joined:
+				product_query.where(uzone, "description_FR", geo_item)
+			elif geo_table == "zone" and not zone_joined:
+				product_query.where(zone, "Description", geo_item)
+			elif geo_table == "subzone" and not subzone_joined:
+				product_query.where(subzone, "Description", geo_item)
+			elif geo_table == "country" and not country_joined:
+				product_query.where(country, "Description_FR", geo_item)
 
 			if len(self.numerical_dates) > 0:
 				product_query.wheredate(sale, 'DateNumYYYYMMDD', self.numerical_dates[0][0], self.numerical_dates[0][1])

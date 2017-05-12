@@ -2,7 +2,7 @@ from sql.request import query
 from intent.mise_en_forme import affichage_euros, affichage_date
 
 # Import de toutes les tables utilisées
-from sql.tables import staff, sale, boutique, country, item, zone, division, department, theme, retail
+from sql.tables import staff, sale, boutique, country, item, zone, division, department, theme, retail, zone, uzone, sub_zone
 
 """
 # Pour pouvoir importer les fichiers sql
@@ -62,8 +62,6 @@ class Vendeur(object):
 		subzone_joined = False
 		country_joined = False
 		state_joined = False
-
-		seller_query.join(sale, zone, "Zone", "Code")
 
 		for geo_table,geo_item in self.geo:
 			if geo_table == "uzone" and not uzone_joined:

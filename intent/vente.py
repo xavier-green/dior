@@ -13,7 +13,7 @@ from intent.mise_en_forme import affichage_euros, affichage_date
 
 
 # Import de toutes les tables utilisées
-from sql.tables import item, sale, boutique, country, division, retail, theme, department, zone
+from sql.tables import item, sale, boutique, country, division, retail, theme, department, zone, uzone, sub_zone
 
 import math
 
@@ -237,9 +237,6 @@ class Vente(object):
 				elif produit_key == "produit" and not produit_seen:
 					# product_query.join(sale, item,"Style","Code")
 					produit_seen = True
-
-		# Retirer Jardin D'avron et Others
-		product_query.join(sale, zone, 'Zone', 'Code')
 
 		"""
 		On fait les conditions
