@@ -130,13 +130,13 @@ class Boutique(object):
 					boutique_query.where(item, "Description", produit[produit_key])
 
 		for geo_table,geo_item in self.geo:
-			if geo_table == "uzone" and not uzone_joined:
+			if geo_table == "uzone":
 				boutique_query.where(uzone, "description_FR", geo_item)
-			elif geo_table == "zone" and not zone_joined:
+			elif geo_table == "zone":
 				boutique_query.where(zone, "Description", geo_item)
-			elif geo_table == "subzone" and not subzone_joined:
+			elif geo_table == "subzone":
 				boutique_query.where(subzone, "Description", geo_item)
-			elif geo_table == "country" and not country_joined:
+			elif geo_table == "country":
 				boutique_query.where(country, "Description_FR", geo_item)
 
 		"""
@@ -187,9 +187,6 @@ class Boutique(object):
 		details = []
 		details.append(["Du", affichage_date(start_date)])
 		details.append(["Au", affichage_date(end_date)])
-
-		if len(self.countries) > 0:
-			details.append(["Pays", ", ".join(self.countries)])
 
 		for produit in self.items :
 			for key in produit:

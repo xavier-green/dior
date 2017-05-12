@@ -57,7 +57,7 @@ class Vente(object):
 		first_word = self.sentence.split(" ")[0]
 		question = self.sentence.lower()
 
-		if ('Où' in self.sentence) or ('où' in self.sentence) or ('ou' in first_word) or ('Ou' in first_word) or ('dans quel pays' in self.sentence.lower()) or ('a quel endroit' in self.sentence.lower()):
+		if ('Où' in self.sentence) or ('où' in self.sentence) or (first_word == "ou") or (first_word == "Ou") or ('dans quel pays' in self.sentence.lower()) or ('a quel endroit' in self.sentence.lower()):
 			print("Sale specific to a location")
 			location_query = True
 
@@ -274,13 +274,13 @@ class Vente(object):
 
 
 		for geo_table,geo_item in self.geo:
-			if geo_table == "uzone" and not uzone_joined:
+			if geo_table == "uzone":
 				product_query.where(uzone, "description_FR", geo_item)
-			elif geo_table == "zone" and not zone_joined:
+			elif geo_table == "zone":
 				product_query.where(zone, "Description", geo_item)
-			elif geo_table == "subzone" and not subzone_joined:
+			elif geo_table == "subzone":
 				product_query.where(subzone, "Description", geo_item)
-			elif geo_table == "country" and not country_joined:
+			elif geo_table == "country":
 				product_query.where(country, "Description_FR", geo_item)
 
 		# for ville in self.cities :
@@ -360,8 +360,7 @@ class Vente(object):
 
 			result = "Il y a eu %i ventes exceptionnelles (supérieures à %s)" %(len(query_result)-1, affichage_euros(self.seuil_exc))
 			result += "pour " + ', '.join(produit_selected) + " " if len(produit_selected) > 0 else ''
-			result += "dans les boutiques de " + ', '.join([b for b in self.cities]) + " " if len(self.cities) > 0 else ''
-			result += "dans le pays " + ", ".join([p for p in self.countries]) + " " if len(self.cities) == 0 and len(self.countries) > 0 else ''
+			result += "dans les boutiques " + ', '.join([b for b in self.boutiques]) if len(self.boutiques) > 0 else ''
 			result += "\n"
 
 			result += "Voici les 3 meilleures :" if len(query_result)-1 > 3 else ""
@@ -437,8 +436,7 @@ class Vente(object):
 
 			result += "du %s au %s par rapport au %s au %s " %(start_date, "20170304", second_start_date, start_date)
 			result += "pour " + ', '.join(produit_selected) + " " if len(produit_selected) > 0 else ''
-			result += "dans les boutiques de " + ', '.join([b for b in self.cities]) + " " if len(self.cities) > 0 else ''
-			result += "dans le pays " + ", ".join([p for p in self.countries]) + " " if len(self.cities) == 0 and len(self.countries) > 0 else ''
+			result += "dans les boutiques de " + ', '.join([b for b in self.boutiques]) if len(self.boutiques) > 0 else ''
 
 			print("***************")
 			return [product_query.request, result]
@@ -468,8 +466,7 @@ class Vente(object):
 			result = "Il y a eu " + str(somme) + " ventes en lien avec " + " et/ou ".join(produit_selected) + " "
 			result += MDorFP
 			result += "du " + start_date + " au " + end_date
-			result += "dans les boutiques de " + ', '.join([b for b in self.cities]) + " " if len(self.cities) > 0 else ''
-			result += "dans le pays " + ", ".join([p for p in self.countries]) + " " if len(self.cities) == 0 and len(self.countries) > 0 else ''
+			result += "dans les boutiques de " + ', '.join([b for b in self.boutiques]) + " " if len(self.boutiques) > 0 else ''
 
 			print("***************")
 			return [product_query.request, result, details_items]
@@ -500,8 +497,7 @@ class Vente(object):
 			result = "Il y a eu " + affichage_euros(str(somme)) + " HT de CA en lien avec " + " et/ou ".join(produit_selected) + " "
 			result += MDorFP
 			result += "du " + start_date + " au " + end_date
-			result += "dans les boutiques de " + ', '.join([b for b in self.cities]) + " " if len(self.cities) > 0 else ''
-			result += "dans le pays " + ", ".join([p for p in self.countries]) + " " if len(self.cities) == 0 and len(self.countries) > 0 else ''
+			result += "dans les boutiques de " + ', '.join([b for b in self.boutiques]) if len(self.boutiques) > 0 else ''
 
 			print("***************")
 			return [product_query.request, result, details_items]

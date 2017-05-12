@@ -87,13 +87,13 @@ class Stock(object):
 				liste_item.append(produit[produit_key])
 
 		for geo_table,geo_item in self.geo:
-			if geo_table == "uzone" and not uzone_joined:
+			if geo_table == "uzone":
 				stock_query.where(uzone, "description_FR", geo_item)
-			elif geo_table == "zone" and not zone_joined:
+			elif geo_table == "zone":
 				stock_query.where(zone, "Description", geo_item)
-			elif geo_table == "subzone" and not subzone_joined:
+			elif geo_table == "subzone":
 				stock_query.where(subzone, "Description", geo_item)
-			elif geo_table == "country" and not country_joined:
+			elif geo_table == "country":
 				stock_query.where(country, "Description_FR", geo_item)
 
 
@@ -186,13 +186,13 @@ class Stock(object):
 			product_query.whereNotJDAandOTH()
 
 			for geo_table,geo_item in self.geo:
-				if geo_table == "uzone" and not uzone_joined:
+				if geo_table == "uzone":
 					product_query.where(uzone, "description_FR", geo_item)
-				elif geo_table == "zone" and not zone_joined:
+				elif geo_table == "zone":
 					product_query.where(zone, "Description", geo_item)
-				elif geo_table == "subzone" and not subzone_joined:
+				elif geo_table == "subzone":
 					product_query.where(subzone, "Description", geo_item)
-				elif geo_table == "country" and not country_joined:
+				elif geo_table == "country":
 					product_query.where(country, "Description_FR", geo_item)
 
 			if len(self.numerical_dates) > 0:
@@ -211,19 +211,11 @@ class Stock(object):
 			res_sellthru = 'Le sellthru '
 			if len(self.boutiques) > 0:
 				res_sellthru += "dans la boutique " + ' '.join(self.boutiques) + ' '
-			if len(self.cities) > 0:
-				res_sellthru += "dans la ville "  + ' '.join(self.cities) + ' '
-			if len(self.countries) > 0:
-				res_sellthru += 'dans le pays ' + ' '.join(self.countries) + ' '
 			res_sellthru += "est de " + sellthru
 			return [stock_query.request + '\n' + product_query.request,res_sellthru ]
 			str_res_stock = 'Le stock '
 			if len(self.boutiques) > 0:
 				str_res_stock += "dans la boutique " + ' '.join(self.boutiques) + ' '
-			if len(self.cities) > 0:
-				str_res_stock += "dans la ville "  + ' '.join(self.cities) + ' '
-			if len(self.countries) > 0:
-				str_res_stock += 'dans le pays ' + ' '.join(self.countries) + ' '
 			res_sellthru += "est de " + str(res_stock)
 			return(stock_query.request, str_res_stock)
 		return(stock_query.request, res_stock)
