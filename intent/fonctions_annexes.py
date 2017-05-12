@@ -1,10 +1,35 @@
 from sql.tables import item, sale, boutique, country, division, retail, theme, department, zone, uzone, sub_zone
 
-def what_products(liste_of_dict):
+def what_products(list_of_dict):
 	assert type(list_of_dict) is list, "Expected a list"
 	assert type(list_of_dict[0]) is dict, "Expected the list to contain dict"
 
-	
+	products_requested = []
+	for produit in self.items :
+		for produit_key in produit:
+			if produit_key == "division":
+				products_requested.append((division, "Description", "Division", produit[produit_key]))
+			elif produit_key == "departement":
+				products_requested.append((department, "Description", "Department", produit[produit_key]))
+			elif produit_key == "groupe":
+				products_requested.append((retail, "Description", "Group", produit[produit_key]))
+			elif produit_key == "theme":
+				products_requested.append((theme, "Description", "Theme", produit[produit_key]))
+			elif produit_key == "produit":
+				products_requested.append((item, "Description", "Style", produit[produit_key]))
+			elif produit_key == "family":
+				products_requested.append((family, "Description", "Family", produit[produit_key]))
+	return products_requested
+
+def sale_join_products(query, list_of_dict, has_been_seen = {}):
+	products_requested = what_products(list_of_dict)
+	for table, column, table_name, product_name in products_requested:
+		if not has_been_seen[table_name]:
+			query.join(sale, table, table_name, "Code")
+			has_been_seen[table_name] = True
+	return query
+
+
 
 
 """

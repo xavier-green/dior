@@ -11,8 +11,7 @@ from sql.request import query
 
 from intent.mise_en_forme import affichage_euros, affichage_date
 from intent.gestion_dates import today, last_monday
-from intent.fonctions_annexes import geography_joins, geography_select
-
+from intent.fonctions_annexes import geography_joins, geography_select, sale_join_products
 
 # Import de toutes les tables utilisées
 from sql.tables import item, sale, boutique, country, division, retail, theme, department, zone, uzone, sub_zone
@@ -196,6 +195,7 @@ class Vente(object):
 		# if nationality_query:
 		# 	product_query.join(sale, country, "Cust_Nationality", "Code_ISO")
 
+		"""
 		division_seen = False
 		department_seen = False
 		retail_seen = False
@@ -219,6 +219,9 @@ class Vente(object):
 				elif produit_key == "produit" and not produit_seen:
 					# product_query.join(sale, item,"Style","Code")
 					produit_seen = True
+		"""
+
+		product_query = sale_join_products(product_query, self.items)
 
 		"""
 		On fait les conditions
