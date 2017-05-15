@@ -136,7 +136,7 @@ class Vente(object):
 		elif price_query:
 			product_query = query(sale, [(sale, "RG_Net_Amount_WOTax_REF")], top_distinct='DISTINCT TOP 1')
 		elif exceptionnal_query:
-			product_query = query(sale, columns_requested+[(sale, "RG_Net_Amount_WOTax_REF", sale, "MD_Net_Amount_WOTax_REF"), "DateNumYYYYMMDD", (boutique, "Description")], top_distinct= 'DISTINCT')
+			product_query = query(sale, columns_requested+[("sum", sale, "RG_Net_Amount_WOTax_REF", sale, "MD_Net_Amount_WOTax_REF"), "DateNumYYYYMMDD", (boutique, "Description")], top_distinct= 'DISTINCT')
 		elif croissance_query:
 			product_query = query(sale, [("sum", sale, "RG_Net_Amount_WOTax_REF", sale, "MD_Net_Amount_WOTax_REF")])
 		elif margin_query:
@@ -263,7 +263,7 @@ class Vente(object):
 			query_result = product_query.write().split('\n')
 			print(query_result)
 			result_line = query_result[1].split('#')
-			item_price = result_line[0]
+			item_price = round(float(result_line[0]), 2)
 
 			details = append_details_date([], self.numerical_dates)
 			details = append_details_products(details, self.items)
