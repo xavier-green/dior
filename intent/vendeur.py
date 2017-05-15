@@ -48,7 +48,7 @@ class Vendeur(object):
 		sale_table = query(sale, ['*'])
 
 		# Retirer les éléments de JDA et OTH
-		seller_query = geography_joins(seller_query, self.geo)
+		sale_table.join(sale, zone, 'Zone', 'Code')
 		sale_table.whereNotJDAandOTH()
 
 		if len(self.numerical_dates) > 0:
@@ -82,6 +82,8 @@ class Vendeur(object):
 					seller_query.join(sale, item,"Style","Code")
 					categorie_produit = "le produit "
 					produit_selected.append(produit[produit_key])
+		
+		seller_query = geography_joins(seller_query, self.geo)
 
 
 		"""
