@@ -23,8 +23,8 @@ from sklearn.svm import SVC
 
 import json
 import requests
-from urllib.request import quote
-from urllib.request import urlopen
+# from urllib.request import quote
+# from urllib.request import urlopen
 
 def tokenize(text):
     stripped_punctuation = re.sub(r'[-_;,.?!]',' ',text.lower())
