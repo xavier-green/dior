@@ -72,7 +72,7 @@ class Word2VecVectorizer(object):
 
     def transform(self, X):
         return np.array([
-            np.mean([getWord2vecVector(w)
+            np.mean([getSingleWord2vecVector(w)
                  for w in tokenize(words)], axis=0)
             for words in X
         ])

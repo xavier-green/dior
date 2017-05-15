@@ -160,14 +160,14 @@ class ProductExtractor(object):
         sentence = sentence.lower()
         sentence = re.sub(r'[^\w\s]','',sentence)
         sentence = " ".join([w for w in sentence.split(" ") if len(w)>=2])
-        print("Entry:"+sentence)
+        # print("Entry:"+sentence)
         tags_dict = self.tag_dict(sentence)
         #print(tags_dict)
         for i in range(self.n_max,0,-1):
-            print("extraction des "+str(i)+"-gram")
+            # print("extraction des "+str(i)+"-gram")
             for orde in self.order:
                 for key in orde:
-                    print("extraction en cours pour "+key)
+                    # print("extraction en cours pour "+key)
                     results, sentence = self.extract_N(sentence, tags_dict, orde[key], key, results, i)
         return results
 
@@ -187,7 +187,7 @@ class ProductExtractor(object):
                     #print(short_sentence)
                     #print("getting product for "+str(csv))
                     if self.get_product(short_sentence, csv["file"], csv["column"]):
-                        print("ok")
+                        # print("ok")
                         matched_item = {}
                         matched_item[bdd] = short_sentence
                         ok_products.append(matched_item)
