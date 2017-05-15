@@ -90,7 +90,6 @@ class Vendeur(object):
 			else:
 				nom_vendeur, nombre_ventes, montant_ventes = ligne.split('#')
 				reponse += nom_vendeur + " avec " + nombre_ventes + " ventes pour un montant de " + affichage_euros(montant_ventes) + " HT ; \n"
-				details.append(["Aucun item demandé", ""])
 
 		details = append_details_date([], self.numerical_dates)
 		products_requested = what_products(self.items)
