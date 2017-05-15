@@ -48,6 +48,9 @@ def getWord2vecVector(words):
     return final_vec
 
 class Word2VecVectorizer(object):
+
+    def __init__(self):
+        print("Word2VecVectorizer class")
     
     def fit(self, X, y):
         return self 
