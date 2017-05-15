@@ -4,7 +4,9 @@ from intent.mise_en_forme import affichage_euros, affichage_date
 # Import de toutes les tables utilisées
 from sql.tables import staff, sale, boutique, country, item, zone, division, department, theme, retail, zone, uzone, sub_zone
 
-from intent.fonctions_annexes import geography_joins, geography_select, what_products, sale_join_products, query_products, where_products, find_category, append_details_date
+from intent.fonctions_annexes import geography_joins, geography_select
+from intent.fonctions_annexes import what_products, sale_join_products, query_products, where_products, find_category
+from intent.fonctions_annexes import append_details_date, append_details_products, append_details_geo
 
 class Vendeur(object):
 
@@ -92,13 +94,12 @@ class Vendeur(object):
 				nom_vendeur, nombre_ventes, montant_ventes = ligne.split('#')
 				reponse += nom_vendeur + " avec " + nombre_ventes + " ventes pour un montant de " + affichage_euros(montant_ventes) + " HT ; \n"
 
+		"""
+		Ajout des details
+		"""
+
 		details = append_details_date([], self.numerical_dates)
-		products_requested = what_products(self.items)
-		for product in products_requested:
-			category = product[2]
-			name = product[3]
-			details.append([name + " trouvé dans", category])
-		for geo_zone, geo_item in self.geo:
-			details.append([geo_zone, geo_item])
+		details = append_details_products(details, self.items)
+		details = append_details_geo(details, self.geo)
 
 		return [seller_query.request, reponse, details]

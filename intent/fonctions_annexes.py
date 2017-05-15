@@ -86,6 +86,17 @@ def append_details_date(details, numerical_dates):
 	details.append(["Au (non inclu)", affichage_date(end_date)])
 	return details
 
+def append_details_products(details, items):
+	products_requested = what_products(items)
+	for table, column, table_name, product_name in products_requested:
+		details.append([product_name + " trouvé dans", table_name])
+	return details
+
+def append_details_geo(details, geo):
+	for geo_zone, geo_item in geo:
+		details.append([geo_zone, geo_item])
+	return details
+
 
 
 """
