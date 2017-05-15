@@ -360,33 +360,8 @@ class Vente(object):
 			# result += "dans les boutiques de " + ', '.join([b for b in self.boutiques]) if len(self.boutiques) > 0 else ''
 
 			details = append_details_date([], self.numerical_dates)
-
-			for col in column_groupby:
-				product_query.groupby(col[0], col[1])
-				second_query.groupby(col[0], col[1])
-			ventes_n = product_query.write().split('\n')
-			ventes_n_moins_un = second_query.write().split('\n')
-			print(ventes_n)
-			print(ventes_n_moins_un)
-
-			# valeur = 0
-			# quantite = 0
-			# for n, ligne in enumerate(query_result):
-			# 	if n == 0:
-			# 		colonnes = ligne.split('#')
-			# 		categorie = find_category(colonnes[0])
-			# 	if n > 0:
-			# 		colonnes = ligne.split('#')
-			# 		prix_ventes = colonnes[len(colonnes)-1]
-			# 		quantite_ventes = colonnes[len(colonnes)-2]
-			# 		valeur += float(prix_ventes)
-			# 		quantite += int(quantite_ventes)
-			# 	if n > 0 and n < 10:
-			# 		details.append([categorie + ' ' + colonnes[0], "("+quantite_ventes+" vendu pour "+affichage_euros(prix_ventes)+" HT"])
-			# 	if n == 10:
-			# 		details.append(["...", "..."])
-			# 		break
-			# print(details)
+			details = append_details_products(details, self.items)
+			details = append_details_geo(details, self.geo)
 
 			print("***************")
 			return [product_query.request, result, details]
