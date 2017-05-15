@@ -82,7 +82,7 @@ class Vendeur(object):
 					seller_query.join(sale, item,"Style","Code")
 					categorie_produit = "le produit "
 					produit_selected.append(produit[produit_key])
-		
+
 		seller_query = geography_joins(seller_query, self.geo)
 
 
@@ -134,9 +134,11 @@ class Vendeur(object):
 		for n, ligne in enumerate(liste_resultat):
 			if n == 0:
 				pass
-			else:
+			elif len(ligne.split('|')) > 2:
 				nom_vendeur, nombre_ventes, montant_ventes = ligne.split('|')
 				reponse += nom_vendeur + " avec " + nombre_ventes + " ventes pour un montant de " + affichage_euros(montant_ventes) + " HT ; \n"
+			else:
+				reponse = "Aucun vendeur n'a réalisé ce genre de vente durant cette période."
 
 		return [seller_query.request,reponse, details]
 
