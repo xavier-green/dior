@@ -54,9 +54,7 @@ class Stock(object):
 		"""
 		Jointures
 		"""
-
-		if len(self.items) > 0:
-			stock_query.join(stock_daily, item, "Style", "Code") # jselointure sur ITEM_Code = STOC_Style
+		stock_query = sale_join_products(stock_query,self.items,main_table=stock_daily)
 
 		# GEOGRAPHY Extraction
 
@@ -66,11 +64,8 @@ class Stock(object):
 		Conditions
 		"""
 
-		liste_item = []
-		for produit in self.items :
-			for produit_key in produit:
-				stock_query.where(item, "Description", produit[produit_key])
-				liste_item.append(produit[produit_key])
+		stock_query = where_products(stock_query, self.items)
+
 
 		stock_query = geography_select(stock_query, self.geo)
 
@@ -80,10 +75,13 @@ class Stock(object):
 		"""
 
 		res_stock = stock_query.write()
-
+        
+		details = append_details_date([], self.numerical_dates)
+		details = append_details_products(details, self.items)
+		details = append_details_geo(details, self.geo)
 		if not sellthru_query:
-			response = "Le stock concernant les mots-clés " + ", ".join(liste_item) + " est de " + res_stock
-			return(stock_query.request, response)
+			response = "Le stock concernant " + ", ".join(map(lambda x : " ".join(dict.values(x)), self.items)) + "dans " + self.geo + self.boutiques +"est de " + res_stock
+			return([stock_query.request, response, details])
 
 		if 'NULL' in res_stock:
 			res_stock = 0
