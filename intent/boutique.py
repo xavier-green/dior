@@ -13,7 +13,7 @@ from sql.request import query
 from sql.tables import item, sale, boutique, country, division, retail, theme, department, zone, sub_zone, uzone
 
 from annexes.mise_en_forme import affichage_euros, affichage_date
-from annexes.gestion_geo import geography_joins, geography_select
+from annexes.gestion_geo import geography_joins, geography_select, geography_joins_boutique
 from annexes.gestion_products import what_products, sale_join_products, query_products, where_products
 from annexes.gestion_details import append_details_date, append_details_products, append_details_geo, find_category
 
@@ -59,14 +59,17 @@ class Boutique(object):
 
 		if "zone" in self.sentence.lower():
 			boutique_query = query(zone, ['Description', 'count(*)', ("sum", sale, "RG_Net_Amount_WOTax_REF", sale, "MD_Net_Amount_WOTax_REF")], 'TOP 7')
+			main_scale = "zone"
 			scale_cible = "zones"
 			boutique_query.join_custom(zone, sale_table.request, sale, "Code", "Zone")
 		elif "pays" in self.sentence.lower():
 			boutique_query = query(country, ['Description', 'count(*)', ("sum", sale, "RG_Net_Amount_WOTax_REF", sale, "MD_Net_Amount_WOTax_REF")], 'TOP 3')
+			main_scale = "country"
 			scale_cible = "pays"
 			boutique_query.join_custom(country, sale_table.request, sale, "Code", "Country")
 		else:
 			boutique_query = query(boutique, ['Description', 'count(*)', ("sum", sale, "RG_Net_Amount_WOTax_REF", sale, "MD_Net_Amount_WOTax_REF")], 'TOP 3')
+			main_scale = "boutique"
 			scale_cible = "boutiques"
 			boutique_query.join_custom(boutique, sale_table.request, sale, "Code", "Location")
 
@@ -76,7 +79,7 @@ class Boutique(object):
 		"""
 		
 		boutique_query = sale_join_products(boutique_query, self.items)
-		boutique_query = geography_joins(sale, boutique_query, self.geo)
+		boutique_query = geography_joins_boutique(boutique_query, self.geo, main_scale = main_scale)
 
 		"""
 		Conditions

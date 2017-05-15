@@ -12,7 +12,7 @@ def geography_joins(table, query, data):
 
 	query.join(table, zone, "Zone", "Code")
 
-	for geo_table,geo_item in data:
+	for geo_table, geo_item in data:
 		if geo_table == "uzone" and not uzone_joined:
 			query.join(zone, uzone, "uzone", "Code")
 			uzone_joined = True
@@ -27,8 +27,36 @@ def geography_joins(table, query, data):
 
 	return query
 
+def geography_joins_boutique(query, data, main_scale = None, main_table = sale):
+
+	has_been_joined = {
+		"uzone": False,
+		"zone": True,
+		"subzone": False,
+		"country": False,
+		"state": False
+	}
+
+	if main_scale in has_been_joined:
+		has_been_joined[main_scale] = True
+
+	query.join(main_table, zone, "Zone", "Code")
+
+	for geo_table, geo_item in data:
+		if geo_table == "uzone" and not has_been_joined["uzone"]:
+			query.join(zone, uzone, "uzone", "Code")
+			has_been_joined["uzone"] = True
+		elif geo_table == "subzone" and not has_been_joined["subzone"]:
+			query.join(zone, sub_zone, "Code", "Zone")
+			has_been_joined["subzone"] = True
+		elif geo_table == "country" and not has_been_joined["country"]:
+			query.join(zone, country, "Code", "Zone")
+			has_been_joined["country"] = True
+
+	return query
+
 def geography_select(query, data):
-	for geo_table,geo_item in data:
+	for geo_table, geo_item in data:
 		if geo_table == "uzone":
 			query.where(uzone, "description_FR", geo_item)
 		elif geo_table == "zone":
