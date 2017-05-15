@@ -90,8 +90,7 @@ def append_details_date(details, numerical_dates):
 Xavier écris en dessous
 """
 
-def geography_joins(query, data):
-	query.join(sale, item, "Style", "Code")
+def geography_joins(table, query, data):
 
 	# GEOGRAPHY Extraction
 
@@ -101,7 +100,7 @@ def geography_joins(query, data):
 	country_joined = False
 	state_joined = False
 
-	query.join(sale, zone, "Zone", "Code")
+	query.join(table, zone, "Zone", "Code")
 
 	for geo_table,geo_item in data:
 		if geo_table == "uzone" and not uzone_joined:

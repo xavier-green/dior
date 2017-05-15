@@ -19,7 +19,7 @@ class extract_boutique(object):
     ]
 
     not_replace = [
-        "geo", "nat", "date", "prix", "vente", "femme", "stock", "yo", "sales", "new", "woman", "women"
+        "geo", "nat", "date", "prix", "vente", "femme", "stock", "yo", "sales", "new", "woman", "women", "dior"
     ]
 
     def __init__(self, csv_path, n_max=3):

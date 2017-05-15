@@ -49,7 +49,6 @@ class Vendeur(object):
 
 		# Retirer les éléments de JDA et OTH
 		seller_query = geography_joins(seller_query, self.geo)
-		sale_table.whereNotJDAandOTH()
 
 		if len(self.numerical_dates) > 0:
 			sale_table.wheredate(sale, 'DateNumYYYYMMDD', self.numerical_dates[0][0], self.numerical_dates[0][1])
@@ -87,6 +86,8 @@ class Vendeur(object):
 		"""
 		Conditions
 		"""
+
+		sale_table.whereNotJDAandOTH()
 
 		for produit in self.items :
 			for produit_key in produit:

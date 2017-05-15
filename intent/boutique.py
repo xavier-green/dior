@@ -43,8 +43,7 @@ class Boutique(object):
 
 		sale_table = query(sale, ['*'])
 
-		boutique_query = geography_joins(boutique_query, self.geo)
-		sale_table.whereNotJDAandOTH()
+		boutique_query = geography_joins(sale, boutique_query, self.geo)
 
 		if len(self.numerical_dates) > 0:
 			sale_table.wheredate(sale, 'DateNumYYYYMMDD', self.numerical_dates[0][0], self.numerical_dates[0][1])
@@ -91,6 +90,8 @@ class Boutique(object):
 		"""
 		Conditions
 		"""
+
+		sale_table.whereNotJDAandOTH()
 
 		for produit in self.items :
 			for produit_key in produit:
