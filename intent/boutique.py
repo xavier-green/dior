@@ -43,6 +43,7 @@ class Boutique(object):
 
 		sale_table = query(sale, ['*'])
 
+		boutique_query = geography_joins(boutique_query, self.geo)
 		sale_table.whereNotJDAandOTH()
 
 		if len(self.numerical_dates) > 0:
@@ -67,16 +68,6 @@ class Boutique(object):
 			boutique_query = query(boutique, ['Description', 'count(*)', ("sum", sale, "RG_Net_Amount_WOTax_REF", sale, "MD_Net_Amount_WOTax_REF")], 'TOP 3')
 			scale_cible = "boutiques"
 			boutique_query.join_custom(boutique, sale_table.request, sale, "Code", "Location")
-
-
-
-		"""
-		Jointures
-		"""
-
-		# GEOGRAPHY Extraction
-
-		boutique_query = geography_joins(boutique_query, self.geo)
 
 		produit_selected = []
 		for produit in self.items :

@@ -139,9 +139,8 @@ class Stock(object):
 					elif produit_key == "produit":
 						product_query.where(item, "Description", produit[produit_key])
 
-			product_query.whereNotJDAandOTH()
-
 			product_query = geography_select(product_query, self.geo)
+			product_query.whereNotJDAandOTH()
 
 			if len(self.numerical_dates) > 0:
 				product_query.wheredate(sale, 'DateNumYYYYMMDD', self.numerical_dates[0][0], self.numerical_dates[0][1])

@@ -152,6 +152,7 @@ class Vente(object):
 		"""
 
 		product_query = geography_joins(product_query, self.geo)
+		product_query.whereNotJDAandOTH()
 
 		if len(self.boutiques) > 0 or exceptionnal_query or croissance_query or location_query > 0:
 			product_query.join(sale, boutique, "Location", "Code")
@@ -167,8 +168,6 @@ class Vente(object):
 		"""
 		On fait les conditions
 		"""
-
-		product_query.whereNotJDAandOTH()
 
 		front_products = []
 
