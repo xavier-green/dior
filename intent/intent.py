@@ -34,6 +34,15 @@ def tokenize(text):
     #print("left: "+' '.join(str(x) for x in cleaned))
     return cleaned
 
+def getSingleWord2vecVector(word):
+    if word.strip() != "":
+        print("Getting vector for "+word)
+        url = "vps397505.ovh.net/"+word
+        url = quote(url.encode('utf8'))
+        vec = urlopen("http://"+url).read()
+        return [float(x) for x in vec.decode("utf-8").replace("[\n  ","").replace("\n]\n","").split(", \n  ")]
+    return np.zeros(300)
+
 def getWord2vecVector(words):
     headers = {'content-type': "application/json",'cache-control': "no-cache"}
     url = "http://vps397505.ovh.net/"
@@ -55,9 +64,16 @@ class Word2VecVectorizer(object):
     def fit(self, X, y):
         return self 
 
+    # def transform(self, X):
+    #     return np.array([
+    #         np.mean(getWord2vecVector(words), axis=0)
+    #         for words in X
+    #     ])
+
     def transform(self, X):
         return np.array([
-            np.mean(getWord2vecVector(words), axis=0)
+            np.mean([getWord2vecVector(w)
+                 for w in tokenize(words)], axis=0)
             for words in X
         ])
 
