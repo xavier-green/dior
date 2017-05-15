@@ -27,5 +27,3 @@ def translate_with_glossaire(text):
     response = glossaire_NG(response, glossaire_1G, 1)
     print("Question finale :\n", response)
     return response
-
-translate_with_glossaire("Bonjour, art de la table et PAP femme s'il vous plait")
