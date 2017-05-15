@@ -134,9 +134,9 @@ class Vente(object):
 		elif location_query:
 			product_query = query(sale, [(boutique, 'Description'), 'count(*)'], top_distinct='DISTINCT TOP 5')
 		elif price_query:
-			product_query = query(sale, [(item, 'Description'), ("sum", sale, "RG_Net_Amount_WOTax_REF", sale, "MD_Net_Amount_WOTax_REF")], top_distinct='DISTINCT TOP 1')
+			product_query = query(sale, [(sale, "RG_Net_Amount_WOTax_REF")]+columns_requested, top_distinct='DISTINCT TOP 1')
 		elif exceptionnal_query:
-			product_query = query(sale, [(item, 'Description'), ("sum", sale, "RG_Net_Amount_WOTax_REF", sale, "MD_Net_Amount_WOTax_REF"), "DateNumYYYYMMDD", (boutique, "Description")], top_distinct= 'DISTINCT')
+			product_query = query(sale, columns_requested+[(sale, "RG_Net_Amount_WOTax_REF", sale, "MD_Net_Amount_WOTax_REF"), "DateNumYYYYMMDD", (boutique, "Description")], top_distinct= 'DISTINCT')
 		elif croissance_query:
 			product_query = query(sale, [("sum", sale, "RG_Net_Amount_WOTax_REF", sale, "MD_Net_Amount_WOTax_REF")])
 		elif margin_query:
@@ -261,13 +261,18 @@ class Vente(object):
 
 		elif price_query:
 			query_result = product_query.write().split('\n')
+			print(query_result)
 			result_line = query_result[1].split('#')
-			item_desc = result_line[0]
-			item_price = result_line[1]
+			item_price = result_line[0]
+
+			details = append_details_date([], self.numerical_dates)
+			details = append_details_products(details, self.items)
+			details = append_details_geo(details, self.geo)
+
 			print(result_line)
-			result = "L'item " + item_desc + " correspondant " + " et ".join(produit_selected) + " se vend à " + item_price + " euros HT."
+			result = str(item_price) + "€ HT."
 			print(result)
-			return [product_query.request,result]
+			return [product_query.request,result,details]
 
 		elif exceptionnal_query:
 			product_query.whereComparaison(sale, (sale, "RG_Net_Amount_WOTax_REF", sale, "MD_Net_Amount_WOTax_REF"), ">", str(self.seuil_exc))
