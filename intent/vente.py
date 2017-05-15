@@ -393,9 +393,9 @@ class Vente(object):
 					break
 			print(details)
 
-			result = "Il y a eu " + str(somme) + " ventes en lien avec " + " et/ou ".join(produit_selected) + " "
+			result = "Il y a eu " + str(somme) + " ventes "# en lien avec " + " et/ou ".join(produit_selected) + " "
 			result += MDorFP
-			result += "dans les boutiques de " + ', '.join([b for b in self.boutiques]) + " " if len(self.boutiques) > 0 else ''
+			# result += "dans les boutiques de " + ', '.join([b for b in self.boutiques]) + " " if len(self.boutiques) > 0 else ''
 
 			print("***************")
 			return [product_query.request, result, details]
@@ -407,6 +407,8 @@ class Vente(object):
 			query_result = product_query.write().split('\n')
 
 			details = append_details_date([], self.numerical_dates)
+			details = append_details_products(details, self.items)
+			details = append_details_geo(details, self.geo)
 
 			somme = 0
 			for n, ligne in enumerate(query_result):
