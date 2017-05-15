@@ -1,6 +1,4 @@
 from sql.tables import item, sale, boutique, country, division, retail, theme, department, zone, uzone, sub_zone, family
-from intent.mise_en_forme import affichage_euros, affichage_date
-from intent.gestion_dates import today, last_monday
 
 def what_products(list_of_dict):
 	"""
@@ -60,92 +58,4 @@ def where_products(query, list_of_dict):
 	for table, column, table_name, product_name, table_desc in products_requested:
 		query.where(table, column, product_name)
 	return query
-
-def find_category(categorie):
-	resp = categorie[0:4]
-	if resp == "DEPT":
-		resp = "Departement"
-	elif resp == "DIVI":
-		resp = "Division"
-	elif resp == "ITEM":
-		resp = "Produit"
-	elif resp == "GROU":
-		resp = "Groupe Retail"
-	elif resp == "FAMI":
-		resp = "Famille"
-	elif resp == "THEM":
-		resp = "Theme"
-	elif resp == "MOD_":
-		resp = "Modele"
-	return resp
-
-def append_details_date(details, numerical_dates):
-	start_date = numerical_dates[0][0] if len(numerical_dates) > 0 else last_monday()
-	end_date = numerical_dates[0][1] if len(numerical_dates) > 0 else today()
-	details.append(["Du", affichage_date(start_date)])
-	details.append(["Au (non inclu)", affichage_date(end_date)])
-	return details
-
-def append_details_products(details, items):
-	products_requested = what_products(items)
-	for table, column, table_name, product_name, table_desc in products_requested:
-		details.append([product_name + " trouvé dans", table_desc])
-	return details
-
-def append_details_geo(details, geo):
-	for geo_zone, geo_item in geo:
-		details.append([geo_zone, geo_item])
-	return details
-
-
-
-"""
-Xavier écris en dessous
-"""
-
-def geography_joins(table, query, data):
-
-	# GEOGRAPHY Extraction
-
-	uzone_joined = False
-	zone_joined = False
-	subzone_joined = False
-	country_joined = False
-	state_joined = False
-
-	query.join(table, zone, "Zone", "Code")
-
-	for geo_table,geo_item in data:
-		if geo_table == "uzone" and not uzone_joined:
-			query.join(zone, uzone, "uzone", "Code")
-			uzone_joined = True
-		elif geo_table == "zone" and not zone_joined:
-			zone_joined = True
-		elif geo_table == "subzone" and not subzone_joined:
-			query.join(zone, sub_zone, "Code", "Zone")
-			subzone_joined = True
-		elif geo_table == "country" and not country_joined:
-			query.join(sale, country, "Country", "Code")
-			country_joined = True
-
-	return query
-
-def geography_select(query, data):
-	for geo_table,geo_item in data:
-		if geo_table == "uzone":
-			query.where(uzone, "description_FR", geo_item)
-		elif geo_table == "zone":
-			query.where(zone, "Description", geo_item)
-		elif geo_table == "subzone":
-			query.where(subzone, "Description", geo_item)
-		elif geo_table == "country":
-			query.where(country, "Description_FR", geo_item)
-	return query
-
-
-
-
-
-
-
 

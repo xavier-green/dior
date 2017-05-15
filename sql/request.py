@@ -3,7 +3,7 @@
 
 import subprocess, csv
 import time
-from intent.gestion_dates import last_monday, today
+from annexes.gestion_dates import last_monday, today
 
 class query(object):
 
