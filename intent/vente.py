@@ -134,7 +134,7 @@ class Vente(object):
 		elif location_query:
 			product_query = query(sale, [(boutique, 'Description'), 'count(*)'], top_distinct='DISTINCT TOP 5')
 		elif price_query:
-			product_query = query(sale, [(sale, "RG_Net_Amount_WOTax_REF")]+columns_requested, top_distinct='DISTINCT TOP 1')
+			product_query = query(sale, [(sale, "RG_Net_Amount_WOTax_REF")], top_distinct='DISTINCT TOP 1')
 		elif exceptionnal_query:
 			product_query = query(sale, columns_requested+[(sale, "RG_Net_Amount_WOTax_REF", sale, "MD_Net_Amount_WOTax_REF"), "DateNumYYYYMMDD", (boutique, "Description")], top_distinct= 'DISTINCT')
 		elif croissance_query:
@@ -260,7 +260,6 @@ class Vente(object):
 			return [product_query.request,";;".join(result)]
 
 		elif price_query:
-			product_query.groupby(sale, "RG_Net_Amount_WOTax_REF")
 			query_result = product_query.write().split('\n')
 			print(query_result)
 			result_line = query_result[1].split('#')
