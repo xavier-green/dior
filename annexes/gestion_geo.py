@@ -31,7 +31,7 @@ def geography_joins_boutique(query, data, main_scale = None, main_table = sale):
 
 	has_been_joined = {
 		"uzone": False,
-		"zone": True,
+		"zone": False,
 		"subzone": False,
 		"country": False,
 		"state": False
@@ -40,7 +40,9 @@ def geography_joins_boutique(query, data, main_scale = None, main_table = sale):
 	if main_scale in has_been_joined:
 		has_been_joined[main_scale] = True
 
-	query.join(main_table, zone, "Zone", "Code")
+	if not has_been_joined["zone"]:
+		query.join(main_table, zone, "Zone", "Code")
+		has_been_joined["zone"] = True
 
 	for geo_table, geo_item in data:
 		if geo_table == "uzone" and not has_been_joined["uzone"]:

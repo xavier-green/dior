@@ -38,3 +38,8 @@ def append_details_geo(details, geo):
 		details.append([geo_zone, geo_item])
 	return details
 
+def append_details_boutiques(details, boutiques):
+	for boutique in boutiques:
+		details.append([boutique + " trouvé dans", "boutique"])
+	return details
+
