@@ -160,8 +160,8 @@ class Vente(object):
 		# if len(self.countries) > 0:
 		# 	product_query.join(sale, country, "Country", "Code")
 
-		# if nationality_query:
-		# 	product_query.join(sale, country, "Cust_Nationality", "Code_ISO")
+		if nationality_query:
+			product_query.join(sale, country, "Cust_Nationality", "Code_ISO")
 
 		product_query = sale_join_products(product_query, self.items)
 
@@ -275,8 +275,8 @@ class Vente(object):
 			return [product_query.request,result,details]
 
 		elif exceptionnal_query:
-			product_query.whereComparaison(sale, (sale, "RG_Net_Amount_WOTax_REF", sale, "MD_Net_Amount_WOTax_REF"), ">", str(self.seuil_exc))
-			product_query.orderby(sale, (sale, "RG_Net_Amount_WOTax_REF", sale, "MD_Net_Amount_WOTax_REF"), "DESC")
+			product_query.whereComparaison(sale, ("sum", sale, "RG_Net_Amount_WOTax_REF", sale, "MD_Net_Amount_WOTax_REF"), ">", str(self.seuil_exc))
+			product_query.orderby(sale, ("sum", sale, "RG_Net_Amount_WOTax_REF", sale, "MD_Net_Amount_WOTax_REF"), "DESC")
 
 			query_result = product_query.write().split('\n')
 			start_date = self.numerical_dates[0][0] if len(self.numerical_dates) > 0 else last_monday()
