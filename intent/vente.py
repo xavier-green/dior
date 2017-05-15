@@ -338,8 +338,10 @@ class Vente(object):
 			else:
 				product_query.wheredate(sale, 'DateNumYYYYMMDD') # par défaut sur les 7 derniers jours
 				second_query.wheredate(sale, 'DateNumYYYYMMDD', "20170218", "20170225") # TODO : à changer
-			vente_date_n = product_query.write().split('\n')[1]
-			vente_date_n_moins_un = second_query.write().split('\n')[1]
+			ventes_n = product_query.write().split('\n')
+			ventes_n_moins_un = second_query.write().split('\n')
+			vente_date_n = ventes_n[1]
+			vente_date_n_moins_un = ventes_n_moins_un[1]
 
 			if vente_date_n_moins_un == "NULL" or vente_date_n == "NULL":
 				result = "Aucune vente enregistrée "
@@ -348,17 +350,40 @@ class Vente(object):
 				vente_date_n_moins_un = float(vente_date_n_moins_un)
 				croissance = 100 * (vente_date_n - vente_date_n_moins_un) / vente_date_n_moins_un if vente_date_n_moins_un > 0 else 0
 				print("Croissance calculée, ", croissance)
-				result = "La croissance est de %.2f pourcent " %(croissance)
+				result = "La croissance est de %.2f% " %(croissance)
 
 			start_date = self.numerical_dates[0][0] if len(self.numerical_dates) > 0 else '20170225'
 			second_start_date = self.numerical_dates[1][0] if len(self.numerical_dates) > 1 else '20170218'
 
-			result += "du %s au %s par rapport au %s au %s " %(start_date, "20170304", second_start_date, start_date)
-			result += "pour " + ', '.join(produit_selected) + " " if len(produit_selected) > 0 else ''
-			result += "dans les boutiques de " + ', '.join([b for b in self.boutiques]) if len(self.boutiques) > 0 else ''
+			# result += "du %s au %s par rapport au %s au %s " %(start_date, "20170304", second_start_date, start_date)
+			# result += "pour " + ', '.join(produit_selected) + " " if len(produit_selected) > 0 else ''
+			# result += "dans les boutiques de " + ', '.join([b for b in self.boutiques]) if len(self.boutiques) > 0 else ''
+
+			print(ventes_n)
+			print(ventes_n_moins_un)
+			details = append_details_date([], self.numerical_dates)
+
+			# valeur = 0
+			# quantite = 0
+			# for n, ligne in enumerate(query_result):
+			# 	if n == 0:
+			# 		colonnes = ligne.split('#')
+			# 		categorie = find_category(colonnes[0])
+			# 	if n > 0:
+			# 		colonnes = ligne.split('#')
+			# 		prix_ventes = colonnes[len(colonnes)-1]
+			# 		quantite_ventes = colonnes[len(colonnes)-2]
+			# 		valeur += float(prix_ventes)
+			# 		quantite += int(quantite_ventes)
+			# 	if n > 0 and n < 10:
+			# 		details.append([categorie + ' ' + colonnes[0], "("+quantite_ventes+" vendu pour "+affichage_euros(prix_ventes)+" HT"])
+			# 	if n == 10:
+			# 		details.append(["...", "..."])
+			# 		break
+			# print(details)
 
 			print("***************")
-			return [product_query.request, result]
+			return [product_query.request, result, details]
 
 		elif quantity_query:
 			for col in column_groupby:
