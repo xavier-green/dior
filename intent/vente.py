@@ -260,6 +260,7 @@ class Vente(object):
 			return [product_query.request,";;".join(result)]
 
 		elif price_query:
+			product_query.groupby(sale, "RG_Net_Amount_WOTax_REF")
 			query_result = product_query.write().split('\n')
 			print(query_result)
 			result_line = query_result[1].split('#')
