@@ -64,18 +64,11 @@ class Word2VecVectorizer(object):
         print("Word2VecVectorizer class")
     
     def fit(self, X, y):
-        return self 
-
-    # def transform(self, X):
-    #     return np.array([
-    #         np.mean(getWord2vecVector(words), axis=0)
-    #         for words in X
-    #     ])
+        return self
 
     def transform(self, X):
         return np.array([
-            np.mean([getSingleWord2vecVector(w)
-                 for w in tokenize(words)], axis=0)
+            np.mean(getWord2vecVector(tokenize(words)), axis=0)
             for words in X
         ])
 
