@@ -136,8 +136,8 @@ class Vendeur(object):
 		for n, ligne in enumerate(liste_resultat):
 			if n == 0:
 				pass
-			elif len(ligne.split('|')) > 2:
-				nom_vendeur, nombre_ventes, montant_ventes = ligne.split('|')
+			elif len(ligne.split('#')) > 2:
+				nom_vendeur, nombre_ventes, montant_ventes = ligne.split('#')
 				reponse += nom_vendeur + " avec " + nombre_ventes + " ventes pour un montant de " + affichage_euros(montant_ventes) + " HT ; \n"
 			else:
 				reponse = "Aucun vendeur n'a réalisé ce genre de vente durant cette période."
