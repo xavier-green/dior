@@ -20,7 +20,8 @@ class Vendeur(object):
 	def build_answer(self):
 		response_base = self.build_query()
 		response_complete = response_base[1]
-		return [response_base[0],response_complete]
+		details_query = response_base[2] if len(response_base) > 2 else "No details"
+		return [response_base[0],response_complete, details_query]
 
 
 	def build_query(self):
@@ -96,8 +97,8 @@ class Vendeur(object):
 		for product in products_requested:
 			category = product[2]
 			name = product[3]
-			details.append([category, name])
+			details.append([name + " trouvé dans", category])
 		for geo_zone, geo_item in self.geo:
 			details.append([geo_zone, geo_item])
 
-		return [seller_query.request,reponse, details]
+		return [seller_query.request, reponse, details]
