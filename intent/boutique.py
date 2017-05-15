@@ -43,7 +43,8 @@ class Boutique(object):
 
 		sale_table = query(sale, ['*'])
 
-		boutique_query = geography_joins(sale, boutique_query, self.geo)
+		sale_table.join(sale, zone, 'Zone', 'Code')
+		sale_table.whereNotJDAandOTH()
 
 		if len(self.numerical_dates) > 0:
 			sale_table.wheredate(sale, 'DateNumYYYYMMDD', self.numerical_dates[0][0], self.numerical_dates[0][1])
@@ -86,6 +87,8 @@ class Boutique(object):
 				elif produit_key == "produit":
 					boutique_query.join(sale, item,"Style","Code")
 					produit_selected.append("le produit " + produit[produit_key])
+
+		boutique_query = geography_joins(sale, boutique_query, self.geo)
 
 		"""
 		Conditions
