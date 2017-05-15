@@ -29,8 +29,10 @@ class Stock(object):
 	def build_answer(self):
 		response_base = self.build_query()
 		print(response_base)
+		details_query = response_base[2] if len(response_base) > 2 else "No details"
+
 		# response_complete = self.append_details(response_base[1])
-		return [response_base[0],response_base[1]]
+		return [response_base[0],response_base[1], details_query]
 
 
 	def build_query(self):
