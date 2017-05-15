@@ -43,6 +43,7 @@ class Boutique(object):
 
 		sale_table = query(sale, ['*'])
 
+		sale_table.join(sale, zone, 'Zone', 'Code')
 		sale_table.whereNotJDAandOTH()
 
 		if len(self.numerical_dates) > 0:
