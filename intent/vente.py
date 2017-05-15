@@ -350,7 +350,7 @@ class Vente(object):
 				vente_date_n_moins_un = float(vente_date_n_moins_un)
 				croissance = 100 * (vente_date_n - vente_date_n_moins_un) / vente_date_n_moins_un if vente_date_n_moins_un > 0 else 0
 				print("Croissance calculée, ", croissance)
-				result = "La croissance est de %.2f% " %(croissance)
+				result = "La croissance est de %.2f%% " %(croissance)
 
 			start_date = self.numerical_dates[0][0] if len(self.numerical_dates) > 0 else '20170225'
 			second_start_date = self.numerical_dates[1][0] if len(self.numerical_dates) > 1 else '20170218'
@@ -359,9 +359,15 @@ class Vente(object):
 			# result += "pour " + ', '.join(produit_selected) + " " if len(produit_selected) > 0 else ''
 			# result += "dans les boutiques de " + ', '.join([b for b in self.boutiques]) if len(self.boutiques) > 0 else ''
 
+			details = append_details_date([], self.numerical_dates)
+
+			for col in column_groupby:
+				product_query.groupby(col[0], col[1])
+				second_query.groupby(col[0], col[1])
+			ventes_n = product_query.write().split('\n')
+			ventes_n_moins_un = second_query.write().split('\n')
 			print(ventes_n)
 			print(ventes_n_moins_un)
-			details = append_details_date([], self.numerical_dates)
 
 			# valeur = 0
 			# quantite = 0
