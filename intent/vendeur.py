@@ -4,15 +4,7 @@ from intent.mise_en_forme import affichage_euros, affichage_date
 # Import de toutes les tables utilisées
 from sql.tables import staff, sale, boutique, country, item, zone, division, department, theme, retail, zone, uzone, sub_zone
 
-from intent.fonctions_annexes import geography_joins, geography_select, sale_join_products, query_products, where_products, find_category, append_details_date
-
-"""
-# Pour pouvoir importer les fichiers sql
-from importlib.machinery import SourceFileLoader
-
-foo = SourceFileLoader("sql.request", "../sql/request.py").load_module()
-foo = SourceFileLoader("sql.tables", "../sql/tables.py").load_module()
-"""
+from intent.fonctions_annexes import geography_joins, geography_select, what_products, sale_join_products, query_products, where_products, find_category, append_details_date
 
 class Vendeur(object):
 
@@ -37,10 +29,8 @@ class Vendeur(object):
 		Query annexe de sale
 		"""
 
-		# Jointure particulière avec la table sale ne contenant que les dates intéressantes
 		sale_table = query(sale, ['*'])
 
-		# Retirer les éléments de JDA et OTH
 		sale_table.join(sale, zone, 'Zone', 'Code')
 		sale_table.whereNotJDAandOTH()
 
@@ -87,34 +77,28 @@ class Vendeur(object):
 		"""
 
 		result = seller_query.write()
-		print("***************")
-		print(result)
-		reponse = "Voici les 3 meilleurs vendeurs : \n"
+		print("***************\n", result)
 
-		details = append_details_date([], self.numerical_dates)
+		reponse = "Voici les 3 meilleurs vendeurs : \n"
 
 		liste_resultat = result.split("\n")
 		for n, ligne in enumerate(liste_resultat):
 			if n == 0:
 				pass
-			elif len(ligne.split('#')) > 2:
+			elif len(ligne.split('#')) < 3:
+				reponse = "Aucun vendeur n'a réalisé ce genre de vente durant cette période."
+			else:
 				nom_vendeur, nombre_ventes, montant_ventes = ligne.split('#')
 				reponse += nom_vendeur + " avec " + nombre_ventes + " ventes pour un montant de " + affichage_euros(montant_ventes) + " HT ; \n"
-			else:
-				reponse = "Aucun vendeur n'a réalisé ce genre de vente durant cette période."
+				details.append(["Aucun item demandé", ""])
+
+		details = append_details_date([], self.numerical_dates)
+		products_requested = what_products(self.items)
+		for product in products_requested:
+			category = product[2]
+			name = product[3]
+			details.append([category, name])
+		for geo_zone, geo_item in self.geo:
+			details.append([geo_zone, geo_item])
 
 		return [seller_query.request,reponse, details]
-
-"""
-data = {
-		'cities': [],
-		'countries': [],
-		'nationalities': [],
-		'numerical_dates': [],
-		'dates': [],
-		'items': {},
-		'sentence': []
-		}
-
-test = Vendeur(data)
-print(test.build_answer())"""
