@@ -34,14 +34,7 @@ class Vendeur(object):
 	def build_query(self):
 
 		"""
-		Initialisation de la query
-		"""
-
-		seller_query = query(staff, ['Name', 'count(*)', ("sum", sale, "RG_Net_Amount_WOTax_REF", sale, "MD_Net_Amount_WOTax_REF")], 'TOP 3')
-
-
-		"""
-		Jointures
+		Query annexe de sale
 		"""
 
 		# Jointure particulière avec la table sale ne contenant que les dates intéressantes
@@ -56,6 +49,17 @@ class Vendeur(object):
 		else:
 			sale_table.wheredate(sale, 'DateNumYYYYMMDD') # par défaut sur les 7 derniers jours
 
+		"""
+		Initialisation de la query
+		"""
+
+		seller_query = query(staff, ['Name', 'count(*)', ("sum", sale, "RG_Net_Amount_WOTax_REF", sale, "MD_Net_Amount_WOTax_REF")], 'TOP 3')
+
+
+		"""
+		Jointures
+		"""
+
 		seller_query.join_custom(staff, sale_table.request, sale, "Code", "Staff") # jointure sur STAFF_Code = SALE_Staff
 
 		seller_query = sale_join_products(seller_query, self.items)
@@ -66,21 +70,7 @@ class Vendeur(object):
 		Conditions
 		"""
 
-		sale_table.whereNotJDAandOTH()
-
-		for produit in self.items :
-			for produit_key in produit:
-				if produit_key == "division":
-					seller_query.where(division, "Description", produit[produit_key])
-				elif produit_key == "departement":
-					seller_query.where(department, "Description", produit[produit_key])
-				elif produit_key == "groupe":
-					seller_query.where(retail, "Description", produit[produit_key])
-				elif produit_key == "theme":
-					seller_query.where(theme, "Description", produit[produit_key])
-				elif produit_key == "produit":
-					seller_query.where(item, "Description", produit[produit_key])
-
+		seller_query = where_products(seller_query, self.items)
 		seller_query = geography_select(seller_query, self.geo)
 
 
@@ -88,7 +78,6 @@ class Vendeur(object):
 		Finitions
 		"""
 
-		# On n'oublie pas le GROUP BY, nécessaire ici vu qu'on prend à la fois une colonne et un count(*)
 		seller_query.groupby(staff, 'Name')
 		seller_query.orderby(None, ("sum", sale, "RG_Net_Amount_WOTax_REF", sale, "MD_Net_Amount_WOTax_REF"), " DESC")
 
