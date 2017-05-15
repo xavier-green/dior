@@ -359,9 +359,15 @@ class Vente(object):
 			# result += "pour " + ', '.join(produit_selected) + " " if len(produit_selected) > 0 else ''
 			# result += "dans les boutiques de " + ', '.join([b for b in self.boutiques]) if len(self.boutiques) > 0 else ''
 
+			details = append_details_date([], self.numerical_dates)
+
+			for col in column_groupby:
+				product_query.groupby(col[0], col[1])
+				second_query.groupby(col[0], col[1])
+			ventes_n = product_query.write().split('\n')
+			ventes_n_moins_un = second_query.write().split('\n')
 			print(ventes_n)
 			print(ventes_n_moins_un)
-			details = append_details_date([], self.numerical_dates)
 
 			# valeur = 0
 			# quantite = 0
