@@ -7,6 +7,8 @@ def what_products(list_of_dict):
 	Prend self.items en argument, qui est une liste de dictionnaires
 	Renvoit une liste de de quadruplets (table, colonne, nom_table, nom_produit)
 	"""
+	if list_of_dict == []:
+		return []
 
 	assert type(list_of_dict) is list, "Expected a list"
 	assert type(list_of_dict[0]) is dict, "Expected the list to contain dict"
