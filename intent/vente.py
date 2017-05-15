@@ -9,9 +9,10 @@ from copy import copy
 
 from sql.request import query
 
-from intent.mise_en_forme import affichage_euros, affichage_date
-from intent.gestion_dates import today, last_monday
-from intent.fonctions_annexes import geography_joins, geography_select, sale_join_products, query_products, where_products, find_category, append_details_date
+from annexes.mise_en_forme import affichage_euros, affichage_date
+from annexes.gestion_geo import geography_joins, geography_select
+from annexes.gestion_products import what_products, sale_join_products, query_products, where_products
+from annexes.gestion_details import append_details_date, append_details_products, append_details_geo, find_category
 
 # Import de toutes les tables utilisées
 from sql.tables import item, sale, boutique, country, division, retail, theme, department, zone, uzone, sub_zone

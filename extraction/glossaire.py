@@ -1,6 +1,7 @@
 """
 Dans ce glossaire, les mots de gauche seront remplacés
 par les mots de droite lors de la lecture de la question
+ex : ventes de PAP femme > ventes de ready to wear women
 """
 
 glossaire_1G = {
