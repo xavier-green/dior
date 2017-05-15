@@ -58,31 +58,7 @@ class Vendeur(object):
 
 		seller_query.join_custom(staff, sale_table.request, sale, "Code", "Staff") # jointure sur STAFF_Code = SALE_Staff
 
-		categorie_produit = ''
-		produit_selected = []
-		for produit in self.items :
-			for produit_key in produit:
-				if produit_key == "division":
-					seller_query.join(sale, division,"Division","Code")
-					categorie_produit = "la division "
-					produit_selected.append(produit[produit_key])
-				elif produit_key == "departement":
-					seller_query.join(sale, department,"Department","Code")
-					categorie_produit = "le departement "
-					produit_selected.append(produit[produit_key])
-				elif produit_key == "groupe":
-					seller_query.join(sale, retail,"Group","Code")
-					categorie_produit = "le groupe retail "
-					produit_selected.append(produit[produit_key])
-				elif produit_key == "theme":
-					seller_query.join(sale, theme,"Theme","Code")
-					categorie_produit = "le theme "
-					produit_selected.append(produit[produit_key])
-				elif produit_key == "produit":
-					seller_query.join(sale, item,"Style","Code")
-					categorie_produit = "le produit "
-					produit_selected.append(produit[produit_key])
-
+		seller_query = sale_join_products(seller_query, self.items)
 		seller_query = geography_joins(sale, seller_query, self.geo)
 
 
@@ -124,13 +100,9 @@ class Vendeur(object):
 		result = seller_query.write()
 		print("***************")
 		print(result)
-		reponse = "Voici les 3 meilleurs vendeurs "
+		reponse = "Voici les 3 meilleurs vendeurs : \n"
 
 		details = append_details_date([], self.numerical_dates)
-
-		reponse += "pour " + categorie_produit + ', '.join(produit_selected) + " " if len(produit_selected) > 0 else ''
-		reponse += "de la boutique " + ', '.join([b for b in self.boutiques]) + " " if len(self.boutiques) > 0 else ''
-		reponse += " : \n"
 
 		liste_resultat = result.split("\n")
 		for n, ligne in enumerate(liste_resultat):
