@@ -113,7 +113,9 @@ class intentData():
                 "Combien de vendeurs y a-t-il à Montaigne",
                 "Nombre de vendeurs au Moyen Orient",
                 "Qui vend le plus de art de la table",
-                "Qui est le meilleur en vente de joa"
+                "Qui est le meilleur en vente de joa",
+                "Quel est le top vendeur à Montaigne cette semaine en horlogerie",
+                "Quels sont mes trois meilleurs vendeurs en art de la table à Paris"
             ]
         }
     }

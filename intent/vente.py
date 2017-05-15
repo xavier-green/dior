@@ -12,7 +12,7 @@ from sql.request import query
 from annexes.mise_en_forme import affichage_euros, affichage_date
 from annexes.gestion_geo import geography_joins, geography_select
 from annexes.gestion_products import what_products, sale_join_products, query_products, where_products
-from annexes.gestion_details import append_details_date, append_details_products, append_details_geo, find_category
+from annexes.gestion_details import append_details_date, append_details_products, append_details_geo, append_details_boutique, find_category
 
 # Import de toutes les tables utilisées
 from sql.tables import item, sale, boutique, country, division, retail, theme, department, zone, uzone, sub_zone
@@ -457,11 +457,12 @@ class Vente(object):
 				if n == 10:
 					details.append(["...", "..."])
 					break
+
+			details = append_details_boutique(details, self.boutiques)
 			print(details)
 
-			result = "Il y a eu " + str(quantite) + " ventes pour un total de " + affichage_euros(str(valeur)) + " HT en lien avec " + " et/ou ".join(produit_selected) + " "
+			result = "Il y a eu " + str(quantite) + " ventes pour un total de " + affichage_euros(str(valeur)) + " HT "
 			result += MDorFP
-			result += "dans les boutiques de " + ', '.join([b for b in self.boutiques]) if len(self.boutiques) > 0 else ''
 
 			print("***************")
 			return [product_query.request, result, details]
