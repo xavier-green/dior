@@ -17,17 +17,17 @@ def what_products(list_of_dict):
 	for produit in list_of_dict :
 		for produit_key in produit:
 			if produit_key == "division":
-				products_requested.append((division, "Description", "Division", produit[produit_key]))
+				products_requested.append((division, "Description", "Division", produit[produit_key]), "division")
 			elif produit_key == "departement":
-				products_requested.append((department, "Description", "Department", produit[produit_key]))
+				products_requested.append((department, "Description", "Department", produit[produit_key]), "departement")
 			elif produit_key == "groupe":
-				products_requested.append((retail, "Description", "Group", produit[produit_key]))
+				products_requested.append((retail, "Description", "Group", produit[produit_key]), "groupe retail")
 			elif produit_key == "theme":
-				products_requested.append((theme, "Description", "Theme", produit[produit_key]))
+				products_requested.append((theme, "Description", "Theme", produit[produit_key]), "theme")
 			elif produit_key == "produit":
-				products_requested.append((item, "Description", "Style", produit[produit_key]))
+				products_requested.append((item, "Description", "Style", produit[produit_key]), "style")
 			elif produit_key == "family":
-				products_requested.append((family, "Description", "Family", produit[produit_key]))
+				products_requested.append((family, "Description", "Family", produit[produit_key]), "famille")
 			else:
 				print("Erreur, un item n'a pas de catégorie connue !")
 	return products_requested
@@ -36,7 +36,7 @@ def query_products(list_of_dict):
 	products_requested = what_products(list_of_dict)
 	has_been_seen = {}
 	columns_products = []
-	for table, column, table_name, product_name in products_requested:
+	for table, column, table_name, product_name, table_desc in products_requested:
 		if not (table_name in has_been_seen and has_been_seen[table_name]):
 			columns_products.append((table, column))
 			has_been_seen[table_name] = True
@@ -47,7 +47,7 @@ def sale_join_products(query, list_of_dict, main_table = sale):
 	print("================")
 	products_requested = what_products(list_of_dict)
 	has_been_seen = {}
-	for table, column, table_name, product_name in products_requested:
+	for table, column, table_name, product_name, table_desc in products_requested:
 		print("Trying to join", table.name)
 		if not (table_name in has_been_seen and has_been_seen[table_name]):
 			query.join(main_table, table, table_name, "Code")
@@ -57,7 +57,7 @@ def sale_join_products(query, list_of_dict, main_table = sale):
 
 def where_products(query, list_of_dict):
 	products_requested = what_products(list_of_dict)
-	for table, column, table_name, product_name in products_requested:
+	for table, column, table_name, product_name, table_desc in products_requested:
 		query.where(table, column, product_name)
 	return query
 
@@ -88,8 +88,8 @@ def append_details_date(details, numerical_dates):
 
 def append_details_products(details, items):
 	products_requested = what_products(items)
-	for table, column, table_name, product_name in products_requested:
-		details.append([product_name + " trouvé dans", table_name])
+	for table, column, table_name, product_name, table_desc in products_requested:
+		details.append([product_name + " trouvé dans", table_desc])
 	return details
 
 def append_details_geo(details, geo):
