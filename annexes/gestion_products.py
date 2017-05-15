@@ -15,17 +15,17 @@ def what_products(list_of_dict):
 	for produit in list_of_dict :
 		for produit_key in produit:
 			if produit_key == "division":
-				products_requested.append((division, "Description", "Division", produit[produit_key]), "division")
+				products_requested.append((division, "Description", "Division", produit[produit_key], "division"))
 			elif produit_key == "departement":
-				products_requested.append((department, "Description", "Department", produit[produit_key]), "departement")
+				products_requested.append((department, "Description", "Department", produit[produit_key], "departement"))
 			elif produit_key == "groupe":
-				products_requested.append((retail, "Description", "Group", produit[produit_key]), "groupe retail")
+				products_requested.append((retail, "Description", "Group", produit[produit_key], "groupe retail"))
 			elif produit_key == "theme":
-				products_requested.append((theme, "Description", "Theme", produit[produit_key]), "theme")
+				products_requested.append((theme, "Description", "Theme", produit[produit_key], "theme"))
 			elif produit_key == "produit":
-				products_requested.append((item, "Description", "Style", produit[produit_key]), "style")
+				products_requested.append((item, "Description", "Style", produit[produit_key], "style"))
 			elif produit_key == "family":
-				products_requested.append((family, "Description", "Family", produit[produit_key]), "famille")
+				products_requested.append((family, "Description", "Family", produit[produit_key], "famille"))
 			else:
 				print("Erreur, un item n'a pas de catégorie connue !")
 	return products_requested
