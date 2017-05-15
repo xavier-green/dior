@@ -80,7 +80,7 @@ class Stock(object):
 		details = append_details_products(details, self.items)
 		details = append_details_geo(details, self.geo)
 		if not sellthru_query:
-			response = "Le stock concernant " + ", ".join(map(lambda x : " ".join(dict.values(x)), self.items)) + "dans " + self.geo + self.boutiques +"est de " + res_stock
+			response = "Le stock concernant " + ", ".join([" ".join(dict.values(x)) for x in self.items]) + "dans " + ", ".join(self.geo + self.boutiques) +"est de " + res_stock
 			return([stock_query.request, response, details])
 
 		if 'NULL' in res_stock:
