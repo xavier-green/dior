@@ -166,9 +166,9 @@ class Vente(object):
 					print("retourne: "+result_string)
 					if result_string[-1] == ",":
 						result_string = result_string[:-1]
-					return [product_query.request,result_string,details]
+					result = result_string
 				else:
-					return [product_query.request,"\n".join(result),details]
+					result = "\n".join(result)
 			else:
 				ret_string = "Aucune couleur enregistrée pour "
 				for produit in self.items :
@@ -176,14 +176,14 @@ class Vente(object):
 						ret_string += produit[produit_key]+","
 				if ret_string[-1] == ",":
 					ret_string = ret_string[:-1]
-				return [product_query.request,ret_string,details]
+				result = ret_string
 
 		elif query_type["location"]:
 			query_result = product_query.write().split('\n')
 			print(query_result)
 			result = [w.split("#")[0]+" ( "+w.split("#")[1]+" vendus )" for w in query_result if 'LOCA_Description' not in w and '------' not in w]
 			print(result)
-			return [product_query.request,";;".join(result)]
+			details = []
 
 		elif query_type["price"]:
 			query_result = product_query.write().split('\n')
@@ -216,7 +216,7 @@ class Vente(object):
 					result += "%s vendu à %s le %s à %s\n" % (item_desc, affichage_euros(item_prix), affichage_date(item_date), item_lieu)
 
 			print("***************")
-			return [product_query.request, result]
+			details = []
 
 		elif query_type["margin"]:
 			query_result = product_query.write().split('\n')
@@ -250,8 +250,7 @@ class Vente(object):
 				margin_global += margin['margin']*margin['count']/total
 
 			result = "Margin: "+str(math.ceil(margin_global*100000)/1000)+"%"
-
-			return [product_query.request, result, real_items]
+			details = real_items
 
 		elif query_type["croissance"]:
 			second_query = copy(product_query)
@@ -283,7 +282,6 @@ class Vente(object):
 			details = append_details_geo(details, self.geo)
 
 			print("***************")
-			return [product_query.request, result, details]
 
 		elif query_type["quantity"]:
 			query_result = product_query.write().split('\n')
@@ -312,7 +310,6 @@ class Vente(object):
 			result += text_MDorFP
 
 			print("***************")
-			return [product_query.request, result, details]
 
 
 		elif query_type["netsale"]:
@@ -344,22 +341,22 @@ class Vente(object):
 			result += "dans les boutiques de " + ', '.join([b for b in self.boutiques]) if len(self.boutiques) > 0 else ''
 
 			print("***************")
-			return [product_query.request, result, details]
 
 		else:
 			query_result = product_query.write().split('\n')
 
 			details = append_details_date([], self.numerical_dates)
+			details = append_details_boutiques(details, self.boutiques)
 
 			details, quantite, valeur = calcul_somme_ventes(query_result, details, quantity = True, value = True)
 
-			details = append_details_boutiques(details, self.boutiques)
-			print(details)
 
 			result = "Il y a eu " + separateur_milliers(str(quantite)) + " ventes pour un total de " + affichage_euros(str(valeur)) + " HT "
 			result += text_MDorFP
 
+			print("details :", details)
 			print("***************")
-			return [product_query.request, result, details]
+
+		return [product_query.request, result, details]
 
 
