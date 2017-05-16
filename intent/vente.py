@@ -211,10 +211,6 @@ class Vente(object):
 
 
 			result = "Il y a eu %i ventes exceptionnelles (supérieures à %s)" %(len(query_result)-1, affichage_euros(self.seuil_exc))
-			result += "pour " + ', '.join(produit_selected) + " " if len(produit_selected) > 0 else ''
-			result += "dans les boutiques " + ', '.join([b for b in self.boutiques]) if len(self.boutiques) > 0 else ''
-			result += "\n"
-
 			result += "Voici les 3 meilleures :" if len(query_result)-1 > 3 else ""
 
 			for n, ligne in enumerate(query_result):
@@ -301,21 +297,8 @@ class Vente(object):
 			query_result = product_query.write().split('\n')
 
 			details = append_details_date([], self.numerical_dates)
-			somme = 0
-			for n, ligne in enumerate(query_result):
-				if n == 0:
-					colonnes = ligne.split('#')
-					categorie = find_category(colonnes[0])
-				if n > 0:
-					colonnes = ligne.split('#')
-					nombre_ventes = colonnes[len(colonnes)-1]
-					somme += int(nombre_ventes)
-				if n > 0 and n < 10:
-					details.append([categorie + " " + colonnes[0], colonnes[len(colonnes)-1]])
-				if n == 10:
-					details.append(["...", "..."])
-					break
-			print(details)
+			details = append_details_products(details, self.items)
+			details = append_details_geo(details, self.geo)
 
 			result = "Il y a eu " + str(somme) + " ventes "# en lien avec " + " et/ou ".join(produit_selected) + " "
 			result += text_MDorFP
@@ -349,7 +332,7 @@ class Vente(object):
 			print(details)
 
 
-			result = "Il y a eu " + affichage_euros(str(somme)) + " HT de CA en lien avec " + " et/ou ".join(produit_selected) + " "
+			result = "Il y a eu " + affichage_euros(str(somme)) + " HT de CA"
 			result += text_MDorFP
 			result += "dans les boutiques de " + ', '.join([b for b in self.boutiques]) if len(self.boutiques) > 0 else ''
 
