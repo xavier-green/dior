@@ -1,4 +1,4 @@
-from sql.tables import item, sale, boutique, country, division, retail, theme, department, zone, uzone, sub_zone, family
+from sql.tables import item, sale, boutique, country, division, retail, theme, department, zone, uzone, sub_zone, family, color
 
 def what_products(list_of_dict):
 	"""
@@ -26,6 +26,8 @@ def what_products(list_of_dict):
 				products_requested.append((item, "Description", "Style", produit[produit_key], "style"))
 			elif produit_key == "family":
 				products_requested.append((family, "Description", "Family", produit[produit_key], "famille"))
+			elif produit_key == "color":
+				products_requested.append((color, "Description", "Color", produit[produit_key], "couleur"))
 			else:
 				print("Erreur, un item n'a pas de catégorie connue !")
 	return products_requested
