@@ -98,7 +98,7 @@ class query(object):
 		self.wcount.append(table.alias + column)
 
 
-		self.request += where + table_date + ' >= ' + start + '\nAND ' + table_date + ' < ' + end + '\n'
+		self.request += where + table_date + ' >= ' + start + '\nAND ' + table_date + ' <= ' + end + '\n'
 
 	def whereNotJDAandOTH(self):
 
