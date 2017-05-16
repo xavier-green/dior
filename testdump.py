@@ -11,6 +11,10 @@ for index, x in enumerate(tables):
     if x == "SZONE_sub_zone":
         m = "SZON"
     tot = cmd1+m+cmd2+x+'"'
+
+    if x == 'COUN_country':
+        tot = cmd1 + m + '_Description_FR) from '+x+'"'
+
     with open('d:/dior/data/'+files[index]+'.csv', 'w', encoding='utf-8') as f:
             p = subprocess.Popen(tot, shell=True, encoding='utf-8', stdout=subprocess.PIPE)
             f.write("".join(p.stdout.readlines()[2:-1]))

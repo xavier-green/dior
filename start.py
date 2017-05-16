@@ -52,7 +52,6 @@ class Logs(admin.BaseView):
 		with open("logs.txt") as f:
 			content = f.readlines()
 			content = [x for x in content]
-			print(content)
 			# center = ""
 			data = []
 			for entry in content:

@@ -148,6 +148,7 @@ class WordClassification(object):
         tokens = self.tokenize(text)
         scores = [0.] * len(tokens)
         found=[]
+        toreplace = []
 
         token_vecs = getWord2vecVector(tokens)
 
@@ -158,9 +159,10 @@ class WordClassification(object):
             scores[idx] = score
             if (score > self.threshold):
                 found += self.match_in_csv(tokens[idx])
+                toreplace.append(tokens[idx])
                 #found.append({term: score})
 
-        return found
+        return (found,toreplace)
 
     def match_in_csv(self, term):
         for category in self.order:
@@ -179,28 +181,30 @@ class WordClassification(object):
         return self.find_similar(self.nationalities,text)
 
     def get_cleaned(self,text):
-        result = self.find_similar_city(text)+self.find_similar_country(text)
+        json,toreplace = self.find_similar_city(text)
+        countries_json,countries_replace = self.find_similar_country(text)
+        json += countries_json
+        toreplace += countries_replace
         cloned_text = '%s' % text
-        for table,element in result:
+        for element in toreplace:
             print("GEO replacing: "+element)
             cloned_text = cloned_text.replace(element,"GEO")
 
-        result = self.find_similar_nationality(text)
-        for table,element in result:
+        json,toreplace = self.find_similar_nationality(text)
+        for element in toreplace:
             print("NAT replacing: "+element)
             cloned_text = cloned_text.replace(element,"NAT")
         #print("cleaned text: ",cloned_text)
         return cloned_text
     
     def find_similar_words(self, text):
-        # json = {
-        #     "cities": self.find_similar_city(text),
-        #     "countries": self.find_similar_country(text),
-        #     "nationalities": self.find_similar_nationality(text)
-        # }
-        json = self.find_similar_city(text)+self.find_similar_country(text)+self.find_similar_nationality(text)
+        json,toreplace = self.find_similar_city(text)
+        countries_json,countries_replace = self.find_similar_country(text)
+        nationalities_json,nationalities_replace = self.find_similar_nationality(text)
+        json += countries_json+nationalities_json
+        toreplace += countries_replace+nationalities_replace
         json = list(set(json))
-        for table,word in json:
+        for word in toreplace:
             text = text.replace(word,'')
         return (json,text)
 
