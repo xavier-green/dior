@@ -23,7 +23,7 @@ class extract_boutique(object):
     ]
 
     def __init__(self, csv_path, n_max=3):
-        self.csv = pd.read_csv(csv_path,names=['Code','Boutique']).dropna()
+        self.csv = pd.read_csv(csv_path,names=['Boutique']).dropna()
         print("Cleaning csv ...")
         self.clean_csv()
         self.n_max = n_max
