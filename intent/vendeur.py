@@ -56,7 +56,7 @@ class Vendeur(object):
 		seller_query.join_custom(staff, sale_table.request, sale, "Code", "Staff") # jointure sur STAFF_Code = SALE_Staff
 
 		seller_query = sale_join_products(seller_query, self.items)
-		seller_query = geography_joins(sale, seller_query, self.geo)
+		seller_query = geography_joins(seller_query, self.geo)
 
 
 		"""
