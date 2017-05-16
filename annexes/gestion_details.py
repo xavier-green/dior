@@ -39,10 +39,13 @@ def append_details_date(details, numerical_dates):
 		details.append(["Le", affichage_date(start_date)])
 	return details
 
-def append_details_products(details, items):
-	products_requested = what_products(items)
-	for table, column, table_name, product_name, table_desc in products_requested:
-		details.append([product_name + " trouvé dans", table_desc])
+def append_details_products(details, items, sources=[]):
+	# products_requested = what_products(items)
+	# for table, column, table_name, product_name, table_desc in products_requested:
+	# 	details.append([product_name + " trouvé dans", table_desc])
+	for idx,item in enumerate(self.items):
+		for key in item:
+			details.append([item[key]+" trouvé dans "+sources[idx]])
 	return details
 
 def append_details_geo(details, geo):
