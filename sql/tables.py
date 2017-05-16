@@ -28,6 +28,7 @@ sub_zone = table("SZONE_Sub_Zone", "SZONE_", "SZ", ["Code", "Description", "Zone
 theme = table("THEM_Theme", "THEM_", "TH", ["Code", "Description"])
 uzone = table("UZONE_Zone", "UZONE_", "UZ", ["Code", "description_FR"])
 zone = table("ZONE_Zone", "ZONE_", "ZO", ["Code", "Description", "uzone"])
+color = table("colo_color", "COLO_", "COL", ["Code", "Description"])
 
 
 

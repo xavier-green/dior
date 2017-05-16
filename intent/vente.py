@@ -16,7 +16,7 @@ from annexes.gestion_details import append_details_date, append_details_products
 from annexes.gestion_intent_vente import find_query_type
 
 # Import de toutes les tables utilisées
-from sql.tables import item, sale, boutique, country, division, retail, theme, department, zone, uzone, sub_zone
+from sql.tables import item, sale, boutique, country, division, retail, theme, department, zone, uzone, sub_zone, color
 
 import math
 
@@ -144,7 +144,7 @@ class Vente(object):
 		"""
 
 		if colour_query:
-			product_query = query(sale, ['Color', 'count(*)'], top_distinct='DISTINCT TOP 5')
+			product_query = query(sale, [(color, 'Description'), 'count(*)'], top_distinct='DISTINCT TOP 5')
 		elif location_query:
 			product_query = query(sale, [(boutique, 'Description'), 'count(*)'], top_distinct='DISTINCT TOP 5')
 		elif price_query:
@@ -212,6 +212,9 @@ class Vente(object):
 				product_query.whereComparaison(sale, "Country", "<>", "CO.COUN_Code")
 			else:
 				product_query.whereComparaison(sale, "Country", "=", "CO.COUN_Code")
+
+		if colour_query:
+			product_query.join(sale, color, "Color", "Code")
 
 
 		product_query = geography_select(product_query, self.geo)
