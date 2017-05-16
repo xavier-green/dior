@@ -300,9 +300,24 @@ class Vente(object):
 			details = append_details_products(details, self.items)
 			details = append_details_geo(details, self.geo)
 
-			result = "Il y a eu " + str(somme) + " ventes "# en lien avec " + " et/ou ".join(produit_selected) + " "
+			somme = 0
+			for n, ligne in enumerate(query_result):
+				if n == 0:
+					colonnes = ligne.split('#')
+					categorie = find_category(colonnes[0])
+				elif n > 0:
+					colonnes = ligne.split('#')
+					nb_ventes = colonnes[len(colonnes)-1]
+					somme += int(nb_ventes)
+				if n > 0 and n < 10:
+					details.append([categorie + " " + colonnes[0], nb_ventes])
+				if n == 10:
+					details.append(["...", "..."])
+					break
+			print(details)
+
+			result = "Il y a eu " + str(somme) + " ventes "
 			result += text_MDorFP
-			# result += "dans les boutiques de " + ', '.join([b for b in self.boutiques]) + " " if len(self.boutiques) > 0 else ''
 
 			print("***************")
 			return [product_query.request, result, details]
