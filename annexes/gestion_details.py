@@ -45,6 +45,7 @@ def append_details_products(details, items, sources=[]):
 	# 	details.append([product_name + " trouvé dans", table_desc])
 	for idx,item in enumerate(items):
 		for key in item:
+			print("bdd",sources[idx][0])
 			details.append([item[key]+" trouvé dans "+sources[idx][0],",".join(sources[idx][1])])
 	return details
 
