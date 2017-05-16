@@ -29,7 +29,8 @@ class intentData():
                 "Quelle est la croissance sur l'item robe",
                 "Comment évolue la croissance en Amérique",
                 "Quelle couleur de bags se vend le plus à Montaigne",
-                "Couleur de pantalon"
+                "Couleur de pantalon",
+                "sellthru for bags"
             ]
         },"stock": {
             "examples" : [

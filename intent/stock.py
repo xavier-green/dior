@@ -1,4 +1,4 @@
-# Pour pouvoir importer les fichiers sql
+x# Pour pouvoir importer les fichiers sql
 # from importlib.machinery import SourceFileLoader
 
 # foo = SourceFileLoader("sql.request", "../sql/request.py").load_module()
@@ -82,8 +82,8 @@ class Stock(object):
 		details = append_details_products(details, self.items)
 		details = append_details_geo(details, self.geo)
 		if not sellthru_query:
-			response = "Le stock concernant " + ", ".join([" ".join(dict.values(x)) for x in self.items]) + "dans " + ", ".join(self.geo + self.boutiques) +"est de " + res_stock
-			return([stock_query.request, response, details])
+			# response = "Le stock concernant " + ", ".join([" ".join(dict.values(x)) for x in self.items]) + "dans " + ", ".join(self.geo + self.boutiques) +"est de " + res_stock
+			return([stock_query.request, res_stock, details])
 
 		if 'NULL' in res_stock:
 			res_stock = 0
