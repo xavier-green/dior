@@ -64,6 +64,6 @@ def append_details_boutiques(details, boutiques):
 
 def upperfirst(x):
 	if len(x)>0:
-		return x[0].upper() + x[1:]
+		return x[0].upper() + x[1:].lower()
 	return ''
 
