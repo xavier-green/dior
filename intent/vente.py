@@ -47,117 +47,44 @@ class Vente(object):
 		On cherche quel type de question a été posée
 		"""
 
-		query_type = {
-			"location":False,
-			"colour":False,
-			"price":False,
-			"exceptionnal":False,
-			"croissance":False,
-			"margin":False,
-			"nationality":False,
-			"quantity":False,
-			"netsale":False,
-			"foreign":False
-		}
-
-		location_query = False
-		colour_query = False
-		price_query = False
-		exceptionnal_query = False
-		croissance_query = False
-		margin_query = False
-		nationality_query = False
-		quantity_query = False
-		netsale_query = False
-		touriste = False
+		query_type = find_query_type(self.sentence)
 
 		first_word = self.sentence.split(" ")[0]
 		question = self.sentence.lower()
 
-		if ('Où' in self.sentence) or ('où' in self.sentence) or (first_word == "ou") or (first_word == "Ou") or ('dans quel pays' in self.sentence.lower()) or ('a quel endroit' in self.sentence.lower()):
-			print("Sale specific to a location")
-			location_query = True
+		if query_type["exceptionnal"] and not self.seuil_exc:
+			print("Aucun seuil trouvé, seuil par défault à 10k")
+			self.seuil_exc = 10000
 
-		if ('couleur' in question):
-			print("Sale specific to a colour")
-			colour_query = True
-
-		if ('prix' in question):
-			print("Sale specific to a price")
-			price_query = True
-
-		if ('exceptionnel' in question):
-			if self.seuil_exc:
-				print("Sale specific to exceptionnal sales")
-				exceptionnal_query = True
-			else:
-				self.seuil_exc = 5000
-				print("Sale specific to exceptionnal sales, default seuil at 5k")
-				exceptionnal_query = True
-
-		if ('margin' in question) or ('marge' in question):
-			margin_query = True
-
-		if ('croissance' in question) or ('trend' in question):
-			print("Sale specific to a croissance")
-			croissance_query = True
-
-		if ('local' in question or 'locaux' in question):
-			nationality_query = True
-
-		if ('touriste' in question) or ('foreign' in question):
-			nationality_query = True
-			touriste = True
-
-		if ('net sale' in question) or ('pour combien' in question) or ('valeur' in question):
-			netsale_query = True
-
-		if ('quantite' in question) or ('volume' in question) or ('nombre' in question) or ("combien" in question and not "pour combien" in question):
-			quantity_query = True
-
-		if (not croissance_query and not exceptionnal_query) and len(self.items) == 0:
+		if (not query_type["croissance"] and not query_type["exceptionnal"]) and len(self.items) == 0:
 			return "Veuillez préciser un produit svp"
 
-		Quantity_requested = []
-		if 'fp' in question or ('full' in question and 'price' in question):
-			Quantity_requested.append('fp')
-		if 'md' in question or ('mark' in question and 'down' in question):
-			Quantity_requested.append('md')
-
-		if len(Quantity_requested) == 0 or len(Quantity_requested) == 2:
-			Quantity = ('sum', sale, 'RG_Quantity', sale, 'MD_Quantity')
-			MDorFP = ""
-		elif Quantity_requested[0] == 'fp':
-			Quantity = ('sum', sale, 'RG_Quantity')
-			MDorFP = "en Full Price "
-		else:
-			Quantity = ('sum', sale, 'MD_Quantity')
-			MDorFP = "en Mark Down "
+		text_MDorFP, quantity_MDorFP = find_MDorFP(self.sentence)
 
 		# List in what categories we will be looking
 		columns_requested = query_products(self.items)
 		column_groupby = columns_requested[:]
-		columns_requested.append(Quantity)
+		columns_requested.append(quantity_MDorFP)
 
 		"""
 		On créé la query en fonction de la question
 		"""
 
-		if colour_query:
+		if query_type["colour"]:
 			product_query = query(sale, ['Color', 'count(*)'], top_distinct='DISTINCT TOP 5')
-		elif location_query:
+		elif query_type["location"]:
 			product_query = query(sale, [(boutique, 'Description'), 'count(*)'], top_distinct='DISTINCT TOP 5')
-		elif price_query:
+		elif query_type["price"]:
 			product_query = query(sale, [(sale, "RG_Net_Amount_WOTax_REF")], top_distinct='DISTINCT TOP 1')
-		elif exceptionnal_query:
+		elif query_type["exceptionnal"]:
 			product_query = query(sale, columns_requested+[("sum", sale, "RG_Net_Amount_WOTax_REF", sale, "MD_Net_Amount_WOTax_REF"), "DateNumYYYYMMDD", (boutique, "Description")], top_distinct= 'DISTINCT')
-		elif croissance_query:
+		elif query_type["croissance"]:
 			product_query = query(sale, [("sum", sale, "RG_Net_Amount_WOTax_REF", sale, "MD_Net_Amount_WOTax_REF")])
-		elif margin_query:
+		elif query_type["margin"]:
 			product_query = query(sale, columns_requested + [("sum", sale, "RG_Net_Amount_WOTax_REF", sale, "MD_Net_Amount_WOTax_REF"),("sum", sale, 'Unit_Avg_Cost_REF')])
-		elif quantity_query:
+		elif query_type["quantity"]:
 			product_query = query(sale, columns_requested)
-		elif quantity_query:
+		elif query_type["netsale"]:
 			product_query = query(sale, columns_requested + [("sum", sale, "RG_Net_Amount_WOTax_REF", sale, "MD_Net_Amount_WOTax_REF")])
 		else:
 			product_query = query(sale, columns_requested + [("sum", sale, "RG_Net_Amount_WOTax_REF", sale, "MD_Net_Amount_WOTax_REF")])
@@ -166,17 +93,16 @@ class Vente(object):
 		On fait les join
 		"""
 
-		product_query = geography_joins(product_query, self.geo)
-
-		if len(self.boutiques) > 0 or exceptionnal_query or croissance_query or location_query > 0:
+		already_joined = []
+		if len(self.boutiques) > 0 or query_type["exceptionnal"] or query_type["croissance"] or query_type["location"]:
 			product_query.join(sale, boutique, "Location", "Code")
-
-		# if len(self.countries) > 0:
-		# 	product_query.join(sale, country, "Country", "Code")
+			already_joined.append("boutique")
 
 		if nationality_query:
 			product_query.join(sale, country, "Cust_Nationality", "Code_ISO")
+			already_joined.append("country")
 
+		product_query = geography_joins(product_query, self.geo, already_joined = already_joined)
 		product_query = sale_join_products(product_query, self.items)
 
 		"""
@@ -185,49 +111,20 @@ class Vente(object):
 
 		product_query.whereNotJDAandOTH()
 
-		front_products = []
-
-		produit_selected = []
-		for produit in self.items :
-			for produit_key in produit:
-				front_products.append(produit[produit_key])
-				if produit_key == "division":
-					product_query.where(division, "Description", produit[produit_key])
-					produit_selected.append("la division " + produit[produit_key])
-				elif produit_key == "departement":
-					product_query.where(department, "Description", produit[produit_key])
-					produit_selected.append("le departement " + produit[produit_key])
-				elif produit_key == "groupe":
-					product_query.where(retail, "Description", produit[produit_key])
-					produit_selected.append("le groupe retail " + produit[produit_key])
-				elif produit_key == "theme":
-					product_query.where(theme, "Description", produit[produit_key])
-					produit_selected.append("le theme " + produit[produit_key])
-				elif produit_key == "produit":
-					product_query.where(item, "Description", produit[produit_key])
-					produit_selected.append("le produit " + produit[produit_key])
-
-		if nationality_query:
-			if touriste:
+		if query_type["nationality"]:
+			if query_type["foreign"]:
 				product_query.whereComparaison(sale, "Country", "<>", "CO.COUN_Code")
 			else:
 				product_query.whereComparaison(sale, "Country", "=", "CO.COUN_Code")
 
-
 		product_query = geography_select(product_query, self.geo)
-
-		# for ville in self.cities :
-		# 	product_query.where(boutique, "Description", ville)
-
-		# if len(self.cities) == 0:
-		# 	for pays in self.countries :
-		# 		product_query.where(country, "Description_FR", pays)
+		product_query = where_products(product_query, self.items)
 
 		if len(self.boutiques) > 0:
 			for _boutique in self.boutiques :
 				product_query.where(boutique, "Description", _boutique)
 
-		if not croissance_query:
+		if not query_type["croissance"]:
 			if len(self.numerical_dates) > 0:
 				product_query.wheredate(sale, 'DateNumYYYYMMDD', self.numerical_dates[0][0], end=self.numerical_dates[0][1])
 			else:
@@ -238,7 +135,7 @@ class Vente(object):
 		On renvoit une réponse
 		"""
 
-		if colour_query:
+		if query_type["colour"]:
 			product_query.groupby(sale, 'Color')
 			product_query.orderby(None, 'count(*)', " DESC")
 			query_result = product_query.write().split('\n')
@@ -264,7 +161,7 @@ class Vente(object):
 					ret_string = ret_string[:-1]
 				return [product_query.request,ret_string]
 
-		elif location_query:
+		elif query_type["location"]:
 			product_query.groupby(boutique, 'Description')
 			product_query.orderby(None, 'count(*)', " DESC")
 			query_result = product_query.write().split('\n')
@@ -273,7 +170,7 @@ class Vente(object):
 			print(result)
 			return [product_query.request,";;".join(result)]
 
-		elif price_query:
+		elif query_type["price"]:
 			query_result = product_query.write().split('\n')
 			print(query_result)
 			result_line = query_result[1].split('#')
@@ -288,7 +185,7 @@ class Vente(object):
 			print(result)
 			return [product_query.request,result,details]
 
-		elif exceptionnal_query:
+		elif query_type["exceptionnal"]:
 			product_query.whereComparaison(sale, ("sum", sale, "RG_Net_Amount_WOTax_REF", sale, "MD_Net_Amount_WOTax_REF"), ">", str(self.seuil_exc))
 			product_query.orderby(sale, ("sum", sale, "RG_Net_Amount_WOTax_REF", sale, "MD_Net_Amount_WOTax_REF"), "DESC")
 
@@ -312,7 +209,7 @@ class Vente(object):
 			print("***************")
 			return [product_query.request, result]
 
-		elif margin_query:
+		elif query_type["margin"]:
 			for col in column_groupby:
 				product_query.groupby(col[0], col[1])
 			query_result = product_query.write().split('\n')
@@ -349,7 +246,7 @@ class Vente(object):
 
 			return [product_query.request, result, real_items]
 
-		elif croissance_query:
+		elif query_type["croissance"]:
 			second_query = copy(product_query)
 			if len(self.numerical_dates) > 1:
 				product_query.wheredate(sale, 'DateNumYYYYMMDD', self.numerical_dates[0][0], self.numerical_dates[0][1])
@@ -385,7 +282,7 @@ class Vente(object):
 			print("***************")
 			return [product_query.request, result, details]
 
-		elif quantity_query:
+		elif query_type["quantity"]:
 			for col in column_groupby:
 				product_query.groupby(col[0], col[1])
 			query_result = product_query.write().split('\n')
@@ -408,14 +305,14 @@ class Vente(object):
 			print(details)
 
 			result = "Il y a eu " + str(somme) + " ventes "# en lien avec " + " et/ou ".join(produit_selected) + " "
-			result += MDorFP
+			result += text_MDorFP
 			# result += "dans les boutiques de " + ', '.join([b for b in self.boutiques]) + " " if len(self.boutiques) > 0 else ''
 
 			print("***************")
 			return [product_query.request, result, details]
 
 
-		elif netsale_query:
+		elif query_type["netsale"]:
 			for col in column_groupby:
 				product_query.groupby(col[0], col[1])
 			query_result = product_query.write().split('\n')
@@ -442,7 +339,7 @@ class Vente(object):
 
 
 			result = "Il y a eu " + affichage_euros(str(somme)) + " HT de CA en lien avec " + " et/ou ".join(produit_selected) + " "
-			result += MDorFP
+			result += text_MDorFP
 			result += "dans les boutiques de " + ', '.join([b for b in self.boutiques]) if len(self.boutiques) > 0 else ''
 
 			print("***************")
@@ -477,7 +374,7 @@ class Vente(object):
 			print(details)
 
 			result = "Il y a eu " + str(quantite) + " ventes pour un total de " + affichage_euros(str(valeur)) + " HT "
-			result += MDorFP
+			result += text_MDorFP
 
 			print("***************")
 			return [product_query.request, result, details]
