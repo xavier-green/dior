@@ -13,6 +13,7 @@ from annexes.mise_en_forme import affichage_euros, affichage_date
 from annexes.gestion_geo import geography_joins, geography_select
 from annexes.gestion_products import what_products, sale_join_products, query_products, where_products
 from annexes.gestion_details import append_details_date, append_details_products, append_details_geo, append_details_boutiques, find_category
+from annexes.gestion_intent_vente import find_query_type
 
 # Import de toutes les tables utilisées
 from sql.tables import item, sale, boutique, country, division, retail, theme, department, zone, uzone, sub_zone
@@ -45,6 +46,19 @@ class Vente(object):
 		"""
 		On cherche quel type de question a été posée
 		"""
+
+		query_type = {
+			"location":False,
+			"colour":False,
+			"price":False,
+			"exceptionnal":False,
+			"croissance":False,
+			"margin":False,
+			"nationality":False,
+			"quantity":False,
+			"netsale":False,
+			"foreign":False
+		}
 
 		location_query = False
 		colour_query = False
