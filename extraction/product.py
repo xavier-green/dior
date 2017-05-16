@@ -128,8 +128,8 @@ class ProductExtractor(object):
 
     def get_product(self, sentence, csv_file, csv_column, csv_single):
         csv_matches = self.csv_contains(sentence, csv_file, csv_column)
-        print(csv_matches)
         if len(csv_matches)>0:
+            print(csv_matches)
             return list(csv_matches[csv_single])
         return None
 
@@ -166,10 +166,11 @@ class ProductExtractor(object):
                     results, sentence, sources = self.extract_N(sentence, tags_dict, orde[key], key, results, sources, i)
         print("$$$$$$$$$$$$$ Sources")
         print(sources)
-        return results
+        return (results, sources)
 
     def extract_N(self, sentence, tags_dict, csv, bdd, prev_results, prev_sources, n):
         prev_results_copy = prev_results[:]
+        prev_sources_copy = prev_sources[:]
         sentence_tokens = sentence.split(" ")
         ng = ngrams(sentence_tokens,n)
         ok_products = []
@@ -186,11 +187,11 @@ class ProductExtractor(object):
                     #print("getting product for "+str(csv))
                     products_matched = self.get_product(short_sentence, csv["file"], csv["column"], csv["single"])
                     if products_matched:
-                        # print("ok")
+                        print("Products matched",products_matched)
                         matched_item = {}
                         matched_item[bdd] = short_sentence
                         ok_products.append(matched_item)
-                        sources += products_matched
+                        sources.append(products_matched)
                         for i in range(len(prev_results_copy)):
                             for key in prev_results_copy[i]:
                                 if prev_results_copy[i][key] in short_sentence:
@@ -198,11 +199,15 @@ class ProductExtractor(object):
         for el in ok_products:
             for key in el:
                 sentence = sentence.replace(el[key],'')
-        return (ok_products+[a for a in prev_results_copy if a != ''],sentence, sources)
+        for idx,a in enumerate(prev_results_copy):
+            if a != '':
+                ok_products.append(a)
+                sources.append(prev_sources_copy[idx])
+        return (ok_products,sentence, sources)
 
     def clean_text(self, text):
         copy = text[:].lower()
-        to_replace = self.extract(text)
+        to_replace,sources = self.extract(text)
         for w in to_replace:
             print(w)
             for key in w:

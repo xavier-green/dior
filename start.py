@@ -81,7 +81,7 @@ def process_sentence(sentence,seuil=None):
 	numerical_dates_extracted = datex.extract_numerical(sentence)
 	dates_extracted,sentence = datex.extract(sentence)
 	boutiques_extracted,sentence = bouti.extract(sentence)
-	items_extracted = word.extract(sentence)
+	items_extracted,sources = word.extract(sentence)
 	json = {
 		'dates': dates_extracted,
 		'geo': geo_extracted,
@@ -90,7 +90,8 @@ def process_sentence(sentence,seuil=None):
 		'boutiques': boutiques_extracted,
 		'sentence': sentence,
 		'seuil': seuil,
-		'items': items_extracted
+		'items': items_extracted,
+		'sources': sources
 	}
 
 	print('data extracted:')
