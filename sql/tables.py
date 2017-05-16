@@ -30,7 +30,7 @@ uzone = table("UZONE_Zone", "UZONE_", "UZ", ["Code", "description_FR"])
 zone = table("ZONE_Zone", "ZONE_", "ZO", ["Code", "Description", "uzone"])
 color = table("colo_color", "COLO_", "COL", ["Code", "Description"])
 material = table("MATE_material", "MATE_", "MAT", ["Code", "Description"])
-color = table("SHAP_shape", "SHAPE_", "SHA", ["Code", "Description", "Order"])
+shape = table("SHAP_shape", "SHAPE_", "SHA", ["Code", "Description", "Order"])
 
 #sale_sales_Random
 #stoc_stocks_Daily

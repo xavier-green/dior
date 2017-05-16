@@ -1,4 +1,4 @@
-from sql.tables import item, sale, boutique, country, division, retail, theme, department, zone, uzone, sub_zone, family, color
+from sql.tables import item, sale, boutique, country, division, retail, theme, department, zone, uzone, sub_zone, family, color, material, shape
 
 def what_products(list_of_dict):
 	"""
