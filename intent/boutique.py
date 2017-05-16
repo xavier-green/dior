@@ -13,7 +13,7 @@ from sql.request import query
 from sql.tables import item, sale, boutique, country, division, retail, theme, department, zone, sub_zone, uzone
 
 from annexes.mise_en_forme import affichage_euros, affichage_date
-from annexes.gestion_geo import geography_joins, geography_select, geography_joins_boutique
+from annexes.gestion_geo import geography_joins, geography_select
 from annexes.gestion_products import what_products, sale_join_products, query_products, where_products
 from annexes.gestion_details import append_details_date, append_details_products, append_details_geo, find_category
 
@@ -79,7 +79,7 @@ class Boutique(object):
 		"""
 		
 		boutique_query = sale_join_products(boutique_query, self.items)
-		boutique_query = geography_joins_boutique(boutique_query, self.geo, main_scale = main_scale)
+		boutique_query = geography_joins(boutique_query, self.geo, already_joined = [main_scale])
 
 		"""
 		Conditions

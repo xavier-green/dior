@@ -60,7 +60,7 @@ class Stock(object):
 
 		# GEOGRAPHY Extraction
 
-		stock_query = geography_joins(stock_daily, stock_query, self.geo)
+		stock_query = geography_joins(stock_query, self.geo, main_table=stock_daily)
 
 		"""
 		Conditions
@@ -122,7 +122,7 @@ class Stock(object):
 				product_query.join(sale, item, "Style", "Code") # jointure sur ITEM_Code = SALE_Style
 			product_query.join(sale, boutique, "Location", "Code") # jointure sur SALE_Location = LOCA_Code
 			
-			product_query = geography_joins(sale, product_query, self.geo)
+			product_query = geography_joins(product_query, self.geo)
 
 			# Maintenant que toutes les jointures sont faites, on passe aux conditions
 			for produit in self.items :
