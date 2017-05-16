@@ -157,7 +157,7 @@ class Vente(object):
 			print(query_result)
 			result = [w.split("#")[0]+" ( "+w.split("#")[1]+" vendus )" for w in query_result if 'COLO_' not in w and '------' not in w]
 			details = append_details_date([], self.numerical_dates)
-			details = append_details_products(details, self.items, self.sources)
+			details = append_details_products(details, self.items, self.product_sources)
 			details = append_details_geo(details, self.geo)
 			if len(result) > 0:
 				if 'le plus' in self.sentence or 'la plus' in self.sentence:
@@ -193,7 +193,7 @@ class Vente(object):
 			item_price = round(float(result_line[0]), 2)
 
 			details = append_details_date([], self.numerical_dates)
-			details = append_details_products(details, self.items, self.sources)
+			details = append_details_products(details, self.items, self.product_sources)
 			details = append_details_geo(details, self.geo)
 
 			print(result_line)
@@ -280,7 +280,7 @@ class Vente(object):
 			second_start_date = self.numerical_dates[1][0] if len(self.numerical_dates) > 1 else '20170218'
 
 			details = append_details_date([], self.numerical_dates)
-			details = append_details_products(details, self.items, self.sources)
+			details = append_details_products(details, self.items, self.product_sources)
 			details = append_details_geo(details, self.geo)
 
 			print("***************")
@@ -290,7 +290,7 @@ class Vente(object):
 			query_result = product_query.write().split('\n')
 
 			details = append_details_date([], self.numerical_dates)
-			details = append_details_products(details, self.items, self.sources)
+			details = append_details_products(details, self.items, self.product_sources)
 			details = append_details_geo(details, self.geo)
 
 			somme = 0
@@ -320,7 +320,7 @@ class Vente(object):
 			query_result = product_query.write().split('\n')
 
 			details = append_details_date([], self.numerical_dates)
-			details = append_details_products(details, self.items, self.sources)
+			details = append_details_products(details, self.items, self.product_sources)
 			details = append_details_geo(details, self.geo)
 
 			somme = 0
