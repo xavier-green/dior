@@ -115,18 +115,6 @@ class ProductExtractor(object):
         file = file[empties]
         return file,column
 
-    # def clean_division_csv(self):
-    #     self.division["Division"] = self.division.Division.apply(self.low)
-
-    # def clean_departement_csv(self):
-    #     self.departement["Departement"] = self.departement.Departement.apply(self.low)
-
-    # def clean_groupe_csv(self):
-    #     self.groupe["Groupe"] = self.groupe.Groupe.apply(self.low)
-
-    # def clean_theme_csv(self):
-    #     self.theme["Theme"] = self.theme.Theme.apply(self.low)
-
     def clean_csv(self):
 
         for item_category in self.order:
@@ -135,17 +123,12 @@ class ProductExtractor(object):
                 column = item_category[key]["column"]
                 item_category[key]["file"],item_category[key]["column"] = self.cleaned_csv(file, column)
 
-        # self.clean_product_csv()
-        # self.clean_division_csv()
-        # self.clean_departement_csv()
-        # self.clean_groupe_csv()
-        # self.clean_theme_csv()
-
     def csv_contains(self, w, csv_file, csv_column):
         return csv_file[csv_column.str.contains(" "+w.rstrip().lstrip()+" ")]
 
     def get_product(self, sentence, csv_file, csv_column, csv_single):
         csv_matches = self.csv_contains(sentence, csv_file, csv_column)
+        print(csv_matches)
         if len(csv_matches)>0:
             return list(csv_matches[csv_single])
         return None
