@@ -1,5 +1,5 @@
 from sql.tables import sale
-from annexes.mise_en_forme import affichage_euros
+from annexes.mise_en_forme import affichage_euros, separateur_milliers
 from annexes.gestion_details import find_category
 
 def find_query_type(sentence):
@@ -104,7 +104,7 @@ def calcul_somme_ventes(query_result, details, quantity = False, value = False):
 			valeur += float(prix_ventes)
 			quantite += int(quantite_ventes)
 		if n > 0 and n < 10:
-			details_quantity = quantite_ventes + " ventes" if quantity else ""
+			details_quantity = separateur_milliers(quantite_ventes) + " ventes" if quantity else ""
 			details_and = " pour " if quantity and value else ""
 			details_value = affichage_euros(prix_ventes) + " HT" if value else ""
 
