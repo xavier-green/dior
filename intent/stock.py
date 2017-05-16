@@ -76,7 +76,7 @@ class Stock(object):
 		Traitement de la réponse
 		"""
 
-		res_stock = stock_query.write()
+		res_stock = stock_query.write().replace("\n","")
         
 		details = append_details_date([], self.numerical_dates)
 		details = append_details_products(details, self.items)

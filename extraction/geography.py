@@ -52,26 +52,31 @@ class WordClassification(object):
         self.order = [
             {"uzone": {
                 "file": self.uzone,
-                "column": self.uzone.Uzone
+                "column": self.uzone.Uzone,
+                "single": 'Uzone'
             }},
             {"zone": {
                 "file": self.zone,
-                "column": self.zone.Zone
+                "column": self.zone.Zone,
+                "single": 'Zone'
             }},
             {"subzone": {
                 "file": self.subzone,
-                "column": self.subzone.Subzone
+                "column": self.subzone.Subzone,
+                "single": 'Subzone'
             }},
             {"country": {
                 "file": self.count,
-                "column": self.count.Country
+                "column": self.count.Country,
+                "single": 'Country'
             }},
             {"state": {
                 "file": self.state,
-                "column": self.state.State
+                "column": self.state.State,
+                "single": 'State'
             }}
         ]
-        print("Cleaning csv ...")
+        # print("Cleaning csv ...")
         self.clean_csv()
 
     def removeRowWithSpecialCharacterAndNumbers(self, w):
@@ -104,15 +109,19 @@ class WordClassification(object):
     def csv_contains(self, w, csv_file, csv_column):
         return csv_file[csv_column.str.contains(" "+w.rstrip().lstrip()+" ")]
     
-    def get_product(self, sentence, csv_file, csv_column):
-        return len(self.csv_contains(sentence, csv_file, csv_column))>0
+    def get_product(self, sentence, csv_file, csv_column, single_column):
+        csv_matches = self.csv_contains(sentence, csv_file, csv_column)
+        if len(csv_matches)>0:
+            return csv_matches[single_column].iloc[0]
+        else:
+            return None
         
     def cos(self, a, b):
         return np.dot(a,b)/(np.linalg.norm(a)*np.linalg.norm(b))
     
     def tokenize(self, text):
-        #stripped_punctuation = re.sub(r'[-_;,.?!]',' ',text.lower())
-        tokens = text.split(' ')
+        stripped_punctuation = re.sub(r'[-_;,.?!]',' ',text.lower())
+        tokens = stripped_punctuation.split(' ')
         cleaned = []
         for token in tokens:
             cleaned.append(token)
@@ -154,12 +163,12 @@ class WordClassification(object):
         return found
 
     def match_in_csv(self, term):
-        print("match for",term,"?")
         for category in self.order:
             for key in category:
-                if self.get_product(term, category[key]["file"], category[key]["column"]):
+                matched_geo = self.get_product(term, category[key]["file"], category[key]["column"], category[key]["single"])
+                if matched_geo:
                     print(term," se trouve bien dans ",key)
-                    return [(key,term)]
+                    return [(key,matched_geo)]
         return []
     
     def find_similar_city(self, text):
@@ -195,12 +204,8 @@ class WordClassification(object):
             text = text.replace(word,'')
         return (json,text)
 
-world = WordClassification()
-print(world.find_similar_words("La semaine dernière, qui a conclu le plus de ventes en japon"))
-# print(world.find_similar_words("Les américains achètent-ils plus que les japonais"))
-# print(world.find_similar_words("Quelle part de russes dans les achats de Lady Dior"))
-# print(world.find_similar_words("Cette semaine, combien y a-t-il eu de clients marocains"))
-# print(world.find_similar_words("Est-ce que la plupart des clients au Moyen Orient sont locaux"))
+# world = WordClassification()
+# print(world.find_similar_words("La semaine dernière, qui a conclu le plus de ventes en europe, paris"))
 
 
 
