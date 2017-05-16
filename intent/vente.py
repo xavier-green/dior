@@ -16,7 +16,7 @@ from annexes.gestion_details import append_details_date, append_details_products
 from annexes.gestion_intent_vente import find_query_type, find_MDorFP
 
 # Import de toutes les tables utilisées
-from sql.tables import item, sale, boutique, country, division, retail, theme, department, zone, uzone, sub_zone
+from sql.tables import item, sale, boutique, country, division, retail, theme, department, zone, uzone, sub_zone, color
 
 import math
 
@@ -70,7 +70,7 @@ class Vente(object):
 		"""
 
 		if query_type["colour"]:
-			product_query = query(sale, ['Color', 'count(*)'], top_distinct='DISTINCT TOP 5')
+			product_query = query(sale, [(color, 'Description'), 'count(*)'], top_distinct='DISTINCT TOP 5')
 		elif query_type["location"]:
 			product_query = query(sale, [(boutique, 'Description'), 'count(*)'], top_distinct='DISTINCT TOP 5')
 		elif query_type["price"]:
@@ -100,6 +100,9 @@ class Vente(object):
 		if query_type["nationality"]:
 			product_query.join(sale, country, "Cust_Nationality", "Code_ISO")
 			already_joined.append("country")
+
+		if colour_query:
+			product_query.join(sale, color, "Color", "Code")
 
 		product_query = geography_joins(product_query, self.geo, already_joined = already_joined)
 		product_query = sale_join_products(product_query, self.items)
