@@ -140,7 +140,7 @@ class Vente(object):
 		"""
 
 		if query_type["colour"]:
-			product_query.groupby(sale, 'Color')
+			product_query.groupby(color, 'Description')
 			product_query.orderby(None, 'count(*)', " DESC")
 		elif query_type["location"]:
 			product_query.groupby(boutique, 'Description')
