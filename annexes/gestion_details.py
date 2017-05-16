@@ -32,7 +32,7 @@ def append_details_date(details, numerical_dates):
 	days_diff = delta.days
 	print("Days difference: "+str(days_diff))
 	if days_diff>1:
-		end_date = end_date+datetime.timedelta(days=-1)
+		end_date = end_date+str(datetime.timedelta(days=-1))
 		details.append(["Du", affichage_date(start_date)])
 		details.append(["Au", affichage_date(end_date)])
 	else:
