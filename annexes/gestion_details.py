@@ -30,7 +30,7 @@ def append_details_date(details, numerical_dates):
 	b = datetime.strptime(end_date, dateFormat)
 	delta = b - a
 	days_diff = delta.days
-	print("Days difference: "+days_diff)
+	print("Days difference: "+str(days_diff))
 	if days_diff>1:
 		details.append(["Du", affichage_date(start_date)])
 		details.append(["Au (non inclu)", affichage_date(end_date)])
