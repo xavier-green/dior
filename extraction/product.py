@@ -41,39 +41,48 @@ class ProductExtractor(object):
         self.order = [
             {"division": {
                 "file": self.division,
-                "column": self.division.Division
+                "column": self.division.Division,
+                "single": 'Division'
             }},
             {"departement": {
                 "file": self.departement,
-                "column": self.departement.Departement
+                "column": self.departement.Departement,
+                "single": 'Departement'
             }},
             {"famille": {
                 "file": self.famille,
-                "column": self.famille.Famille
+                "column": self.famille.Famille,
+                "single": 'Famille'
             }},
             {"color": {
                 "file": self.color,
-                "column": self.color.Color
+                "column": self.color.Color,
+                "single": 'Color'
             }},
             {"groupe": {
                 "file": self.groupe,
-                "column": self.groupe.Groupe
+                "column": self.groupe.Groupe,
+                "single": 'Groupe'
             }},
             {"material": {
                 "file": self.material,
-                "column": self.material.Material
+                "column": self.material.Material,
+                "single": 'Material'
             }},
             {"shape": {
                 "file": self.shape,
-                "column": self.shape.Shape
+                "column": self.shape.Shape,
+                "single": 'Shape'
             }},
             {"theme": {
                 "file": self.theme,
-                "column": self.theme.Theme
+                "column": self.theme.Theme,
+                "single": 'Theme'
             }},
             {"produit": {
                 "file": self.produit,
-                "column": self.produit.Produit
+                "column": self.produit.Produit,
+                "single": 'Produit'
             }}
         ]
         print("Cleaning csv ...")
@@ -106,18 +115,6 @@ class ProductExtractor(object):
         file = file[empties]
         return file,column
 
-    # def clean_division_csv(self):
-    #     self.division["Division"] = self.division.Division.apply(self.low)
-
-    # def clean_departement_csv(self):
-    #     self.departement["Departement"] = self.departement.Departement.apply(self.low)
-
-    # def clean_groupe_csv(self):
-    #     self.groupe["Groupe"] = self.groupe.Groupe.apply(self.low)
-
-    # def clean_theme_csv(self):
-    #     self.theme["Theme"] = self.theme.Theme.apply(self.low)
-
     def clean_csv(self):
 
         for item_category in self.order:
@@ -126,18 +123,15 @@ class ProductExtractor(object):
                 column = item_category[key]["column"]
                 item_category[key]["file"],item_category[key]["column"] = self.cleaned_csv(file, column)
 
-        # self.clean_product_csv()
-        # self.clean_division_csv()
-        # self.clean_departement_csv()
-        # self.clean_groupe_csv()
-        # self.clean_theme_csv()
-
     def csv_contains(self, w, csv_file, csv_column):
-        #print(self.csv[self.csv.Produit.str.contains(" "+w.rstrip().lstrip()+" ")])
         return csv_file[csv_column.str.contains(" "+w.rstrip().lstrip()+" ")]
 
-    def get_product(self, sentence, csv_file, csv_column):
-        return len(self.csv_contains(sentence, csv_file, csv_column))>0
+    def get_product(self, sentence, csv_file, csv_column, csv_single):
+        csv_matches = self.csv_contains(sentence, csv_file, csv_column)
+        print(csv_matches)
+        if len(csv_matches)>0:
+            return list(csv_matches[csv_single])
+        return None
 
     def aggressive_tokenize(self, text):
         min_length = 3
@@ -156,6 +150,7 @@ class ProductExtractor(object):
 
     def extract(self, sentence):
         results = []
+        sources = []
         pattern = re.compile('^[a-zA-Z0-9 ]')
         sentence = sentence.lower()
         sentence = re.sub(r'[^\w\s]','',sentence)
@@ -168,14 +163,17 @@ class ProductExtractor(object):
             for orde in self.order:
                 for key in orde:
                     # print("extraction en cours pour "+key)
-                    results, sentence = self.extract_N(sentence, tags_dict, orde[key], key, results, i)
+                    results, sentence, sources = self.extract_N(sentence, tags_dict, orde[key], key, results, sources, i)
+        print("$$$$$$$$$$$$$ Sources")
+        print(sources)
         return results
 
-    def extract_N(self, sentence, tags_dict, csv, bdd, prev_results, n):
+    def extract_N(self, sentence, tags_dict, csv, bdd, prev_results, prev_sources, n):
         prev_results_copy = prev_results[:]
         sentence_tokens = sentence.split(" ")
         ng = ngrams(sentence_tokens,n)
         ok_products = []
+        sources = []
         for item in ng:
             short_sentence = " ".join(item)
             auth = not (len([w for w in self.not_replace if w in short_sentence])>0 or len([w for w in item if w not in tags_dict])>0)
@@ -186,11 +184,13 @@ class ProductExtractor(object):
                 if words_tags[:-1] in self.authorized:
                     #print(short_sentence)
                     #print("getting product for "+str(csv))
-                    if self.get_product(short_sentence, csv["file"], csv["column"]):
+                    products_matched = self.get_product(short_sentence, csv["file"], csv["column"], csv["single"])
+                    if products_matched:
                         # print("ok")
                         matched_item = {}
                         matched_item[bdd] = short_sentence
                         ok_products.append(matched_item)
+                        sources += products_matched
                         for i in range(len(prev_results_copy)):
                             for key in prev_results_copy[i]:
                                 if prev_results_copy[i][key] in short_sentence:
@@ -198,7 +198,7 @@ class ProductExtractor(object):
         for el in ok_products:
             for key in el:
                 sentence = sentence.replace(el[key],'')
-        return (ok_products+[a for a in prev_results_copy if a != ''],sentence)
+        return (ok_products+[a for a in prev_results_copy if a != ''],sentence, sources)
 
     def clean_text(self, text):
         copy = text[:].lower()

@@ -113,8 +113,7 @@ class WordClassification(object):
         csv_matches = self.csv_contains(sentence, csv_file, csv_column)
         if len(csv_matches)>0:
             return csv_matches[single_column].iloc[0]
-        else:
-            return None
+        return None
         
     def cos(self, a, b):
         return np.dot(a,b)/(np.linalg.norm(a)*np.linalg.norm(b))
