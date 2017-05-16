@@ -191,13 +191,12 @@ class DateExtractor(object):
         if (newMonth<=0):
             newMonth += 12
             year -= 1
-        last_m, last_day = monthrange(year, newMonth)
         startDate = datetime.datetime(year, newMonth, 1, 12, 00)
         startDate = startDate.strftime(dateFormat)
         if toDate:
             endDate = datetime.datetime(currentDate["year"], currentDate["month"], currentDate["day"], 12, 00)
         else:
-            endDate = datetime.datetime(year, newMonth, last_day, 12, 00)
+            endDate = datetime.datetime(year, newMonth+1, 1, 12, 00)
         endDate = endDate.strftime(dateFormat)
         return [startDate,endDate]
 

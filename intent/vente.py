@@ -50,7 +50,7 @@ class Vente(object):
 			self.seuil_exc = 10000
 
 		if (not query_type["croissance"] and not query_type["exceptionnal"]) and len(self.items) == 0:
-			return "Veuillez préciser un produit svp"
+			return [None, "Veuillez préciser un produit svp"]
 
 		text_MDorFP, quantity_MDorFP = find_MDorFP(self.sentence)
 
@@ -154,7 +154,10 @@ class Vente(object):
 		if query_type["colour"]:
 			query_result = product_query.write().split('\n')
 			print(query_result)
-			result = [w.split("#")[0]+" ( "+w.split("#")[1]+" vendus )" for w in query_result if 'SALE_Color' not in w and '------' not in w]
+			result = [w.split("#")[0]+" ( "+w.split("#")[1]+" vendus )" for w in query_result if 'COLO_' not in w and '------' not in w]
+			details = append_details_date([], self.numerical_dates)
+			details = append_details_products(details, self.items)
+			details = append_details_geo(details, self.geo)
 			if len(result) > 0:
 				if 'le plus' in self.sentence or 'la plus' in self.sentence:
 					print("Wanting the top one from: ")
@@ -163,9 +166,9 @@ class Vente(object):
 					print("retourne: "+result_string)
 					if result_string[-1] == ",":
 						result_string = result_string[:-1]
-					return [product_query.request,result_string]
+					return [product_query.request,result_string,details]
 				else:
-					return [product_query.request,"\n".join(result)]
+					return [product_query.request,"\n".join(result),details]
 			else:
 				ret_string = "Aucune couleur enregistrée pour "
 				for produit in self.items :
@@ -173,7 +176,7 @@ class Vente(object):
 						ret_string += produit[produit_key]+","
 				if ret_string[-1] == ",":
 					ret_string = ret_string[:-1]
-				return [product_query.request,ret_string]
+				return [product_query.request,ret_string,details]
 
 		elif query_type["location"]:
 			query_result = product_query.write().split('\n')
