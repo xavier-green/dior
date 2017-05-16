@@ -158,7 +158,7 @@ class Vente(object):
 			result = [w.split("#")[0]+" ( "+w.split("#")[1]+" vendus )" for w in query_result if 'COLO_' not in w and '------' not in w]
 
 			details = append_details_date([], self.numerical_dates)
-			details = append_details_products(details, self.items, self.sources)
+			details = append_details_products(details, self.items, self.product_sources)
 			details = append_details_geo(details, self.geo)
 
 			if len(result) > 0:
@@ -192,7 +192,7 @@ class Vente(object):
 			item_price = round(float(result_line[0]), 2)
 
 			details = append_details_date([], self.numerical_dates)
-			details = append_details_products(details, self.items, self.sources)
+			details = append_details_products(details, self.items, self.product_sources)
 			details = append_details_geo(details, self.geo)
 
 			print(result_line)
@@ -273,14 +273,14 @@ class Vente(object):
 				result = "La croissance est de %.2f%% " %(croissance)
 
 			details = append_details_date([], self.numerical_dates)
-			details = append_details_products(details, self.items, self.sources)
+			details = append_details_products(details, self.items, self.product_sources)
 			details = append_details_geo(details, self.geo)
 
 		elif query_type["quantity"]:
 			query_result = product_query.write().split('\n')
 
 			details = append_details_date([], self.numerical_dates)
-			details = append_details_products(details, self.items, self.sources)
+			details = append_details_products(details, self.items, self.product_sources)
 			details = append_details_geo(details, self.geo)
 
 			details, quantite, valeur = calcul_somme_ventes(query_result, details, quantity = True)
@@ -292,7 +292,7 @@ class Vente(object):
 			query_result = product_query.write().split('\n')
 
 			details = append_details_date([], self.numerical_dates)
-			details = append_details_products(details, self.items, self.sources)
+			details = append_details_products(details, self.items, self.product_sources)
 			details = append_details_geo(details, self.geo)
 
 			details, quantite, valeur = calcul_somme_ventes(query_result, details, value = True)
