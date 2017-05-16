@@ -101,7 +101,7 @@ class Vente(object):
 			product_query.join(sale, country, "Cust_Nationality", "Code_ISO")
 			already_joined.append("country")
 
-		if colour_query:
+		if query_type["colour"]:
 			product_query.join(sale, color, "Color", "Code")
 
 		product_query = geography_joins(product_query, self.geo, already_joined = already_joined)
