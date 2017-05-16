@@ -154,17 +154,16 @@ class Vente(object):
 
 		if query_type["colour"]:
 			query_result = product_query.write().split('\n')
-			print(query_result)
+
 			result = [w.split("#")[0]+" ( "+w.split("#")[1]+" vendus )" for w in query_result if 'COLO_' not in w and '------' not in w]
+
 			details = append_details_date([], self.numerical_dates)
 			details = append_details_products(details, self.items, self.sources)
 			details = append_details_geo(details, self.geo)
+
 			if len(result) > 0:
 				if 'le plus' in self.sentence or 'la plus' in self.sentence:
-					print("Wanting the top one from: ")
-					print(result)
 					result_string = "La couleur la plus vendue est "+result[0]+" pour "+",".join(front_products)
-					print("retourne: "+result_string)
 					if result_string[-1] == ",":
 						result_string = result_string[:-1]
 					result = result_string
@@ -202,7 +201,6 @@ class Vente(object):
 			return [product_query.request,result,details]
 
 		elif query_type["exceptionnal"]:
-
 			query_result = product_query.write().split('\n')
 			start_date = self.numerical_dates[0][0] if len(self.numerical_dates) > 0 else last_monday()
 
@@ -216,7 +214,6 @@ class Vente(object):
 					item_desc, item_prix, item_date, item_lieu = colonnes
 					result += "%s vendu à %s le %s à %s\n" % (item_desc, affichage_euros(item_prix), affichage_date(item_date), item_lieu)
 
-			print("***************")
 			details = []
 
 		elif query_type["margin"]:
@@ -275,14 +272,9 @@ class Vente(object):
 				print("Croissance calculée, ", croissance)
 				result = "La croissance est de %.2f%% " %(croissance)
 
-			start_date = self.numerical_dates[0][0] if len(self.numerical_dates) > 0 else '20170225'
-			second_start_date = self.numerical_dates[1][0] if len(self.numerical_dates) > 1 else '20170218'
-
 			details = append_details_date([], self.numerical_dates)
 			details = append_details_products(details, self.items, self.sources)
 			details = append_details_geo(details, self.geo)
-
-			print("***************")
 
 		elif query_type["quantity"]:
 			query_result = product_query.write().split('\n')
@@ -291,27 +283,10 @@ class Vente(object):
 			details = append_details_products(details, self.items, self.sources)
 			details = append_details_geo(details, self.geo)
 
-			somme = 0
-			for n, ligne in enumerate(query_result):
-				if n == 0:
-					colonnes = ligne.split('#')
-					categorie = find_category(colonnes[0])
-				elif n > 0:
-					colonnes = ligne.split('#')
-					nb_ventes = colonnes[len(colonnes)-1]
-					somme += int(nb_ventes)
-				if n > 0 and n < 10:
-					details.append([categorie + " " + colonnes[0], nb_ventes])
-				if n == 10:
-					details.append(["...", "..."])
-					break
-			print(details)
+			details, quantite, valeur = calcul_somme_ventes(query_result, details, quantity = True)
 
-			result = "Il y a eu " + str(somme) + " ventes "
+			result = "Il y a eu " + separateur_milliers(str(quantite)) + " ventes "
 			result += text_MDorFP
-
-			print("***************")
-
 
 		elif query_type["netsale"]:
 			query_result = product_query.write().split('\n')
@@ -320,28 +295,10 @@ class Vente(object):
 			details = append_details_products(details, self.items, self.sources)
 			details = append_details_geo(details, self.geo)
 
-			somme = 0
-			for n, ligne in enumerate(query_result):
-				if n == 0:
-					colonnes = ligne.split('#')
-					categorie = find_category(colonnes[0])
-				elif n > 0:
-					colonnes = ligne.split('#')
-					prix_ventes = colonnes[len(colonnes)-1]
-					somme += float(prix_ventes)
-				if n > 0 and n < 10:
-					details.append([categorie + " " + colonnes[0], affichage_euros(colonnes[len(colonnes)-1])])
-				if n == 10:
-					details.append(["...", "..."])
-					break
-			print(details)
+			details, quantite, valeur = calcul_somme_ventes(query_result, details, value = True)
 
-
-			result = "Il y a eu " + affichage_euros(str(somme)) + " HT de CA"
+			result = "Il y a eu " + affichage_euros(str(valeur)) + " HT de CA "
 			result += text_MDorFP
-			result += "dans les boutiques de " + ', '.join([b for b in self.boutiques]) if len(self.boutiques) > 0 else ''
-
-			print("***************")
 
 		else:
 			query_result = product_query.write().split('\n')
@@ -351,13 +308,11 @@ class Vente(object):
 
 			details, quantite, valeur = calcul_somme_ventes(query_result, details, quantity = True, value = True)
 
-
 			result = "Il y a eu " + separateur_milliers(str(quantite)) + " ventes pour un total de " + affichage_euros(str(valeur)) + " HT "
 			result += text_MDorFP
 
-			print("details :", details)
-			print("***************")
-
+		print("***************\n" + result + "\n***************")
+		print("details :", details)
 		return [product_query.request, result, details]
 
 
