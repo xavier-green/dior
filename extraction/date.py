@@ -30,6 +30,7 @@ year_words = {
     "an":1,
     "ans":1,
     "ytd":-1,
+    "year-to-date":-1,
     "year":1,
     "years":1,
     "yearly":1,
@@ -41,6 +42,7 @@ month_words = {
     "semestre":6,
     "semestres":6,
     "mtd":-1,
+    "month-to-date":-1,
     "month":1,
     "months":1,
     "quarter":3,
@@ -51,7 +53,8 @@ week_words = {
     "weeks":1,
     "semaine":1,
     "semaines":1,
-    "wtd":-1
+    "wtd":-1,
+    "week-to-date":-1
 }
 previous_words = ["il y a","depuis","ce","cette","dernier","derniers","derniere","dernieres", "last", "previous"]
 post_words = ["dernier","derniers","derniere","dernière", "précédente", "précédent", "precedente", "precedent", "last"]
