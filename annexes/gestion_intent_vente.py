@@ -21,7 +21,7 @@ def find_query_type(sentence):
 		}
 
 	question = sentence.lower()
-	question_words = question.split[" "]
+	question_words = question.split(" ")
 	first_word = question_words[0]
 
 	if ('où' in question_words) or (first_word == "ou") or ('dans quel pays' in question) or ('a quel endroit' in question):
@@ -67,7 +67,7 @@ def find_MDorFP(sentence):
 	Trouve si la question porte sur un Mark Down ou un Full Price, et indique les colonnes à sélectionner en fonction
 	"""
 
-	question = sentence.lower().split[" "]
+	question = sentence.lower().split(" ")
 	Quantity_requested = []
 	if 'fp' in question or ('full' in question and 'price' in question):
 		Quantity_requested.append('fp')
