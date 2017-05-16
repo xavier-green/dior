@@ -82,8 +82,17 @@ def find_category(categorie):
 def append_details_date(details, numerical_dates):
 	start_date = numerical_dates[0][0] if len(numerical_dates) > 0 else last_monday()
 	end_date = numerical_dates[0][1] if len(numerical_dates) > 0 else today()
-	details.append(["Du", affichage_date(start_date)])
-	details.append(["Au (non inclu)", affichage_date(end_date)])
+	dateFormat = "%Y%m%d"
+	a = datetime.strptime(start_date, dateFormat)
+	b = datetime.strptime(end_date, dateFormat)
+	delta = b - a
+	days_diff = delta.days
+	print("Days difference: "+days_diff)
+	if days_diff>1:
+		details.append(["Du", affichage_date(start_date)])
+		details.append(["Au (non inclu)", affichage_date(end_date)])
+	else:
+		details.append(["Le", affichage_date(start_date)])
 	return details
 
 def append_details_products(details, items):
