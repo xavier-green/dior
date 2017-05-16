@@ -2,7 +2,7 @@
 
 from sql.request import query
 
-from annexes.mise_en_forme import affichage_euros, affichage_date
+from annexes.mise_en_forme import affichage_euros, affichage_date, separateur_milliers
 from annexes.gestion_geo import geography_joins, geography_select
 from annexes.gestion_products import what_products, sale_join_products, query_products, where_products
 from annexes.gestion_details import append_details_date, append_details_products, append_details_geo, append_details_boutiques, find_category
@@ -353,7 +353,7 @@ class Vente(object):
 			details = append_details_boutiques(details, self.boutiques)
 			print(details)
 
-			result = "Il y a eu " + str(quantite) + " ventes pour un total de " + affichage_euros(str(valeur)) + " HT "
+			result = "Il y a eu " + separateur_milliers(str(quantite)) + " ventes pour un total de " + affichage_euros(str(valeur)) + " HT "
 			result += text_MDorFP
 
 			print("***************")

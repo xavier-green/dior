@@ -5,6 +5,20 @@ pour que ce soit joli a l'affichage
 
 import datetime
 
+def separateur_milliers(somme):
+	"""
+	Permet de séparer les milliers avec des espaces,
+	ex : 3455 > 3 455
+	"""
+	assert type(somme) is str, "Expected a string"
+	
+	n = len(somme) % 3
+	en_tete = somme[0:n] if n > 0 else ""
+	espace = " " if len(somme) > 3 else ""
+	milliers = [somme[i+n:i+3+n] for i in range(0, len(somme)-n, 3)]
+
+	return en_tete + espace + " ".join(milliers)
+
 def affichage_euros(montant):
 	"""
 	Permet un bel affichage d'un montant en euros.
@@ -20,12 +34,8 @@ def affichage_euros(montant):
 		somme, centimes = montant.split(",")
 	else:
 		somme, centimes = [montant, "0"]
-	n = len(somme) % 3
-	en_tete = somme[0:n] if n > 0 else ""
-	espace = " " if len(somme) > 3 else ""
-	milliers = [somme[i+n:i+3+n] for i in range(0, len(somme)-n, 3)]
 	centimes = "," + centimes[0:2] if (len(centimes) >= 2 and centimes != "00") else ""
-	return en_tete + espace + " ".join(milliers) + centimes +' €'
+	return separateur_milliers(somme) + centimes +' €'
 
 def affichage_date(date):
 	"""
