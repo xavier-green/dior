@@ -1,11 +1,4 @@
-﻿"""
-from importlib.machinery import SourceFileLoader
-
-foo = SourceFileLoader("sql.request", "../sql/request.py").load_module()
-foo = SourceFileLoader("sql.tables", "../sql/tables.py").load_module()
-
-"""
-from copy import copy
+﻿from copy import copy
 
 from sql.request import query
 
@@ -13,7 +6,7 @@ from annexes.mise_en_forme import affichage_euros, affichage_date
 from annexes.gestion_geo import geography_joins, geography_select
 from annexes.gestion_products import what_products, sale_join_products, query_products, where_products
 from annexes.gestion_details import append_details_date, append_details_products, append_details_geo, append_details_boutiques, find_category
-from annexes.gestion_intent_vente import find_query_type, find_MDorFP
+from annexes.gestion_intent_vente import find_query_type, find_MDorFP, calcul_somme_ventes
 
 # Import de toutes les tables utilisées
 from sql.tables import item, sale, boutique, country, division, retail, theme, department, zone, uzone, sub_zone, color
@@ -282,10 +275,6 @@ class Vente(object):
 			start_date = self.numerical_dates[0][0] if len(self.numerical_dates) > 0 else '20170225'
 			second_start_date = self.numerical_dates[1][0] if len(self.numerical_dates) > 1 else '20170218'
 
-			# result += "du %s au %s par rapport au %s au %s " %(start_date, "20170304", second_start_date, start_date)
-			# result += "pour " + ', '.join(produit_selected) + " " if len(produit_selected) > 0 else ''
-			# result += "dans les boutiques de " + ', '.join([b for b in self.boutiques]) if len(self.boutiques) > 0 else ''
-
 			details = append_details_date([], self.numerical_dates)
 			details = append_details_products(details, self.items)
 			details = append_details_geo(details, self.geo)
@@ -359,23 +348,7 @@ class Vente(object):
 
 			details = append_details_date([], self.numerical_dates)
 
-			valeur = 0
-			quantite = 0
-			for n, ligne in enumerate(query_result):
-				if n == 0:
-					colonnes = ligne.split('#')
-					categorie = find_category(colonnes[0])
-				if n > 0:
-					colonnes = ligne.split('#')
-					prix_ventes = colonnes[len(colonnes)-1]
-					quantite_ventes = colonnes[len(colonnes)-2]
-					valeur += float(prix_ventes)
-					quantite += int(quantite_ventes)
-				if n > 0 and n < 10:
-					details.append([categorie + ' ' + colonnes[0], "("+quantite_ventes+" vendu pour "+affichage_euros(prix_ventes)+" HT"])
-				if n == 10:
-					details.append(["...", "..."])
-					break
+			details, quantite, valeur = calcul_somme_ventes(query_result, details, quantity = True, value = True)
 
 			details = append_details_boutiques(details, self.boutiques)
 			print(details)
@@ -386,17 +359,4 @@ class Vente(object):
 			print("***************")
 			return [product_query.request, result, details]
 
-"""
-data = {
-		'cities' : ['Paris', 'Madrid'],
-		'countries' : [],
-		'nationalities' : [],
-		'dates' : [],
-		'numerical_dates' : [],
-		'sentence' : '',
-		'items' : {'produit':['robe']}
-		}
 
-test = Produit(data)
-print(test.build_query())
-"""
