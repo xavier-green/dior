@@ -94,7 +94,7 @@ def calcul_somme_ventes(query_result, details, quantity = False, value = False):
 	valeur = 0
 	quantite = 0
 	for n, ligne in enumerate(query_result):
-		if len(ligne.split('#')) < 3:
+		if len(ligne.split('#')) < 2:
 			print("result was null")
 			return details, quantite, valeur
 		if n == 0:
