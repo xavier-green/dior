@@ -114,7 +114,7 @@ def calcul_somme_ventes(query_result, details, quantity = False, value = False):
 		if n == 10:
 			details.append(["...", "..."])
 
-	return details, valeur, quantite, valeur
+	return details, quantite, valeur
 
 
 
