@@ -128,8 +128,8 @@ class ProductExtractor(object):
 
     def get_product(self, sentence, csv_file, csv_column, csv_single):
         csv_matches = self.csv_contains(sentence, csv_file, csv_column)
-        print(csv_matches)
         if len(csv_matches)>0:
+            print(csv_matches)
             return list(csv_matches[csv_single])
         return None
 
@@ -185,6 +185,7 @@ class ProductExtractor(object):
                     #print(short_sentence)
                     #print("getting product for "+str(csv))
                     products_matched = self.get_product(short_sentence, csv["file"], csv["column"], csv["single"])
+                    print("Products matched",products_matched)
                     if products_matched:
                         # print("ok")
                         matched_item = {}
