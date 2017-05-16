@@ -3,6 +3,7 @@
 from sql.request import query
 
 from annexes.mise_en_forme import affichage_euros, affichage_date, separateur_milliers
+from annexes.gestion_dates import last_week, same_week_last_year
 from annexes.gestion_geo import geography_joins, geography_select
 from annexes.gestion_products import what_products, sale_join_products, query_products, where_products
 from annexes.gestion_details import append_details_date, append_details_products, append_details_geo, append_details_boutiques, find_category
@@ -252,12 +253,13 @@ class Vente(object):
 
 		elif query_type["croissance"]:
 			second_query = copy(product_query)
-			if len(self.numerical_dates) > 1:
-				product_query.wheredate(sale, 'DateNumYYYYMMDD', self.numerical_dates[0][0], self.numerical_dates[0][1])
-				second_query.wheredate(sale, 'DateNumYYYYMMDD', self.numerical_dates[1][0], self.numerical_dates[1][1])
-			else:
-				product_query.wheredate(sale, 'DateNumYYYYMMDD') # par défaut sur les 7 derniers jours
-				second_query.wheredate(sale, 'DateNumYYYYMMDD', "20170218", "20170225") # TODO : à changer
+
+			first_start_date, first_end_date = last_week()
+			second_start_date, second_end_date = same_week_last_year()
+
+			product_query.wheredate(sale, 'DateNumYYYYMMDD', first_start_date, first_end_date)
+			second_query.wheredate(sale, 'DateNumYYYYMMDD', second_start_date, second_end_date)
+
 			ventes_n = product_query.write().split('\n')
 			ventes_n_moins_un = second_query.write().split('\n')
 			vente_date_n = ventes_n[1]
@@ -272,7 +274,8 @@ class Vente(object):
 				print("Croissance calculée, ", croissance)
 				result = "La croissance est de %.2f%% " %(croissance)
 
-			details = append_details_date([], self.numerical_dates)
+			details = append_details_date([], [[first_start_date, first_end_date]])
+			details = append_details_date(details, [[second_start_date, second_end_date]])
 			details = append_details_products(details, self.items, self.product_sources)
 			details = append_details_geo(details, self.geo)
 
