@@ -169,6 +169,6 @@ class Stock(object):
 					str_res_stock += "dans la boutique " + ' '.join(self.boutiques) + ' '
 				res_sellthru += "est de " + str(res_stock)
 			else:
-				res_sellthru = "Le stock est nul"
+				str_res_stock = "Le stock est null"
 			return(stock_query.request, str_res_stock)
 		return(stock_query.request, res_stock)
