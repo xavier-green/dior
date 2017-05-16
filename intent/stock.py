@@ -25,6 +25,7 @@ class Stock(object):
 		self.items = data['items']
 		self.boutiques = data['boutiques']
 		self.sentence = data['sentence']
+		self.product_sources = data['sources']
 
 	def build_answer(self):
 		response_base = self.build_query()
@@ -79,7 +80,7 @@ class Stock(object):
 		res_stock = stock_query.write().replace("\n","")
         
 		details = append_details_date([], self.numerical_dates)
-		details = append_details_products(details, self.items)
+		details = append_details_products(details, self.items, self.product_sources)
 		details = append_details_geo(details, self.geo)
 		if not sellthru_query:
 			# response = "Le stock concernant " + ", ".join([" ".join(dict.values(x)) for x in self.items]) + "dans " + ", ".join(self.geo + self.boutiques) +"est de " + res_stock
@@ -169,6 +170,6 @@ class Stock(object):
 					str_res_stock += "dans la boutique " + ' '.join(self.boutiques) + ' '
 				res_sellthru += "est de " + str(res_stock)
 			else:
-				res_sellthru = "Le stock est nul"
+				str_res_stock = "Le stock est null"
 			return(stock_query.request, str_res_stock)
 		return(stock_query.request, res_stock)
