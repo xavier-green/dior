@@ -43,8 +43,9 @@ def append_details_products(details, items, sources=[]):
 	# products_requested = what_products(items)
 	# for table, column, table_name, product_name, table_desc in products_requested:
 	# 	details.append([product_name + " trouvé dans", table_desc])
-	if len(sources)>0:
-		details.append("Produit trouvé dans "+",".join(sources))
+	for idx,item in enumerate(items):
+		for key in item:
+			details.append([item[key]+" trouvé dans "+",".join(sources[idx])])
 	return details
 
 def append_details_geo(details, geo):
