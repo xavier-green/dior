@@ -61,7 +61,6 @@ class Vente(object):
 
 		text_MDorFP, quantity_MDorFP = find_MDorFP(self.sentence)
 
-		# List in what categories we will be looking
 		columns_requested = query_products(self.items)
 		column_groupby = columns_requested[:]
 		columns_requested.append(quantity_MDorFP)
@@ -90,7 +89,7 @@ class Vente(object):
 			product_query = query(sale, columns_requested + [("sum", sale, "RG_Net_Amount_WOTax_REF", sale, "MD_Net_Amount_WOTax_REF")])
 
 		"""
-		On fait les join
+		Jointures
 		"""
 
 		already_joined = []
@@ -98,18 +97,18 @@ class Vente(object):
 			product_query.join(sale, boutique, "Location", "Code")
 			already_joined.append("boutique")
 
-		if nationality_query:
+		if query_type["nationality"]:
 			product_query.join(sale, country, "Cust_Nationality", "Code_ISO")
 			already_joined.append("country")
 
-		if colour_query:
+		if query_type["colour"]:
 			product_query.join(sale, color, "Color", "Code")
 
 		product_query = geography_joins(product_query, self.geo, already_joined = already_joined)
 		product_query = sale_join_products(product_query, self.items)
 
 		"""
-		On fait les conditions
+		Conditions
 		"""
 
 		product_query.whereNotJDAandOTH()
@@ -133,14 +132,33 @@ class Vente(object):
 			else:
 				product_query.wheredate(sale, 'DateNumYYYYMMDD') # par défaut sur les 7 derniers jours
 
+		if query_type["exceptionnal"]:
+			product_query.whereComparaison(sale, ("sum", sale, "RG_Net_Amount_WOTax_REF", sale, "MD_Net_Amount_WOTax_REF"), ">", str(self.seuil_exc))
+
+		"""
+		Finitions
+		"""
+
+		if query_type["colour"]:
+			product_query.groupby(sale, 'Color')
+			product_query.orderby(None, 'count(*)', " DESC")
+		elif query_type["location"]:
+			product_query.groupby(boutique, 'Description')
+			product_query.orderby(None, 'count(*)', " DESC")
+		elif query_type["exceptionnal"]:
+			product_query.orderby(sale, ("sum", sale, "RG_Net_Amount_WOTax_REF", sale, "MD_Net_Amount_WOTax_REF"), "DESC")
+		elif query_type["price"] or query_type["croissance"]:
+			pass
+		else:
+			for col in column_groupby:
+				product_query.groupby(col[0], col[1])
+
 
 		"""
 		On renvoit une réponse
 		"""
 
 		if query_type["colour"]:
-			product_query.groupby(sale, 'Color')
-			product_query.orderby(None, 'count(*)', " DESC")
 			query_result = product_query.write().split('\n')
 			print(query_result)
 			result = [w.split("#")[0]+" ( "+w.split("#")[1]+" vendus )" for w in query_result if 'SALE_Color' not in w and '------' not in w]
@@ -165,8 +183,6 @@ class Vente(object):
 				return [product_query.request,ret_string]
 
 		elif query_type["location"]:
-			product_query.groupby(boutique, 'Description')
-			product_query.orderby(None, 'count(*)', " DESC")
 			query_result = product_query.write().split('\n')
 			print(query_result)
 			result = [w.split("#")[0]+" ( "+w.split("#")[1]+" vendus )" for w in query_result if 'LOCA_Description' not in w and '------' not in w]
@@ -189,8 +205,6 @@ class Vente(object):
 			return [product_query.request,result,details]
 
 		elif query_type["exceptionnal"]:
-			product_query.whereComparaison(sale, ("sum", sale, "RG_Net_Amount_WOTax_REF", sale, "MD_Net_Amount_WOTax_REF"), ">", str(self.seuil_exc))
-			product_query.orderby(sale, ("sum", sale, "RG_Net_Amount_WOTax_REF", sale, "MD_Net_Amount_WOTax_REF"), "DESC")
 
 			query_result = product_query.write().split('\n')
 			start_date = self.numerical_dates[0][0] if len(self.numerical_dates) > 0 else last_monday()
@@ -213,8 +227,6 @@ class Vente(object):
 			return [product_query.request, result]
 
 		elif query_type["margin"]:
-			for col in column_groupby:
-				product_query.groupby(col[0], col[1])
 			query_result = product_query.write().split('\n')
 
 			somme = 0
@@ -286,8 +298,6 @@ class Vente(object):
 			return [product_query.request, result, details]
 
 		elif query_type["quantity"]:
-			for col in column_groupby:
-				product_query.groupby(col[0], col[1])
 			query_result = product_query.write().split('\n')
 
 			details = append_details_date([], self.numerical_dates)
@@ -316,8 +326,6 @@ class Vente(object):
 
 
 		elif query_type["netsale"]:
-			for col in column_groupby:
-				product_query.groupby(col[0], col[1])
 			query_result = product_query.write().split('\n')
 
 			details = append_details_date([], self.numerical_dates)
@@ -349,8 +357,6 @@ class Vente(object):
 			return [product_query.request, result, details]
 
 		else:
-			for col in column_groupby:
-				product_query.groupby(col[0], col[1])
 			query_result = product_query.write().split('\n')
 
 			details = append_details_date([], self.numerical_dates)
