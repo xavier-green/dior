@@ -152,7 +152,7 @@ class Stock(object):
 				# La requête est terminée, on l'écrit
 				# product_query.write()
 			res_sales = product_query.write()
-			if res_sales == 'NULL':
+			if 'NULL' in res_sales:
 				res_sales = 0
 			else:
 				res_sales = int(res_sales)
