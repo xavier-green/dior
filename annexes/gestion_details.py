@@ -46,7 +46,7 @@ def append_details_products(details, items, sources=[]):
 	for idx,item in enumerate(items):
 		for key in item:
 			print("bdd",sources[idx][0])
-			details.append([item[key]+" trouvé dans "+sources[idx][0],",".join(sources[idx][1])])
+			details.append([item[key]+" trouvé dans "+sources[idx][0],",".join([upperfirst(w) for w in sources[idx][1]])])
 	return details
 
 def append_details_geo(details, geo):
@@ -58,4 +58,9 @@ def append_details_boutiques(details, boutiques):
 	for boutique in boutiques:
 		details.append([boutique + " trouvé dans", "boutique"])
 	return details
+
+def upperfirst(x):
+	if len(x)>0:
+    	return x[0].upper() + x[1:]
+    return ''
 
