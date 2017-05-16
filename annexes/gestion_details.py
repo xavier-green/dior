@@ -1,7 +1,8 @@
 from annexes.mise_en_forme import affichage_euros, affichage_date
 from annexes.gestion_dates import today, last_monday
 from annexes.gestion_products import what_products
-import datetime
+
+from datetime import datetime
 
 def find_category(categorie):
 	resp = categorie[0:4]
