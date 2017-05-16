@@ -145,9 +145,9 @@ class ProductExtractor(object):
         return csv_file[csv_column.str.contains(" "+w.rstrip().lstrip()+" ")]
 
     def get_product(self, sentence, csv_file, csv_column, csv_single):
-        csv_matches = self.csv_contains(sentence, csv_file, csv_column, csv_single)
+        csv_matches = self.csv_contains(sentence, csv_file, csv_column)
         if len(csv_matches)>0:
-            return list(csv_matches[single_column])
+            return list(csv_matches[csv_single])
         return None
 
     def aggressive_tokenize(self, text):
