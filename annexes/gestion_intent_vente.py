@@ -1,4 +1,6 @@
 from sql.tables import sale
+from annexes.mise_en_forme import affichage_euros
+from annexes.gestion_details import find_category
 
 def find_query_type(sentence):
 	"""
@@ -85,3 +87,34 @@ def find_MDorFP(sentence):
 		MDorFP = "en Mark Down "
 
 	return MDorFP, Quantity
+
+def calcul_somme_ventes(query_result, details, quantity = False, value = False):
+	assert (quantity or value), "Vous n'avez demandé ni quantité ni valeur"
+	
+	valeur = 0
+	quantite = 0
+	for n, ligne in enumerate(query_result):
+		if n == 0:
+			colonnes = ligne.split('#')
+			categorie = find_category(colonnes[len(colonnes)-3]) if value and quantite else find_category(colonnes[len(colonnes)-2])
+		if n > 0:
+			colonnes = ligne.split('#')
+			prix_ventes = colonnes[len(colonnes)-1] if value else "0"
+			quantite_ventes = colonnes[len(colonnes)-2] if value else colonnes[len(colonnes)-1]
+			valeur += float(prix_ventes)
+			quantite += int(quantite_ventes)
+		if n > 0 and n < 10:
+			details_quantity = quantite_ventes + " ventes" if quantity else ""
+			details_and = " pour " if quantity and value else ""
+			details_value = affichage_euros(prix_ventes) + " HT" if value else ""
+
+			categorie_item = colonnes[len(colonnes)-3] if value and quantite else colonnes[len(colonnes)-2]
+
+			details.append([categorie + ' ' + categorie_item, details_quantity + details_and + details_value])
+		if n == 10:
+			details.append(["...", "..."])
+
+	return details, valeur, quantite, valeur
+
+
+

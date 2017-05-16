@@ -1,34 +1,5 @@
 from sql.tables import item, sale, boutique, country, division, retail, theme, department, zone, uzone, sub_zone, family
 
-"""
-def geography_joins(table, query, data):
-
-	# GEOGRAPHY Extraction
-
-	uzone_joined = False
-	zone_joined = False
-	subzone_joined = False
-	country_joined = False
-	state_joined = False
-
-	query.join(table, zone, "Zone", "Code")
-
-	for geo_table, geo_item in data:
-		if geo_table == "uzone" and not uzone_joined:
-			query.join(zone, uzone, "uzone", "Code")
-			uzone_joined = True
-		elif geo_table == "zone" and not zone_joined:
-			zone_joined = True
-		elif geo_table == "subzone" and not subzone_joined:
-			query.join(zone, sub_zone, "Code", "Zone")
-			subzone_joined = True
-		elif geo_table == "country" and not country_joined:
-			query.join(sale, country, "Country", "Code")
-			country_joined = True
-
-	return query
-"""
-
 def geography_joins(query, data, already_joined = [], main_table = sale):
 
 	has_been_joined = {
