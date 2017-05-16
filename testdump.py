@@ -12,7 +12,7 @@ for index, x in enumerate(tables):
         m = "SZON"
     tot = cmd1+m+cmd2+x+'"'
 
-    if x == 'COUN_country':
+    if x == 'COUN_country' or x == 'UZONE_zone':
         tot = cmd1 + m + '_Description_FR) from '+x+'"'
 
     with open('d:/dior/data/'+files[index]+'.csv', 'w', encoding='utf-8') as f:
