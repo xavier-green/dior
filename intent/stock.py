@@ -1,4 +1,4 @@
-x# Pour pouvoir importer les fichiers sql
+# Pour pouvoir importer les fichiers sql
 # from importlib.machinery import SourceFileLoader
 
 # foo = SourceFileLoader("sql.request", "../sql/request.py").load_module()
