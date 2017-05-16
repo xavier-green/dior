@@ -70,15 +70,9 @@ class Vente(object):
 		On créé la query en fonction de la question
 		"""
 
-<<<<<<< HEAD
-		if colour_query:
-			product_query = query(sale, [(color, 'Description'), 'count(*)'], top_distinct='DISTINCT TOP 5')
-		elif location_query:
-=======
 		if query_type["colour"]:
-			product_query = query(sale, ['Color', 'count(*)'], top_distinct='DISTINCT TOP 5')
+			product_query = query(sale, [(color, 'Description'), 'count(*)'], top_distinct='DISTINCT TOP 5')
 		elif query_type["location"]:
->>>>>>> 3776a6002cd3529317ba4080d96f1fba43ac47c4
 			product_query = query(sale, [(boutique, 'Description'), 'count(*)'], top_distinct='DISTINCT TOP 5')
 		elif query_type["price"]:
 			product_query = query(sale, [(sale, "RG_Net_Amount_WOTax_REF")], top_distinct='DISTINCT TOP 1')
