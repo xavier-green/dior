@@ -191,7 +191,7 @@ class ProductExtractor(object):
                         matched_item = {}
                         matched_item[bdd] = short_sentence
                         ok_products.append(matched_item)
-                        sources.append(products_matched)
+                        sources.append((bdd,products_matched))
                         for i in range(len(prev_results_copy)):
                             for key in prev_results_copy[i]:
                                 if prev_results_copy[i][key] in short_sentence:
