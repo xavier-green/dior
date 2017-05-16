@@ -1,4 +1,9 @@
 def find_query_type(sentence):
+	"""
+	Permet à partir d'une phrase, d'en extraire un intent plus précis
+	ex : "Où vend-on le plus aux touristes ?" > location, nationality, foreign
+	ex : "Quelle est la croissance de Lady Dior ?" > croissance
+	"""
 
 	query_type = {
 			"location":False,
@@ -8,15 +13,16 @@ def find_query_type(sentence):
 			"croissance":False,
 			"margin":False,
 			"nationality":False,
-			"quantity":False,
+			"foreign":False,
 			"netsale":False,
-			"foreign":False
+			"quantity":False
 		}
 
-	first_word = self.sentence.split(" ")[0].lower()
 	question = self.sentence.lower()
+	question_words = question.split[" "]
+	first_word = question_words[0]
 
-	if ('où' in question) or (first_word == "ou") or ('dans quel pays' in question) or ('a quel endroit' in question):
+	if ('où' in question_words) or (first_word == "ou") or ('dans quel pays' in question) or ('a quel endroit' in question):
 		print("Sale specific to a location")
 		query_type["location"] = True
 
@@ -30,27 +36,27 @@ def find_query_type(sentence):
 
 	if ('exceptionnel' in question):
 		print("Sale specific to exceptionnal sales")
-		exceptionnal_query = True
-
-	if ('margin' in question) or ('marge' in question):
-		margin_query = True
+		query_type["exceptionnal"] = True
 
 	if ('croissance' in question) or ('trend' in question):
 		print("Sale specific to a croissance")
-		croissance_query = True
+		query_type["croissance"] = True
+
+	if ('margin' in question) or ('marge' in question):
+		query_type["margin"] = True
 
 	if ('local' in question or 'locaux' in question):
-		nationality_query = True
+		query_type["nationality"] = True
 
 	if ('touriste' in question) or ('foreign' in question):
-		nationality_query = True
-		touriste = True
+		query_type["nationality"] = True
+		query_type["foreign"] = True
 
 	if ('net sale' in question) or ('pour combien' in question) or ('valeur' in question):
-		netsale_query = True
+		query_type["netsale"] = True
 
 	if ('quantite' in question) or ('volume' in question) or ('nombre' in question) or ("combien" in question and not "pour combien" in question):
-		quantity_query = True
+		query_type["quantity"] = True
 
-	if (not croissance_query and not exceptionnal_query) and len(self.items) == 0:
-		return "Veuillez préciser un produit svp"
+	return query_type
+
