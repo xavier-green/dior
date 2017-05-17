@@ -67,7 +67,7 @@ class Vente(object):
 		if query_type["colour"]:
 			product_query = query(sale, [(color, 'Description'), quantity_MDorFP], top_distinct='DISTINCT TOP 3')
 		elif query_type["location"]:
-			product_query = query(sale, [(boutique, 'Description'), 'count(*)'], top_distinct='DISTINCT TOP 5')
+			product_query = query(sale, [(boutique, 'Description'), quantity_MDorFP], top_distinct='DISTINCT TOP 5')
 		elif query_type["price"]:
 			product_query = query(sale, [("sum", sale, "RG_Net_Amount_WOTax_REF", sale, "MD_Net_Amount_WOTax_REF")], top_distinct='DISTINCT TOP 1')
 		elif query_type["exceptionnal"]:
@@ -142,7 +142,7 @@ class Vente(object):
 
 		elif query_type["location"]:
 			product_query.groupby(boutique, 'Description')
-			product_query.orderby(None, 'count(*)', " DESC")
+			product_query.orderby(None, quantity_MDorFP, " DESC")
 
 		elif query_type["exceptionnal"]:
 			product_query.orderby(sale, ("sum", sale, "RG_Net_Amount_WOTax_REF", sale, "MD_Net_Amount_WOTax_REF"), "DESC")
@@ -178,10 +178,20 @@ class Vente(object):
 
 		elif query_type["location"]:
 			query_result = product_query.write().split('\n')
-			print(query_result)
-			result = [w.split("#")[0]+" ( "+w.split("#")[1]+" vendus )" for w in query_result if 'LOCA_Description' not in w and '------' not in w]
-			print(result)
-			details = []
+
+			details = append_details_date([], self.numerical_dates)
+			details = append_details_products(details, self.items, self.product_sources)
+			details = append_details_geo(details, self.geo)
+
+			result = "Voici les 3 boutiques avec les meilleurs ventes : \n"
+			for n, ligne in enumerate(query_result):
+				if n > 0:
+					colonnes = ligne.split('#')
+					if len(colonnes) != 2:
+						result = "Aucune vente pour les mots-clés demandés."
+					else:
+						boutique, nb_ventes = colonnes
+						result += boutique + " avec " + separateur_milliers(nb_ventes) + " ventes \n"
 
 		elif query_type["price"]:
 			query_result = product_query.write().split('\n')
