@@ -7,7 +7,7 @@ import re
 import pandas as pd
 from stop_words import get_stop_words
 stop_words_old = get_stop_words('fr')
-not_stop_words = ["ou","où","qui","quand","quel","quelle","quelle", "le"]
+not_stop_words = ["ou","où","qui","quand","quel","quelle","quelle"]
 stop_words = [x for x in stop_words_old if x not in not_stop_words]
 from textblob import TextBlob
 from textblob_fr import PatternTagger, PatternAnalyzer
@@ -191,9 +191,10 @@ class WordClassification(object):
 
         json,toreplace = self.find_similar_nationality(text)
         for element in toreplace:
-            print("NAT replacing: "+element)
-            cloned_text = cloned_text.replace(element,"NAT")
-        #print("cleaned text: ",cloned_text)
+            if element not in ["le", "la"]:
+                print("NAT replacing: "+element)
+                cloned_text = cloned_text.replace(element,"NAT")
+                #print("cleaned text: ",cloned_text)
         return cloned_text
 
     def find_similar_words(self, text):
