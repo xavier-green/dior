@@ -236,15 +236,15 @@ class Vente(object):
 				if n > 0:
 					colonnes = ligne.split('#')
 					if len(colonnes) > 3:
-						avg_cost = colonnes[-1]
-						prix_vente = colonnes[-2]
-						nb_vente = colonnes[-3]
+						avg_cost = float(colonnes[-1])
+						prix_vente = float(colonnes[-2])
+						nb_vente = int(colonnes[-3])
 						nom_item = colonnes[-4]
-						assert float(prix_vente) != 0, "Prix de vente nul, impossible de calculer le margin"
-						margin = (float(prix_vente)-float(avg_cost))/float(prix_vente)
+						assert prix_vente != 0, "Prix de vente nul, impossible de calculer le margin"
+						margin = (prix_vente-avg_cost)/prix_vente
 						margins.append({
 							'margin': margin,
-							'count': int(nb_vente)
+							'count': nb_vente
 						})
 						total_ventes += nb_vente
 					else:
