@@ -128,7 +128,7 @@ class Boutique(object):
 		"""
 
 		details = append_details_date([], self.numerical_dates)
-		details = append_details_products(details, self.items)
+		details = append_details_products(details, self.items, self.product_sources)
 		details = append_details_geo(details, self.geo)
 
 		return [boutique_query.request, reponse, details]

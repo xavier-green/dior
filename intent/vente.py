@@ -44,15 +44,15 @@ class Vente(object):
 
 		query_type = find_query_type(self.sentence)
 
-		first_word = self.sentence.split(" ")[0]
-		question = self.sentence.lower()
-
 		if query_type["exceptionnal"] and not self.seuil_exc:
-			print("Aucun seuil trouvé, seuil par défault à 10k")
-			self.seuil_exc = 10000
+			print("Aucun seuil trouvé, seuil par défault à 50k")
+			self.seuil_exc = 50000
 
-		if (not query_type["croissance"] and not query_type["exceptionnal"]) and len(self.items) == 0:
-			return [None, "Veuillez préciser un produit svp"]
+		if query_type["margin"] and len(self.items) == 0:
+			return [None, "Vous avez posé une question concernant un margin, mais sans préciser le produit associé."]
+
+		elif query_type["price"] and len(self.items) == 0:
+			return [None, "Vous avez demandé un prix sans préciser le produit associé."]
 
 		text_MDorFP, quantity_MDorFP = find_MDorFP(self.sentence)
 
@@ -69,7 +69,7 @@ class Vente(object):
 		elif query_type["location"]:
 			product_query = query(sale, [(boutique, 'Description'), 'count(*)'], top_distinct='DISTINCT TOP 5')
 		elif query_type["price"]:
-			product_query = query(sale, [(sale, "RG_Net_Amount_WOTax_REF")], top_distinct='DISTINCT TOP 1')
+			product_query = query(sale, [("sum", sale, "RG_Net_Amount_WOTax_REF", sale, "MD_Net_Amount_WOTax_REF")], top_distinct='DISTINCT TOP 1')
 		elif query_type["exceptionnal"]:
 			product_query = query(sale, columns_requested+[("sum", sale, "RG_Net_Amount_WOTax_REF", sale, "MD_Net_Amount_WOTax_REF"), "DateNumYYYYMMDD", (boutique, "Description")], top_distinct= 'DISTINCT')
 		elif query_type["croissance"]:
@@ -87,20 +87,22 @@ class Vente(object):
 		Jointures
 		"""
 
-		already_joined = []
+		already_joined_geo = []
 		if len(self.boutiques) > 0 or query_type["exceptionnal"] or query_type["croissance"] or query_type["location"]:
 			product_query.join(sale, boutique, "Location", "Code")
-			already_joined.append("boutique")
+			already_joined_geo.append("boutique")
 
 		if query_type["nationality"]:
 			product_query.join(sale, country, "Cust_Nationality", "Code_ISO")
-			already_joined.append("country")
+			already_joined_geo.append("country")
 
+		already_joined_product = []
 		if query_type["colour"]:
 			product_query.join(sale, color, "Color", "Code")
+			already_joined_product.append("Color")
 
-		product_query = geography_joins(product_query, self.geo, already_joined = already_joined)
-		product_query = sale_join_products(product_query, self.items)
+		product_query = geography_joins(product_query, self.geo, already_joined = already_joined_geo)
+		product_query = sale_join_products(product_query, self.items, already_joined = already_joined_product)
 
 		"""
 		Conditions
@@ -125,7 +127,7 @@ class Vente(object):
 			if len(self.numerical_dates) > 0:
 				product_query.wheredate(sale, 'DateNumYYYYMMDD', self.numerical_dates[0][0], end=self.numerical_dates[0][1])
 			else:
-				product_query.wheredate(sale, 'DateNumYYYYMMDD') # par défaut sur les 7 derniers jours
+				product_query.wheredate(sale, 'DateNumYYYYMMDD') # par défaut en week-to-date
 
 		if query_type["exceptionnal"]:
 			product_query.whereComparaison(sale, ("sum", sale, "RG_Net_Amount_WOTax_REF", sale, "MD_Net_Amount_WOTax_REF"), ">", str(self.seuil_exc))
@@ -137,13 +139,17 @@ class Vente(object):
 		if query_type["colour"]:
 			product_query.groupby(color, 'Description')
 			product_query.orderby(None, 'count(*)', " DESC")
+
 		elif query_type["location"]:
 			product_query.groupby(boutique, 'Description')
 			product_query.orderby(None, 'count(*)', " DESC")
+
 		elif query_type["exceptionnal"]:
 			product_query.orderby(sale, ("sum", sale, "RG_Net_Amount_WOTax_REF", sale, "MD_Net_Amount_WOTax_REF"), "DESC")
+		
 		elif query_type["price"] or query_type["croissance"]:
 			pass
+		
 		else:
 			for col in column_groupby:
 				product_query.groupby(col[0], col[1])

@@ -46,7 +46,7 @@ def query_products(list_of_dict):
 			has_been_seen[table_name] = True
 	return columns_products
 
-def sale_join_products(query, list_of_dict, main_table = sale):
+def sale_join_products(query, list_of_dict, main_table = sale, already_joined = []):
 	"""
 	Fait les jointures à partir de list_of_dict = self.items
 	main_table est censé être soit sale, soit stock
@@ -54,6 +54,9 @@ def sale_join_products(query, list_of_dict, main_table = sale):
 	"""
 	products_requested = what_products(list_of_dict)
 	has_been_seen = {}
+	for table_name in already_joined:
+		has_been_seen[table_name] = True
+		
 	for table, column, table_name, product_name, table_desc in products_requested:
 		print("Trying to join", table.name)
 		if not (table_name in has_been_seen and has_been_seen[table_name]):

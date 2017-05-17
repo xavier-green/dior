@@ -40,16 +40,16 @@ def append_details_date(details, numerical_dates):
 	return details
 
 def append_details_products(details, items, sources=[]):
-	# products_requested = what_products(items)
-	# for table, column, table_name, product_name, table_desc in products_requested:
-	# 	details.append([product_name + " trouvé dans", table_desc])
 	try:
 		for idx,item in enumerate(items):
 			for key in item:
 				print("bdd",sources[idx][0])
 				details.append([item[key]+" trouvé dans "+sources[idx][0],",".join([upperfirst(w) for w in sources[idx][1]])])
 	except:
-		pass
+		products_requested = what_products(items)
+		for table, column, table_name, product_name, table_desc in products_requested:
+			details.append([product_name + " trouvé dans", table_desc])
+			
 	return details
 
 def append_details_geo(details, geo):
