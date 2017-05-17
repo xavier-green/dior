@@ -69,7 +69,7 @@ class Vente(object):
 		elif query_type["location"]:
 			product_query = query(sale, [(boutique, 'Description'), quantity_MDorFP], top_distinct='DISTINCT TOP 5')
 		elif query_type["price"]:
-			product_query = query(sale, [("sum", sale, "RG_Net_Amount_WOTax_REF", sale, "MD_Net_Amount_WOTax_REF")], top_distinct='DISTINCT TOP 1')
+			product_query = query(sale, [(item, "Description"), ("sum", sale, "RG_Net_Amount_WOTax_REF", sale, "MD_Net_Amount_WOTax_REF")], top_distinct='DISTINCT TOP 1')
 		elif query_type["exceptionnal"]:
 			product_query = query(sale, columns_requested+[("sum", sale, "RG_Net_Amount_WOTax_REF", sale, "MD_Net_Amount_WOTax_REF"), "DateNumYYYYMMDD", (boutique, "Description")], top_distinct= 'DISTINCT')
 		elif query_type["croissance"]:
@@ -100,6 +100,10 @@ class Vente(object):
 		if query_type["colour"]:
 			product_query.join(sale, color, "Color", "Code")
 			already_joined_product.append("Color")
+
+		if query_type["price"]:
+			product_query.join(sale, item, "Style", "Code")
+			already_joined_product.append("Style")
 
 		product_query = geography_joins(product_query, self.geo, already_joined = already_joined_geo)
 		product_query = sale_join_products(product_query, self.items, already_joined = already_joined_product)
@@ -195,26 +199,19 @@ class Vente(object):
 
 		elif query_type["price"]:
 			query_result = product_query.write().split('\n')
-			print(query_result)
-			result_line = query_result[1].split('#')
-			item_price = round(float(result_line[0]), 2)
+			if len(query_result[1].split('#')) == 2:
+				product_name, product_price = query_result[1].split('#')
+				result = "Mon premier résultat est " + product_name + " qui s'est vendu à " + affichage_euros(product_price)
 
 			details = append_details_date([], self.numerical_dates)
 			details = append_details_products(details, self.items, self.product_sources)
 			details = append_details_geo(details, self.geo)
 
-			print(result_line)
-			result = str(item_price) + "€ HT."
-			print(result)
-			return [product_query.request,result,details]
-
 		elif query_type["exceptionnal"]:
 			query_result = product_query.write().split('\n')
-			start_date = self.numerical_dates[0][0] if len(self.numerical_dates) > 0 else last_monday()
-
 
 			result = "Il y a eu %i ventes exceptionnelles (supérieures à %s)" %(len(query_result)-1, affichage_euros(self.seuil_exc))
-			result += "Voici les 3 meilleures :" if len(query_result)-1 > 3 else ""
+			result += "\nVoici les 3 meilleures :" if len(query_result)-1 > 3 else ""
 
 			for n, ligne in enumerate(query_result):
 				if n > 0 and n < 4:
