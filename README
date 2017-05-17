@@ -1,0 +1,26 @@
+#L'API de OVH (folder ovh)
+
+1) pip install fasttext
+2) python fasttext_server.py
+
+------ API Rest ------
+
+GET sur /{mot} :: Retourne le vecteur (de dim 300) associé au mot (vecteur nul sinon)
+POST sur / avec un body = {"words":["madrid","chien"]} :: Retourne un tableau des vecteurs associés au mots du body
+
+
+
+
+#Installation de l'API Principale
+
+1) git clone ...
+2) pip install -r requirements.txt
+3) créer un service dans le task scheduler de windows (crontab) qui run les script .bat (launch.bat et dumps_desc.bat)
+4) python start.py (entrainement du ml + lancement du webserver)
+
+------ API Rest ------
+
+POST sur / avec un body = {"sentence":"combien avons nous vendu de sac hier","seuil":500000} :: Retourne un dictionnaire contenant le 'anwser' qui est ce qui sera retourné au user sur l'app et 'details' qui montre les informations supplémentaires lorsque le user clique sur la réponse du bot
+--> Sentence contient la phrase de l'utilisateur, le seuil est le seuil de transactions exceptionnelles
+
+GET /admin/logs :: Tableau avec tous les logs de l'app (date-question-requête SQL-réponse)
