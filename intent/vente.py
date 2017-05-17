@@ -65,7 +65,7 @@ class Vente(object):
 		"""
 
 		if query_type["colour"]:
-			product_query = query(sale, [(color, 'Description')] + quantity_MDorFP, top_distinct='DISTINCT TOP 3')
+			product_query = query(sale, [(color, 'Description'), quantity_MDorFP], top_distinct='DISTINCT TOP 3')
 		elif query_type["location"]:
 			product_query = query(sale, [(boutique, 'Description'), 'count(*)'], top_distinct='DISTINCT TOP 5')
 		elif query_type["price"]:
