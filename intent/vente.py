@@ -236,7 +236,6 @@ class Vente(object):
 				if n > 0:
 					colonnes = ligne.split('#')
 					if len(colonnes) > 3:
-						print("DEBUG : print colonnes :", colonnes)
 						avg_cost = colonnes[-1]
 						prix_vente = colonnes[-2]
 						nb_vente = colonnes[-3]

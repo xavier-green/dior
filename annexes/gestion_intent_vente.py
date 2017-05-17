@@ -89,6 +89,11 @@ def find_MDorFP(sentence):
 	return MDorFP, Quantity
 
 def calcul_somme_ventes(query_result, details, quantity = False, value = False):
+	"""
+	A partir d'une query_result comportant à la fin [nom, nb_vente (if quantity), prix_vente (if value)],
+	renvoit la quantite de ventes totale et le CA total,
+	tout en ajoutant le détail aux détails.
+	"""
 	assert (quantity or value), "Vous n'avez demandé ni quantité ni valeur"
 	
 	valeur = 0
