@@ -211,8 +211,8 @@ class Vente(object):
 					if len(colonnes) != 2:
 						result = "Aucune vente pour les mots-clés demandés."
 					else:
-						boutique, nb_ventes = colonnes
-						result += boutique + " avec " + separateur_milliers(nb_ventes) + " ventes \n"
+						_boutique, nb_ventes = colonnes
+						result += _boutique + " avec " + separateur_milliers(nb_ventes) + " ventes \n"
 
 		elif query_type["price"]:
 			if len(query_result) > 1 and len(query_result[1].split('#')) == 2:
