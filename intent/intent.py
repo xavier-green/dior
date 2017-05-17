@@ -2,6 +2,7 @@
 import sys
 import os
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'extraction'))
+sys.path.insert(0,'..')
 from product import ProductExtractor
 from geography import WordClassification
 from date import DateExtractor
@@ -23,8 +24,7 @@ from sklearn.svm import SVC
 
 import json
 import requests
-# from urllib.request import quote
-# from urllib.request import urlopen
+import config
 
 def tokenize(text):
     stripped_punctuation = re.sub(r'[-_;,.?!]',' ',text.lower())
@@ -36,18 +36,9 @@ def tokenize(text):
     #print("left: "+' '.join(str(x) for x in cleaned))
     return cleaned
 
-def getSingleWord2vecVector(word):
-    if word.strip() != "":
-        print("Getting vector for "+word)
-        url = "vps397505.ovh.net/"+word
-        url = quote(url.encode('utf8'))
-        vec = urlopen("http://"+url).read()
-        return [float(x) for x in vec.decode("utf-8").replace("[\n  ","").replace("\n]\n","").split(", \n  ")]
-    return np.zeros(300)
-
 def getWord2vecVector(words):
     headers = {'content-type': "application/json",'cache-control': "no-cache"}
-    url = "http://vps397505.ovh.net/"
+    url = config.fasttext_url
     post_fields = {'words':[w.lower() for w in words]}
     post_fields = json.dumps(post_fields)
     # print(post_fields);

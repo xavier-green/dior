@@ -1,7 +1,7 @@
 ﻿# -*- coding: utf-8 -*-
 
 import sys
-sys.path.append('/usr/local/Cellar/python3/3.6.0/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages')
+sys.path.insert(0,'..')
 import numpy as np
 import re
 import pandas as pd
@@ -17,15 +17,15 @@ from urllib.request import quote
 from urllib.request import urlopen
 import json
 import requests
+import config
 
 cache_corpus = {}
 
 def getWord2vecVector(words):
     headers = {'content-type': "application/json",'cache-control': "no-cache"}
-    url = "http://vps397505.ovh.net/"
+    url = config.fasttext_url
     post_fields = {'words':[w.lower() for w in words]}
     post_fields = json.dumps(post_fields)
-    # print(post_fields);
     response = requests.request("POST", url, data=post_fields, headers=headers)
     word_vec = response.text.replace("[\n  [\n    ","").replace("\n  ]\n]\n","").split("\n  ], \n  [\n")
     final_vec = []

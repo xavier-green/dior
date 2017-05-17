@@ -1,0 +1,1 @@
+fasttext_url = "http://vps397505.ovh.net/"
