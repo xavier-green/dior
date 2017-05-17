@@ -37,7 +37,7 @@ class Stock(object):
 
 		sellthru_query = False
 
-		if 'sellthru' in self.sentence:
+		if 'thru' in self.sentence:
 			print('It is a sellthru')
 			sellthru_query = True
 
