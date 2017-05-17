@@ -229,7 +229,6 @@ class Vente(object):
 					result += "%s vendu à %s le %s à %s\n" % (item_desc, affichage_euros(item_prix), affichage_date(item_date), item_lieu)
 
 		elif query_type["margin"]:
-			details, quantite, valeur = calcul_somme_ventes(query_result, details, quantity = True, value = True)
 			
 			margins = []
 			total_ventes = 0
