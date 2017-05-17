@@ -120,6 +120,7 @@ class Stock(object):
 			product_query.join(sale, boutique, "Location", "Code") # jointure sur SALE_Location = LOCA_Code
 
 			product_query = geography_joins(product_query, self.geo)
+			seller_query = sale_join_products(seller_query, self.items)
 
 			# Maintenant que toutes les jointures sont faites, on passe aux conditions
 			product_query = where_products(product_query, self.items)
