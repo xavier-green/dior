@@ -88,7 +88,7 @@ class Stock(object):
 				res_stock = "Le stock est de 0"
 			else:
 				res_stock = "Le stock est de " + res_stock
-			return([stock_query.request, str_res_stock, details])
+			return([stock_query.request, res_stock, details])
 
 		if 'NULL' in res_stock:
 			res_stock = 0
