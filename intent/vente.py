@@ -234,7 +234,7 @@ class Vente(object):
 			total_ventes = 0
 			for n, ligne in enumerate(query_result):
 				if n > 0:
-					colonnes = ligne.spit('#')
+					colonnes = ligne.split('#')
 					if len(colonnes) > 3:
 						print("DEBUG : print colonnes :", colonnes)
 						avg_cost = colonnes[-1]
