@@ -107,7 +107,6 @@ class query(object):
 	# whereComparaison(sale, prix, ">", 35000)
 	def whereComparaison(self, table, column, comparaison, description):
 		assert table in self.joined_tables, "Vous faites appel à la table " + table.name + " absente de la requête, utilisez JOIN pour l'ajouter"
-		assert column in table.columns, "La table " + table.name + " ne possède pas d'attribut " + table.prefix + column
 
 		# Choix d'utiliser WHERE, AND ou OR au début de la condition
 		if len(self.wcount) == 0:
