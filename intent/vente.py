@@ -247,14 +247,12 @@ class Vente(object):
 							'count': nb_vente
 						})
 						total_ventes += nb_vente
-					else:
-						result = "Impossible de calculer le margin pour les mots-clés donnés."
 
 			margin_global = 0
 			for margin in margins:
 				margin_global += margin['margin']*margin['count']/total_ventes
 
-			result = "Le margin est de %.2f%%" %(margin_global*100) if len(margins) != 0 else "Impossible de calculer le margin pour les mots-clés donnés."
+			result = "Le margin est de %.2f%%" %(margin_global*100) if len(margins) != 0 else "Impossible de calculer le margin pour les mots-clés donnés, il n'y a pas eu de telles ventes sur cette période."
 
 		elif query_type["croissance"]:
 			second_query = copy(product_query)
