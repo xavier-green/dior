@@ -108,13 +108,18 @@ class query(object):
 	def whereComparaison(self, table, column, comparaison, description):
 		assert table in self.joined_tables, "Vous faites appel à la table " + table.name + " absente de la requête, utilisez JOIN pour l'ajouter"
 
+		if type(column) is tuple:
+			_column = column[2]
+		else:
+			_column = column
+
 		# Choix d'utiliser WHERE, AND ou OR au début de la condition
 		if len(self.wcount) == 0:
 			where_and_or = "WHERE "
-			self.wcount.append(table.alias + column)
+			self.wcount.append(table.alias + _column)
 		elif (table.alias + column) not in self.wcount:
 			where_and_or = "AND "
-			self.wcount.append(table.alias + column)
+			self.wcount.append(table.alias + _column)
 		else:
 			where_and_or = "OR "
 
