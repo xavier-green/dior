@@ -35,7 +35,7 @@ def getWord2vecVector(words):
 
 class WordClassification(object):
 
-    def __init__(self, threshold=0.12, uzone_path='data/uzone.csv', zone_path='data/zone.csv', 
+    def __init__(self, threshold=0.12, uzone_path='data/uzone.csv', zone_path='data/zone.csv',
         subzone_path='data/szone.csv', country_path='data/country.csv', state_path='data/state.csv'):
 
         self.cities = ["Paris","London","Tokyo","NewYork","Seoul","Dubai","Madrid","Ginza"]
@@ -48,7 +48,7 @@ class WordClassification(object):
         self.count = pd.read_csv(country_path,names=['Country']).dropna().drop_duplicates()
         self.subzone = pd.read_csv(subzone_path,names=['Subzone']).dropna().drop_duplicates()
         self.state = pd.read_csv(state_path,names=['State']).dropna().drop_duplicates()
-        
+
         self.order = [
             {"uzone": {
                 "file": self.uzone,
@@ -82,10 +82,10 @@ class WordClassification(object):
     def removeRowWithSpecialCharacterAndNumbers(self, w):
         pattern = re.compile('^[a-zA-Z-\' ]+$')
         return pattern.match(w) != None
-    
+
     def removShortStrings(self, x):
         return " "+" ".join([w.lower() for w in x.split(" ")if len(w)>2]).rstrip().lstrip()+" "
-    
+
     def low(self, x):
         return " "+x.lower().rstrip().lstrip()+" "
 
@@ -97,7 +97,7 @@ class WordClassification(object):
         empties = column != ""
         file = file[empties]
         return file,column
-        
+
     def clean_csv(self):
 
         for item_category in self.order:
@@ -108,16 +108,16 @@ class WordClassification(object):
 
     def csv_contains(self, w, csv_file, csv_column):
         return csv_file[csv_column.str.contains(" "+w.rstrip().lstrip()+" ")]
-    
+
     def get_product(self, sentence, csv_file, csv_column, single_column):
         csv_matches = self.csv_contains(sentence, csv_file, csv_column)
         if len(csv_matches)>0:
             return csv_matches[single_column].iloc[0]
         return None
-        
+
     def cos(self, a, b):
         return np.dot(a,b)/(np.linalg.norm(a)*np.linalg.norm(b))
-    
+
     def tokenize(self, text):
         stripped_punctuation = re.sub(r'[-_;,.?!]',' ',text.lower())
         tokens = stripped_punctuation.split(' ')
@@ -125,9 +125,9 @@ class WordClassification(object):
         for token in tokens:
             cleaned.append(token)
         return cleaned
-    
+
     def find_similar(self,similar_classed,text):
-        
+
         total_comparison_corpus = similar_classed
 
         C = np.zeros((len(total_comparison_corpus),300))
@@ -171,7 +171,7 @@ class WordClassification(object):
                     print(term," se trouve bien dans ",key)
                     return [(key,matched_geo)]
         return []
-    
+
     def find_similar_city(self, text):
         return self.find_similar(self.cities,text)
     def find_similar_country(self, text):
@@ -191,11 +191,12 @@ class WordClassification(object):
 
         json,toreplace = self.find_similar_nationality(text)
         for element in toreplace:
-            print("NAT replacing: "+element)
-            cloned_text = cloned_text.replace(element,"NAT")
-        #print("cleaned text: ",cloned_text)
+            if element not in ["le", "la"]:
+                print("NAT replacing: "+element)
+                cloned_text = cloned_text.replace(element,"NAT")
+                #print("cleaned text: ",cloned_text)
         return cloned_text
-    
+
     def find_similar_words(self, text):
         json,toreplace = self.find_similar_city(text)
         countries_json,countries_replace = self.find_similar_country(text)
@@ -209,10 +210,3 @@ class WordClassification(object):
 
 # world = WordClassification()
 # print(world.find_similar_words("La semaine dernière, qui a conclu le plus de ventes en europe, paris"))
-
-
-
-
-
-
-
