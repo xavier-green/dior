@@ -65,7 +65,7 @@ class Vente(object):
 		"""
 
 		if query_type["colour"]:
-			product_query = query(sale, [(color, 'Description'), 'count(*)'], top_distinct='DISTINCT TOP 5')
+			product_query = query(sale, [(color, 'Description')] + quantity_MDorFP, top_distinct='DISTINCT TOP 3')
 		elif query_type["location"]:
 			product_query = query(sale, [(boutique, 'Description'), 'count(*)'], top_distinct='DISTINCT TOP 5')
 		elif query_type["price"]:
@@ -162,28 +162,19 @@ class Vente(object):
 		if query_type["colour"]:
 			query_result = product_query.write().split('\n')
 
-			result = [w.split("#")[0]+" ( "+w.split("#")[1]+" vendus )" for w in query_result if 'COLO_' not in w and '------' not in w]
-
 			details = append_details_date([], self.numerical_dates)
 			details = append_details_products(details, self.items, self.product_sources)
 			details = append_details_geo(details, self.geo)
 
-			if len(result) > 0:
-				if 'le plus' in self.sentence or 'la plus' in self.sentence:
-					result_string = "La couleur la plus vendue est "+result[0]+" pour "+",".join(front_products)
-					if result_string[-1] == ",":
-						result_string = result_string[:-1]
-					result = result_string
-				else:
-					result = "\n".join(result)
-			else:
-				ret_string = "Aucune couleur enregistrée pour "
-				for produit in self.items :
-					for produit_key in produit:
-						ret_string += produit[produit_key]+","
-				if ret_string[-1] == ",":
-					ret_string = ret_string[:-1]
-				result = ret_string
+			result = "Voici les 3 couleurs les plus vendues : \n"
+			for n, ligne in enumerate(query_result):
+				if n > 0:
+					colonnes = ligne.split('#')
+					if len(colonnes) != 2:
+						result = "Aucune vente avec des couleurs pour les mots-clés demandés."
+					else:
+						couleur, nb_ventes = colonnes
+						result += couleur + " avec " + separateur_milliers(nb_ventes) + " ventes \n"
 
 		elif query_type["location"]:
 			query_result = product_query.write().split('\n')
