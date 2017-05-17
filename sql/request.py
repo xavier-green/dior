@@ -117,7 +117,7 @@ class query(object):
 		if len(self.wcount) == 0:
 			where_and_or = "WHERE "
 			self.wcount.append(table.alias + _column)
-		elif (table.alias + column) not in self.wcount:
+		elif (table.alias + _column) not in self.wcount:
 			where_and_or = "AND "
 			self.wcount.append(table.alias + _column)
 		else:
