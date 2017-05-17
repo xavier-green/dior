@@ -28,6 +28,10 @@ def what_products(list_of_dict):
 				products_requested.append((family, "Description", "Family", produit[produit_key], "famille"))
 			elif produit_key == "color":
 				products_requested.append((color, "Description", "Color", produit[produit_key], "couleur"))
+			elif produit_key == "material":
+				products_requested.append((material, "Description", "Material", produit[produit_key], "materiau"))
+			elif produit_key == "shape":
+				products_requested.append((shape, "Description", "Shape", produit[produit_key], "shape"))
 			else:
 				print("Erreur, un item n'a pas de catégorie connue !")
 	return products_requested
@@ -43,16 +47,28 @@ def query_products(list_of_dict):
 	return columns_products
 
 def sale_join_products(query, list_of_dict, main_table = sale):
-	print("JOINING PRODUCTS")
-	print("================")
+	"""
+	Fait les jointures à partir de list_of_dict = self.items
+	main_table est censé être soit sale, soit stock
+	Les tables Material et Shape ont un traitement spécifique car elles doivent être join sur item
+	"""
 	products_requested = what_products(list_of_dict)
 	has_been_seen = {}
 	for table, column, table_name, product_name, table_desc in products_requested:
 		print("Trying to join", table.name)
 		if not (table_name in has_been_seen and has_been_seen[table_name]):
-			query.join(main_table, table, table_name, "Code")
-			print("JOINING", table.name)
-			has_been_seen[table_name] = True
+			if table_name == "Material" or table_name == "Shape":
+				if not ("Style" in has_been_seen and has_been_seen["Style"]):
+					print("JOINING table ITEM_ITEM pour Material et/ou Shape")
+					query.join(main_table, item, "Style", "Code")
+					has_been_seen["Style"] = True
+				print("JOINING", table.name)
+				query.join(item, table, table_name, "Code")
+
+			else:
+				query.join(main_table, table, table_name, "Code")
+				print("JOINING", table.name)
+				has_been_seen[table_name] = True
 	return query
 
 def where_products(query, list_of_dict):
