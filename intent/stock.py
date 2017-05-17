@@ -129,23 +129,7 @@ class Stock(object):
 			product_query = geography_joins(product_query, self.geo)
 
 			# Maintenant que toutes les jointures sont faites, on passe aux conditions
-			for produit in self.items :
-				for produit_key in produit:
-					if produit_key == "division":
-						product_query.join(sale, division,"Division","Code")
-						product_query.where(division, "Description", produit[produit_key])
-					elif produit_key == "departement":
-						product_query.join(sale, department,"Department","Code")
-						product_query.where(department, "Description", produit[produit_key])
-					elif produit_key == "groupe":
-						product_query.join(sale, retail,"Group","Code")
-						product_query.where(retail, "Description", produit[produit_key])
-					elif produit_key == "theme":
-						product_query.join(sale, theme,"Theme","Code")
-						product_query.where(theme, "Description", produit[produit_key])
-					elif produit_key == "produit":
-						product_query.where(item, "Description", produit[produit_key])
-
+			product_query = where_products(product_query, self.items)
 			product_query = geography_select(product_query, self.geo)
 			product_query.whereNotJDAandOTH()
 
