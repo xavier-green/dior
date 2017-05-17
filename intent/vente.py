@@ -158,18 +158,38 @@ class Vente(object):
 			for col in column_groupby:
 				product_query.groupby(col[0], col[1])
 
-
 		"""
-		On renvoit une réponse
+		Ecriture de la query
 		"""
 
-		if query_type["colour"]:
+		if not query_type["croissance"]:
 			query_result = product_query.write().split('\n')
+
+		"""
+		Ecriture des détails
+		"""
+
+		if query_type["croissance"]:
+
+			first_start_date, first_end_date = last_week()
+			second_start_date, second_end_date = same_week_last_year()
+
+			details = append_details_date([], [[first_start_date, first_end_date]])
+			details = append_details_date(details, [[second_start_date, second_end_date]])
+			details = append_details_products(details, self.items, self.product_sources)
+			details = append_details_geo(details, self.geo)
+
+		else:
 
 			details = append_details_date([], self.numerical_dates)
 			details = append_details_products(details, self.items, self.product_sources)
 			details = append_details_geo(details, self.geo)
 
+		"""
+		Mise en forme de la réponse
+		"""
+
+		if query_type["colour"]:
 			result = "Voici les 3 couleurs les plus vendues : \n"
 			for n, ligne in enumerate(query_result):
 				if n > 0:
@@ -181,12 +201,6 @@ class Vente(object):
 						result += couleur.rstrip() + " avec " + separateur_milliers(nb_ventes) + " ventes \n"
 
 		elif query_type["location"]:
-			query_result = product_query.write().split('\n')
-
-			details = append_details_date([], self.numerical_dates)
-			details = append_details_products(details, self.items, self.product_sources)
-			details = append_details_geo(details, self.geo)
-
 			result = "Voici les 3 boutiques avec les meilleurs ventes : \n"
 			for n, ligne in enumerate(query_result):
 				if n > 0:
@@ -198,18 +212,13 @@ class Vente(object):
 						result += boutique + " avec " + separateur_milliers(nb_ventes) + " ventes \n"
 
 		elif query_type["price"]:
-			query_result = product_query.write().split('\n')
 			if len(query_result[1].split('#')) == 2:
 				product_name, product_price = query_result[1].split('#')
 				result = "Mon premier résultat est " + product_name + " qui s'est vendu à " + affichage_euros(product_price)
-
-			details = append_details_date([], self.numerical_dates)
-			details = append_details_products(details, self.items, self.product_sources)
-			details = append_details_geo(details, self.geo)
+			else:
+				result = "Aucune vente concernant ces mots-clés, impossible de trouver un prix."
 
 		elif query_type["exceptionnal"]:
-			query_result = product_query.write().split('\n')
-
 			result = "Il y a eu %i ventes exceptionnelles (supérieures à %s)" %(len(query_result)-1, affichage_euros(self.seuil_exc))
 			result += "\nVoici les 3 meilleures :" if len(query_result)-1 > 3 else ""
 
@@ -219,24 +228,9 @@ class Vente(object):
 					item_desc, item_prix, item_date, item_lieu = colonnes
 					result += "%s vendu à %s le %s à %s\n" % (item_desc, affichage_euros(item_prix), affichage_date(item_date), item_lieu)
 
-			details = []
-
 		elif query_type["margin"]:
-			query_result = product_query.write().split('\n')
-
-			somme = 0
-			details_items = []
-			for n, ligne in enumerate(query_result):
-				if n > 0:
-					colonnes = ligne.split('#')
-					nombre_ventes = colonnes[1]
-					somme += float(nombre_ventes)
-				if n > 0 and n < 10:
-					details_items.append(colonnes)
-				if n == 10:
-					details_items.append(["...", "..."])
-					break
-			real_items = []
+			details, quantite, valeur = calcul_somme_ventes(query_result, details, quantity = True, value = True)
+			
 			margins = []
 			total = 0
 			for items in details_items:
@@ -247,19 +241,15 @@ class Vente(object):
 					'count': float(items[1])
 				})
 				total += float(items[1])
-				real_items.append([name,str(math.ceil(margin*100000)/1000)+"%"])
+
 			margin_global = 0
 			for margin in margins:
 				margin_global += margin['margin']*margin['count']/total
 
 			result = "Margin: "+str(math.ceil(margin_global*100000)/1000)+"%"
-			details = real_items
 
 		elif query_type["croissance"]:
 			second_query = copy(product_query)
-
-			first_start_date, first_end_date = last_week()
-			second_start_date, second_end_date = same_week_last_year()
 
 			product_query.wheredate(sale, 'DateNumYYYYMMDD', first_start_date, first_end_date)
 			second_query.wheredate(sale, 'DateNumYYYYMMDD', second_start_date, second_end_date)
@@ -275,48 +265,26 @@ class Vente(object):
 				vente_date_n = float(vente_date_n)
 				vente_date_n_moins_un = float(vente_date_n_moins_un)
 				croissance = 100 * (vente_date_n - vente_date_n_moins_un) / vente_date_n_moins_un if vente_date_n_moins_un > 0 else 0
-				print("Croissance calculée, ", croissance)
 				result = "La croissance est de %.2f%% " %(croissance)
 
-			details = append_details_date([], [[first_start_date, first_end_date]])
-			details = append_details_date(details, [[second_start_date, second_end_date]])
-			details = append_details_products(details, self.items, self.product_sources)
-			details = append_details_geo(details, self.geo)
-
 		elif query_type["quantity"]:
-			query_result = product_query.write().split('\n')
-
-			details = append_details_date([], self.numerical_dates)
-			details = append_details_products(details, self.items, self.product_sources)
-			details = append_details_geo(details, self.geo)
-
 			details, quantite, valeur = calcul_somme_ventes(query_result, details, quantity = True)
-
 			result = "Il y a eu " + separateur_milliers(str(quantite)) + " ventes "
 			result += text_MDorFP
 
 		elif query_type["netsale"]:
-			query_result = product_query.write().split('\n')
-
-			details = append_details_date([], self.numerical_dates)
-			details = append_details_products(details, self.items, self.product_sources)
-			details = append_details_geo(details, self.geo)
-
 			details, quantite, valeur = calcul_somme_ventes(query_result, details, value = True)
-
 			result = "Il y a eu " + affichage_euros(str(valeur)) + " HT de CA "
 			result += text_MDorFP
 
 		else:
-			query_result = product_query.write().split('\n')
-
-			details = append_details_date([], self.numerical_dates)
-			details = append_details_boutiques(details, self.boutiques)
-
 			details, quantite, valeur = calcul_somme_ventes(query_result, details, quantity = True, value = True)
-
 			result = "Il y a eu " + separateur_milliers(str(quantite)) + " ventes pour un total de " + affichage_euros(str(valeur)) + " HT "
 			result += text_MDorFP
+
+		"""
+		Return
+		"""
 
 		print("***************\n" + result + "\n***************")
 		print("details :", details)
