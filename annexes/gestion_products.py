@@ -33,7 +33,7 @@ def what_products(list_of_dict):
 			elif produit_key == "shape":
 				products_requested.append((shape, "Description", "Shape", produit[produit_key], "shape"))
 			else:
-				print("Erreur, un item n'a pas de catégorie connue !")
+				print("Erreur, la catégorie de l'item %s, censée être %s, n'est pas connue !" %(produit[produit_key], produit_key))
 	return products_requested
 
 def query_products(list_of_dict):
@@ -56,7 +56,7 @@ def sale_join_products(query, list_of_dict, main_table = sale, already_joined = 
 	has_been_seen = {}
 	for table_name in already_joined:
 		has_been_seen[table_name] = True
-		
+
 	for table, column, table_name, product_name, table_desc in products_requested:
 		print("Trying to join", table.name)
 		if not (table_name in has_been_seen and has_been_seen[table_name]):
