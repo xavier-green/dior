@@ -54,7 +54,9 @@ glossaire_1G = {
     "objets":"objects",
     "mobilier":"furniture",
     "mobiliers":"furniture",
-    "pap":"ready to wear"
+    "pap":"ready to wear",
+    "montre":"watches",
+    "montres":"watches"
 }
 
 glossaire_2G = {

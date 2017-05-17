@@ -215,9 +215,9 @@ class Vente(object):
 						result += boutique + " avec " + separateur_milliers(nb_ventes) + " ventes \n"
 
 		elif query_type["price"]:
-			if len(query_result[1].split('#')) == 2:
+			if len(query_result) > 1 and len(query_result[1].split('#')) == 2:
 				product_name, product_price = query_result[1].split('#')
-				result = "Mon premier résultat est " + product_name + " qui s'est vendu à " + affichage_euros(product_price)
+				result = "Mon premier résultat est " + product_name.rstrip() + " qui s'est vendu à " + affichage_euros(product_price)
 			else:
 				result = "Aucune vente concernant ces mots-clés, impossible de trouver un prix."
 
@@ -229,7 +229,7 @@ class Vente(object):
 				if n > 0 and n < 4:
 					colonnes = ligne.split('#')
 					item_desc, item_prix, item_date, item_lieu = colonnes
-					result += "%s vendu à %s le %s à %s\n" % (item_desc, affichage_euros(item_prix), affichage_date(item_date), item_lieu)
+					result += "%s vendu à %s le %s à %s\n" % (item_desc.rstrip(), affichage_euros(item_prix), affichage_date(item_date), item_lieu)
 
 		elif query_type["margin"]:
 			

@@ -18,6 +18,7 @@ class Vendeur(object):
 		self.items = data['items']
 		self.sentence = data['sentence']
 		self.boutiques = data['boutiques']
+		self.product_sources = data['sources']
 
 	def build_answer(self):
 		response_base = self.build_query()

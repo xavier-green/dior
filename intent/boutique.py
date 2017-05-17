@@ -17,6 +17,7 @@ class Boutique(object):
 		self.numerical_dates = data['numerical_dates']
 		self.items = data['items']
 		self.sentence = data['sentence']
+		self.product_sources = data['sources']
 
 	def build_answer(self):
 		response_base = self.build_query()
