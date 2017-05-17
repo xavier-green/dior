@@ -47,7 +47,7 @@ class Methods {
                     print(detail)
                     let item = detail["item"] as? String
                     let count = detail["count"] as? String
-                    details += item!+" ("+count!+")\n"
+                    details += firstCharacterUppercaseString(string: item!)+" : "+count!+"\n"
                 }
             }
         } catch {
@@ -56,6 +56,13 @@ class Methods {
         print("Answer: "+string_response)
         print("Details: "+details)
         return [string_response,details]
+    }
+    
+    func firstCharacterUppercaseString(string: String) -> String {
+        let str = string as NSString
+        let firstUppercaseCharacter = str.substring(to: 1).uppercased()
+        let firstUppercaseCharacterString = str.replacingCharacters(in: NSMakeRange(0, 1), with: firstUppercaseCharacter)
+        return firstUppercaseCharacterString
     }
     
 }

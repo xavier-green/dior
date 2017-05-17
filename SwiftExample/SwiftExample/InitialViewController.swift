@@ -7,14 +7,20 @@
 //
 
 import UIKit
+import JSQMessagesViewController
 
 @available(iOS 10.0, *)
 class InitialViewController: UIViewController {
+    
+    var favourites = Favourites()
 
     override func viewDidLoad() {
         super.viewDidLoad()
         let chatView = ChatViewController()
-        chatView.messages = makeNormalConversation()
+        let history = favourites.read_history()
+        chatView.messages = history[0] as! [JSQMessage]
+        let details = favourites.read_details()
+        chatView.chat_details = details
         let chatNavigationController = UINavigationController(rootViewController: chatView)
         present(chatNavigationController, animated: true, completion: nil)
     }

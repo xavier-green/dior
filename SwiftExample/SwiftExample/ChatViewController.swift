@@ -9,15 +9,26 @@
 import UIKit
 import JSQMessagesViewController
 
-class ChatViewController: JSQMessagesViewController {
+class ChatViewController: JSQMessagesViewController, UIGestureRecognizerDelegate {
     var messages = [JSQMessage]()
     
     var favourites = Favourites()
-    var chat_details = ["Pas de détails pour ce message !"]
+    var chat_details = [String]()
     
     var incomingBubble: JSQMessagesBubbleImage!
     var outgoingBubble: JSQMessagesBubbleImage!
     fileprivate var displayName: String!
+    
+    var can_send_msg = true
+    
+    func tapped() {
+        print("Main logo tapped")
+        messages = [JSQMessage]()
+        favourites.write_history(questions: self.messages)
+        chat_details = [String]()
+        favourites.write_details(details: chat_details)
+        self.collectionView?.reloadData()
+    }
     
     override func viewDidLoad() {
         print("Main chat loading...")
@@ -27,7 +38,24 @@ class ChatViewController: JSQMessagesViewController {
         
         // Setup navigation
         setupFavButton()
-
+        
+//        self.navigationItem.title = "Dior"
+        navigationController?.navigationBar.barTintColor = UIColor(colorLiteralRed: 140/255, green: 140/255, blue: 140/255, alpha: 1)
+        navigationController?.navigationBar.tintColor = UIColor.white
+//        navigationController?.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.white, NSFontAttributeName: UIFont(name: "Baskerville", size: 40)!]
+        
+        let titleView = UILabel()
+        titleView.text = "Dior"
+        titleView.font = UIFont(name: "Baskerville", size: 40)!
+        titleView.textColor = UIColor.white
+        titleView.frame  = CGRect(x: 0, y: 0, width: 100, height: 30)
+        self.navigationItem.titleView = titleView
+        
+        let recognizer = UITapGestureRecognizer(target: self, action: #selector(self.tapped))
+        titleView.isUserInteractionEnabled = true
+        titleView.addGestureRecognizer(recognizer)
+        
+//        self.navigationController?.navigationBar.setTitleVerticalPositionAdjustment(5, for: .default)
         
         incomingBubble = JSQMessagesBubbleImageFactory().incomingMessagesBubbleImage(with: UIColor.jsq_messageBubbleGreen())
         outgoingBubble = JSQMessagesBubbleImageFactory().outgoingMessagesBubbleImage(with: UIColor.jsq_messageBubbleBlue())
@@ -47,13 +75,20 @@ class ChatViewController: JSQMessagesViewController {
         button.setImage(UIImage(named: "settings"), for: UIControlState.normal)
         button.addTarget(self, action: #selector(self.addTapped), for: UIControlEvents.touchUpInside)
         button.frame = CGRect(x: 0, y: 0, width: 30, height: 30)
-        
         let barButton = UIBarButtonItem(customView: button)
-        navigationItem.rightBarButtonItem = barButton
-        navigationController?.navigationBar.barTintColor = UIColor(colorLiteralRed: 87/255, green: 93/255, blue: 102/255, alpha: 1)
-        navigationController?.navigationBar.tintColor = UIColor.white
-        navigationController?.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.white, NSFontAttributeName: UIFont.systemFont(ofSize: 22)]
+        navigationItem.leftBarButtonItem = barButton
         
+        let diorbot: UIButton = UIButton(type: .custom)
+        diorbot.setTitle("DiorBot", for: UIControlState.normal)
+        diorbot.frame = CGRect(x: 0, y: 0, width: 80, height: 30)
+        diorbot.titleLabel?.font = UIFont(name: "Baskerville", size: 20)!
+        let barbotButton = UIBarButtonItem(customView: diorbot)
+        navigationItem.rightBarButtonItem = barbotButton
+        
+    }
+    
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return .lightContent
     }
     
     @objc func addTapped() {
@@ -66,11 +101,7 @@ class ChatViewController: JSQMessagesViewController {
     func setupFavButton() {
         let button = UIButton.init(type: .custom)
         button.setImage(UIImage.init(named: "star"), for: UIControlState.normal)
-//        let backButton = UIBarButtonItem(title: "Favorits", style: UIBarButtonItemStyle.plain, target: self, action: #selector(favTapped))
-//        navigationItem.rightBarButtonItem = backButton
-        button.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
-//        self.navigationItem.rightBarButtonItem = barButton
-        self.navigationItem.title = "DiorBot"
+        button.frame = CGRect.init(x: 0, y: 0, width: 30, height: 20)
         self.inputToolbar.contentView?.leftBarButtonItem = button
     }
     
@@ -90,6 +121,10 @@ class ChatViewController: JSQMessagesViewController {
         
         let message_reply = JSQMessage(senderId: "Bot", senderDisplayName: "Bot", date: Date(), text: sentence)
         self.fake_reply(message: message_reply)
+        print("writing history to file")
+        favourites.write_history(questions: self.messages)
+        favourites.write_details(details: self.chat_details)
+        self.can_send_msg = true
         
     }
     
@@ -101,15 +136,24 @@ class ChatViewController: JSQMessagesViewController {
     
     func send_message(sentence: String){
         print("sending {"+sentence+"} to server")
-        let seuil: String = favourites.read_file_transac()
-        DispatchQueue.global(qos: .background).async {
-            let parsed_messages = Methods().parse_message(sentence: sentence, seuil: seuil)
-            DispatchQueue.main.async {
-                print("done")
-                self.chat_details.append(parsed_messages[1])
-                self.toogleTyping()
-                self.reply(sentence: parsed_messages[0])
+        if self.can_send_msg {
+            
+            self.can_send_msg = false
+            let seuil: String = favourites.read_file_transac()
+            DispatchQueue.global(qos: .background).async {
+                let parsed_messages = Methods().parse_message(sentence: sentence, seuil: seuil)
+                DispatchQueue.main.async {
+                    print("done")
+                    self.chat_details.append(parsed_messages[1])
+                    self.toogleTyping()
+                    self.reply(sentence: parsed_messages[0])
+                }
             }
+            
+        } else {
+            let alert = UIAlertController(title: "Attention", message: "Veuillez attendre la réponse du bot avant d'envoyer un nouveau message", preferredStyle: UIAlertControllerStyle.alert)
+            alert.addAction(UIAlertAction(title: "Fermer", style: UIAlertActionStyle.cancel, handler: nil))
+            self.present(alert, animated: true, completion: nil)
         }
     }
     
@@ -237,11 +281,13 @@ class ChatViewController: JSQMessagesViewController {
 //            return nil
 //        }
         
+        let date_string = " ("+getDate(date: message.date)+")"
+        
         if message.senderId == self.senderId() {
-            return NSAttributedString(string: "Vous")
+            return NSAttributedString(string: "Vous"+date_string)
         }
 
-        return NSAttributedString(string: message.senderDisplayName)
+        return NSAttributedString(string: message.senderDisplayName+date_string)
     }
     
     override func collectionView(_ collectionView: JSQMessagesCollectionView, layout collectionViewLayout: JSQMessagesCollectionViewFlowLayout, heightForCellTopLabelAt indexPath: IndexPath) -> CGFloat {
@@ -313,7 +359,7 @@ class ChatViewController: JSQMessagesViewController {
     }
     
     func add_to_fav_popup(question: String) {
-        let alert = UIAlertController(title: "Ajouter aux favorits", message: "Voulez vous ajouter la question {"+question+"} à vos favorits ?", preferredStyle: UIAlertControllerStyle.alert)
+        let alert = UIAlertController(title: "Ajouter aux favoris", message: "Voulez vous ajouter la question {"+question+"} à vos favoris ?", preferredStyle: UIAlertControllerStyle.alert)
         alert.addAction(UIAlertAction(title: "Oui", style: UIAlertActionStyle.default, handler: {
             action in self.add_to_fav(question: question)
         }))
@@ -322,6 +368,7 @@ class ChatViewController: JSQMessagesViewController {
     }
     
     func see_info(index: Int) {
+        print(self.chat_details)
         let details_index = quotient(a: index, b: 2)
         let alert = UIAlertController(title: "Informations", message: "Voici d'où les infos sont extraites:\n"+self.chat_details[details_index], preferredStyle: UIAlertControllerStyle.alert)
         alert.addAction(UIAlertAction(title: "Fermer", style: UIAlertActionStyle.cancel, handler: nil))
@@ -335,21 +382,29 @@ class ChatViewController: JSQMessagesViewController {
             favourites.write_to_file(questions: all_questions)
         }
     }
-    
+
     func slow_response() {
         DispatchQueue.main.async {
             self.toogleTyping()
+            self.chat_details.append("Aucune info pour les erreurs")
             self.reply(sentence: "Malheureusement le server a mis trop longtemps à répondre...")
         }
     }
     
+    func getDate(date: Date) -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "dd/MM/yyyy HH:mm"
+        return dateFormatter.string(from: date)
+    }
+
     func quotient(a: Int, b: Int) -> Int {
         return ~(~(a/b))
     }
     
     func writeQuestionToInput(question: String) {
-        self.inputToolbar.contentView?.textView?.text = question+" "
         self.inputToolbar.contentView!.textView!.becomeFirstResponder()
+        self.inputToolbar.contentView?.textView?.text = question+" "
+        self.inputToolbar.contentView?.rightBarButtonItem?.isEnabled = true
     }
     
 }
