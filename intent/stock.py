@@ -78,13 +78,17 @@ class Stock(object):
 		"""
 
 		res_stock = stock_query.write().replace("\n","")
-        
+
 		details = append_details_date([], self.numerical_dates)
 		details = append_details_products(details, self.items, self.product_sources)
 		details = append_details_geo(details, self.geo)
+
 		if not sellthru_query:
-			# response = "Le stock concernant " + ", ".join([" ".join(dict.values(x)) for x in self.items]) + "dans " + ", ".join(self.geo + self.boutiques) +"est de " + res_stock
-			return([stock_query.request, res_stock, details])
+			if 'NULL' in res_stock:
+				res_stock = "Le stock est de 0"
+			else:
+				res_stock = "Le stock est de " + res_stock
+			return([stock_query.request, str_res_stock, details])
 
 		if 'NULL' in res_stock:
 			res_stock = 0
@@ -92,8 +96,7 @@ class Stock(object):
 			res_stock = int(res_stock)
 		print('Stock:', res_stock)
 
-
-		if 'sellthru' in self.sentence:
+		if sellthru_query:
 			print('It is a sellthru')
 			#Calculate sales for sellthru
 			Quantity_requested = []
@@ -122,7 +125,7 @@ class Stock(object):
 			if len(self.items) > 0:
 				product_query.join(sale, item, "Style", "Code") # jointure sur ITEM_Code = SALE_Style
 			product_query.join(sale, boutique, "Location", "Code") # jointure sur SALE_Location = LOCA_Code
-			
+
 			product_query = geography_joins(product_query, self.geo)
 
 			# Maintenant que toutes les jointures sont faites, on passe aux conditions
@@ -164,12 +167,6 @@ class Stock(object):
 				if len(self.boutiques) > 0:
 					res_sellthru += "dans la boutique " + ' '.join(self.boutiques) + ' '
 				res_sellthru += "est de " + sellthru
-				return [stock_query.request + '\n' + product_query.request,res_sellthru ]
-				str_res_stock = 'Le stock '
-				if len(self.boutiques) > 0:
-					str_res_stock += "dans la boutique " + ' '.join(self.boutiques) + ' '
-				res_sellthru += "est de " + str(res_stock)
-			else:
-				str_res_stock = "Le stock est null"
-			return(stock_query.request, str_res_stock)
-		return(stock_query.request, res_stock)
+				return [stock_query.request + '\n' + product_query.request,res_sellthru, details]
+			str_res_stock = "Le stock est null"
+			return(stock_query.request + '\n' + product_query.request, str_res_stock, details)
