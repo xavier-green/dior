@@ -174,7 +174,7 @@ class Vente(object):
 						result = "Aucune vente avec des couleurs pour les mots-clés demandés."
 					else:
 						couleur, nb_ventes = colonnes
-						result += couleur + " avec " + separateur_milliers(nb_ventes) + " ventes \n"
+						result += couleur.rstrip() + " avec " + separateur_milliers(nb_ventes) + " ventes \n"
 
 		elif query_type["location"]:
 			query_result = product_query.write().split('\n')
