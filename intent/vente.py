@@ -151,7 +151,10 @@ class Vente(object):
 		elif query_type["exceptionnal"]:
 			product_query.orderby(sale, ("sum", sale, "RG_Net_Amount_WOTax_REF", sale, "MD_Net_Amount_WOTax_REF"), "DESC")
 		
-		elif query_type["price"] or query_type["croissance"]:
+		elif query_type["price"]:
+			product_query.groupby(item, "Description")
+
+		elif query_type["croissance"]:
 			pass
 		
 		else:

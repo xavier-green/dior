@@ -54,6 +54,7 @@ class intentData():
                 "stock de pantalons à londres",
                 "taille de mon stock en amerique",
                 "Quelle est la boutique en France avec la meilleure couverture de stocks",
+                "Combien de Lady Dior reste-t-il"
             ]
         },"bonjour": {
             "examples" : ["bonjour",

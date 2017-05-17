@@ -21,7 +21,8 @@ class ProductExtractor(object):
     not_replace = [
         "geo", "nat", "date", "prix", "vente", "stock", "boutique","part", "couleur", "matière", "francais", "moyen",
         "jours", "couverture", "article", "new", "mix", "type", "cruise", "zone", "clients", "gros", "grands", "top",
-        "nom", "collection", "endroit", "ete", "md", "fp", "mark", "down", "full", "price", "markdown", "fullprice"
+        "nom", "collection", "endroit", "ete", "md", "fp", "mark", "down", "full", "price", "markdown", "fullprice",
+        "net", "sale", "division"
     ]
 
     def __init__(self, produit_path='data/products.csv', division_path='data/Divisions.csv',
