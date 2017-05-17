@@ -1,12 +1,3 @@
-"""
-from importlib.machinery import SourceFileLoader
-
-foo = SourceFileLoader("sql.request", "../sql/request.py").load_module()
-foo = SourceFileLoader("sql.tables", "../sql/tables.py").load_module()
-
-"""
-
-# sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'sql'))
 from sql.request import query
 
 # Import de toutes les tables utilisées
@@ -133,17 +124,3 @@ class Boutique(object):
 
 		return [boutique_query.request, reponse, details]
 
-"""
-data = {
-		'cities' : ['Paris', 'Madrid'],
-		'countries' : [],
-		'nationalities' : [],
-		'dates' : [],
-		'numerical_dates' : [],
-		'sentence': 'pays',
-		'items' : {'produit':['robe']}
-		}
-
-test = Boutique(data)
-print(test.build_query())
-"""

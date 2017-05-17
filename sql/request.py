@@ -1,7 +1,4 @@
-﻿# coding=utf-8
-
-
-import subprocess, csv
+﻿import subprocess, csv
 import time
 from annexes.gestion_dates import last_monday, today
 
@@ -167,13 +164,4 @@ class query(object):
 		out.pop(1)
 		return("\n".join(out))
 
-"""
-test = query(sale, ['Style', ('sum', sale, 'RG_Quantity')])
-test.join(sale, item, 'Style', 'Code')
-test.join(sale, zone, 'Location', 'Code')
-test.wheredate(sale, 'Style')
-test.orderby(None, 'count(*)')
-test.groupby(zone, 'Description')
-print(test.request)
-#print(test.proprify_columns(sale, ['Style', (staff, 'Name'), (None, 'count(*)'), ('sum', sale, 'RG_Quantity', sale, 'MD_Quantity')]))
-"""
+
