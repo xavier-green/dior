@@ -232,21 +232,30 @@ class Vente(object):
 			details, quantite, valeur = calcul_somme_ventes(query_result, details, quantity = True, value = True)
 			
 			margins = []
-			total = 0
-			for items in details_items:
-				name = items[0]
-				margin = (float(items[2])-float(items[3]))/float(items[2])
-				margins.append({
-					'margin': margin,
-					'count': float(items[1])
-				})
-				total += float(items[1])
+			total_ventes = 0
+			for n, ligne in enumerate(query_result):
+				if n > 0:
+					colonnes = ligne.spit('#')
+					if len(colonnes) > 3:
+						avg_cost = colonnes[-1]
+						prix_vente = colonnes[-2]
+						nb_vente = colonnes[-3]
+						nom_item = colonnes[-4]
+						assert float(prix_vente) != 0, "Prix de vente nul, impossible de calculer le margin"
+						margin = (float(prix_vente)-float(avg_cost))/float(prix_vente)
+						margins.append({
+							'margin': margin,
+							'count': int(nb_vente)
+						})
+						total_ventes += nb_vente
+					else:
+						result = "Impossible de calculer le margin pour les mots-clés donnés."
 
 			margin_global = 0
 			for margin in margins:
-				margin_global += margin['margin']*margin['count']/total
+				margin_global += margin['margin']*margin['count']/total_ventes
 
-			result = "Margin: "+str(math.ceil(margin_global*100000)/1000)+"%"
+			result = "Le margin est de %.2f%" %(margin_global*100) if len(margins) != 0 else "Impossible de calculer le margin pour les mots-clés donnés."
 
 		elif query_type["croissance"]:
 			second_query = copy(product_query)
@@ -265,7 +274,7 @@ class Vente(object):
 				vente_date_n = float(vente_date_n)
 				vente_date_n_moins_un = float(vente_date_n_moins_un)
 				croissance = 100 * (vente_date_n - vente_date_n_moins_un) / vente_date_n_moins_un if vente_date_n_moins_un > 0 else 0
-				result = "La croissance est de %.2f%% " %(croissance)
+				result = "La croissance est de %.2f% " %(croissance)
 
 		elif query_type["quantity"]:
 			details, quantite, valeur = calcul_somme_ventes(query_result, details, quantity = True)

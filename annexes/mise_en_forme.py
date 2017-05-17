@@ -78,4 +78,3 @@ def affichage_jour(input_date):
 	return weekday_dict[str(weekday)]
 
 
-
