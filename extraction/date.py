@@ -56,8 +56,9 @@ week_words = {
     "wtd":-1,
     "week-to-date":-1
 }
-previous_words = ["il y a","depuis","ce","cette","dernier","derniers","derniere","dernieres", "last", "previous"]
-post_words = ["dernier","derniers","derniere","dernière", "précédente", "précédent", "precedente", "precedent", "last"]
+balai = ["dernier","derniers","derniere","dernière","sur"]
+previous_words = balai+["il y a","ce","cette", "last", "previous"]
+post_words = balai+["précédente", "précédent", "precedente", "precedent", "last"]
 
 chiffres = {
     "un":1,
@@ -174,7 +175,7 @@ class DateExtractor(object):
             "year": int(time.strftime("%Y")),
         }
 
-    def annee(self,remove=1,dateFormat="%Y%m%d",toDate=False):
+    def annee(self,remove=1,dateFormat="%Y%m%d",toDate=False,ntd=False):
         currentDate = self.getCurrentDate()
         newYear = currentDate["year"] - remove
         startDate = datetime.datetime(newYear, 1, 1, 12, 00)
@@ -182,11 +183,12 @@ class DateExtractor(object):
         if toDate:
             endDate = datetime.datetime(currentDate["year"], 12, 31, 12, 00)
         else:
-            endDate = datetime.datetime(newYear+1, 1, 1, 12, 00)
+            final_year = (newYear+remove) if ntd else (newYear+1)
+            endDate = datetime.datetime(final_year, 1, 1, 12, 00)
         endDate = endDate.strftime(dateFormat)
         return [startDate,endDate]
 
-    def mois(self, remove=1,dateFormat="%Y%m%d",toDate=False):
+    def mois(self, remove=1,dateFormat="%Y%m%d",toDate=False,ntd=False):
         currentDate = self.getCurrentDate()
         newMonth = currentDate["month"] - remove
         year = currentDate["year"]
@@ -198,11 +200,13 @@ class DateExtractor(object):
         if toDate:
             endDate = datetime.datetime(currentDate["year"], currentDate["month"], currentDate["day"], 12, 00)
         else:
-            endDate = datetime.datetime(year, newMonth+1, 1, 12, 00)
+            final_month = (newMonth+remove) if ntd else (newMonth+1)
+            endDate = datetime.datetime(year, final_month, 1, 12, 00)
         endDate = endDate.strftime(dateFormat)
+        print(endDate)
         return [startDate,endDate]
 
-    def semaine(self, remove=1,dateFormat="%Y%m%d",toDate=False):
+    def semaine(self, remove=1,dateFormat="%Y%m%d",toDate=False,ntd=False):
         currentDate = self.getCurrentDate()
         newWeek = currentDate["week"] - remove
         year = currentDate["year"]
@@ -211,7 +215,8 @@ class DateExtractor(object):
             year -= 1
         stime = time.strptime('{} {} 1'.format(year, newWeek), '%Y %W %w')
         sDay,sMonth = stime.tm_mday,stime.tm_mon
-        etime = time.strptime('{} {} 1'.format(year, newWeek+1), '%Y %W %w')
+        final_week = (newWeek+remove) if ntd else (newWeek+1)
+        etime = time.strptime('{} {} 1'.format(year, final_week), '%Y %W %w')
         eDay,eMonth = etime.tm_mday,etime.tm_mon
         startDate = datetime.datetime(year, sMonth, sDay, 12, 00)
         startDate = startDate.strftime(dateFormat)
@@ -275,7 +280,9 @@ class DateExtractor(object):
                         print("{} : {}".format(days_diff,days_diff_amount))
                         total_days = days_diff*days_diff_amount
                         print("Total days "+str(total_days))
-                        new_dates_array = order[key]["function"](remove=total_days)
+                        is_to_date = ("depuis" in " ".join(sentence_split))
+                        is_balayement = len([w for w in balai if w in " ".join(sentence_split)])>0
+                        new_dates_array = order[key]["function"](remove=total_days,toDate=is_to_date,ntd=is_balayement)
                         allDates.append(new_dates_array)
                         allDates.append(order[key]["function"](remove=total_days+1))
                 except:
@@ -308,4 +315,4 @@ class DateExtractor(object):
 #datex = DateExtractor()
 #print(datex.getPrevious("20160510",7))
 
-#print(datex.extract_numerical("ou vend on le plus de bags les trois derniers mois"))
+#print(datex.extract_numerical("ou vend on le plus de bags sur 3 mois"))
