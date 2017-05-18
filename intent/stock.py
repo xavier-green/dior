@@ -6,7 +6,7 @@ from sql.tables import item, sale, boutique, country, division, retail, theme, d
 from annexes.mise_en_forme import affichage_euros, affichage_date, separateur_milliers
 from annexes.gestion_geo import geography_joins, geography_select
 from annexes.gestion_products import what_products, sale_join_products, query_products, where_products
-from annexes.gestion_details import append_details_date, append_details_products, append_details_geo, find_category
+from annexes.gestion_details import append_details_date, append_details_products, append_details_geo, find_category, append_details_boutiques
 
 class Stock(object):
 
@@ -50,21 +50,23 @@ class Stock(object):
 		"""
 		Jointures
 		"""
-		stock_query = sale_join_products(stock_query,self.items,main_table=stock_daily)
 
-		# GEOGRAPHY Extraction
+		stock_query = sale_join_products(stock_query, self.items, main_table = stock_daily)
+		stock_query = geography_joins(stock_query, self.geo, main_table = stock_daily)
 
-		stock_query = geography_joins(stock_query, self.geo, main_table=stock_daily)
+		if len(self.boutiques) > 0 :
+			boutique_query.join(stock_daily, boutique, "Location", "Code")
+
 
 		"""
 		Conditions
 		"""
 
 		stock_query = where_products(stock_query, self.items)
-
-
 		stock_query = geography_select(stock_query, self.geo)
 
+		for _boutique in self.boutiques:
+			seller_query.where(boutique, "Description", _boutique)
 
 		"""
 		Traitement de la réponse
@@ -75,6 +77,7 @@ class Stock(object):
 		details = append_details_date([], self.numerical_dates)
 		details = append_details_products(details, self.items, self.product_sources)
 		details = append_details_geo(details, self.geo)
+		details = append_details_boutiques(details, self.boutiques)
 
 		if not sellthru_query:
 			if 'NULL' in res_stock:
@@ -89,62 +92,57 @@ class Stock(object):
 			res_stock = int(res_stock)
 		print('Stock:', res_stock)
 
+		"""
+		Query secondaire pour le sell-thru
+		Il faut ici calculer les sales en plus du stock
+		"""
+
 		if sellthru_query:
 			print('It is a sellthru')
-			#Calculate sales for sellthru
-			Quantity_requested = []
-			if 'fp' in self.sentence.lower() or ('full' in self.sentence.lower() and 'price' in self.sentence.lower()):
-				Quantity_requested.append('fp')
-			if 'md' in self.sentence.lower() or ('mark' in self.sentence.lower() and 'down' in self.sentence.lower()):
-				Quantity_requested.append('md')
+			
+			# Initialisation
 
-			if len(Quantity_requested) == 0 or len(Quantity_requested) == 2:
-				Quantity = ('sum', sale, 'RG_Quantity', sale, 'MD_Quantity')
-				MDorFP = ""
-			elif Quantity_requested[0] == 'fp':
-				Quantity = ('sum', sale, 'RG_Quantity')
-				MDorFP = "en Full Price "
-			else:
-				Quantity = ('sum', sale, 'MD_Quantity')
-				MDorFP = "en Mark Down "
-
+			MDorFP, Quantity = find_MDorFP(self.sentence)
 			product_query = query(sale, [Quantity])
 
-			if 'couleur' in self.sentence:
-				product_query = query(sale, ['Color','count(*)'], top_distinct='DISTINCT TOP 5')
-			elif ('Où' in self.sentence) or ('où' in self.sentence):
-				product_query = query(sale, [(boutique, 'Description'),'count(*)'], top_distinct='DISTINCT TOP 5')
-			# Initialisation de la query : par défaut pour l'instant on sélectionne count(*)	'""'
-			if len(self.items) > 0:
-				product_query.join(sale, item, "Style", "Code") # jointure sur ITEM_Code = SALE_Style
-			product_query.join(sale, boutique, "Location", "Code") # jointure sur SALE_Location = LOCA_Code
+			# Jointures
 
 			product_query = geography_joins(product_query, self.geo)
 			seller_query = sale_join_products(seller_query, self.items)
 
-			# Maintenant que toutes les jointures sont faites, on passe aux conditions
+			if len(self.boutiques) > 0 :
+				boutique_query.join(stock_daily, boutique, "Location", "Code")
+
+			# Conditions
+
 			product_query = where_products(product_query, self.items)
 			product_query = geography_select(product_query, self.geo)
+
+			for _boutique in self.boutiques:
+				seller_query.where(boutique, "Description", _boutique)
+
 			product_query.whereNotJDAandOTH()
 
 			if len(self.numerical_dates) > 0:
 				product_query.wheredate(sale, 'DateNumYYYYMMDD', self.numerical_dates[0][0], self.numerical_dates[0][1])
 			else:
-				product_query.wheredate(sale, 'DateNumYYYYMMDD') # par défaut sur les 7 derniers jours
-				# La requête est terminée, on l'écrit
-				# product_query.write()
+				product_query.wheredate(sale, 'DateNumYYYYMMDD')
+
+			# Calcul des ventes
+
 			res_sales = product_query.write()
 			if 'NULL' in res_sales:
 				res_sales = 0
 			else:
 				res_sales = int(res_sales)
+
 			print("Sales:", res_sales)
+
+			# Calcul du sell-thru
+
 			if (res_sales+res_stock > 0):
-				sellthru = format((100 * res_sales / (res_sales  + res_stock)), '.2f') + ' %'
-				res_sellthru = 'Le sellthru '
-				if len(self.boutiques) > 0:
-					res_sellthru += "dans la boutique " + ' '.join(self.boutiques) + ' '
-				res_sellthru += "est de " + sellthru
+				sellthru = (100 * res_sales / (res_sales  + res_stock))
+				res_sellthru = "Le sellthru est de %.2f%%" %(sellthru)
 				return [stock_query.request + '\n' + product_query.request,res_sellthru, details]
 			str_res_stock = "Le stock est null"
 			return(stock_query.request + '\n' + product_query.request, str_res_stock, details)

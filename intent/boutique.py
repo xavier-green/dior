@@ -6,7 +6,7 @@ from sql.tables import item, sale, boutique, country, division, retail, theme, d
 from annexes.mise_en_forme import affichage_euros, affichage_date
 from annexes.gestion_geo import geography_joins, geography_select
 from annexes.gestion_products import what_products, sale_join_products, query_products, where_products
-from annexes.gestion_details import append_details_date, append_details_products, append_details_geo, find_category
+from annexes.gestion_details import append_details_date, append_details_products, append_details_geo, find_category, append_details_boutiques
 
 class Boutique(object):
 
@@ -17,6 +17,7 @@ class Boutique(object):
 		self.numerical_dates = data['numerical_dates']
 		self.items = data['items']
 		self.sentence = data['sentence']
+		self.boutiques = data['boutiques']
 		self.product_sources = data['sources']
 
 	def build_answer(self):
@@ -73,12 +74,18 @@ class Boutique(object):
 		boutique_query = sale_join_products(boutique_query, self.items)
 		boutique_query = geography_joins(boutique_query, self.geo, already_joined = [main_scale])
 
+		if len(self.boutiques) > 0 and not main_scale == "boutique":
+			boutique_query.join(sale, boutique, "Location", "Code")
+
 		"""
 		Conditions
 		"""
 
 		boutique_query = where_products(boutique_query, self.items)
 		boutique_query = geography_select(boutique_query, self.geo)
+
+		for _boutique in self.boutiques :
+			boutique_query.where(boutique, "Description", _boutique)
 
 		"""
 		Finitions
@@ -122,6 +129,7 @@ class Boutique(object):
 		details = append_details_date([], self.numerical_dates)
 		details = append_details_products(details, self.items, self.product_sources)
 		details = append_details_geo(details, self.geo)
+		details = append_details_boutiques(details, self.boutiques)
 
 		return [boutique_query.request, reponse, details]
 

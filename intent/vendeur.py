@@ -6,7 +6,7 @@ from sql.tables import staff, sale, boutique, country, item, zone, division, dep
 from annexes.mise_en_forme import affichage_euros, affichage_date
 from annexes.gestion_geo import geography_joins, geography_select
 from annexes.gestion_products import what_products, sale_join_products, query_products, where_products
-from annexes.gestion_details import append_details_date, append_details_products, append_details_geo, find_category
+from annexes.gestion_details import append_details_date, append_details_products, append_details_geo, find_category, append_details_boutiques
 
 class Vendeur(object):
 
@@ -59,6 +59,9 @@ class Vendeur(object):
 		seller_query = sale_join_products(seller_query, self.items)
 		seller_query = geography_joins(seller_query, self.geo)
 
+		if len(self.boutiques) > 0:
+			seller_query.join(sale, boutique, "Location", "Code")
+
 
 		"""
 		Conditions
@@ -66,6 +69,9 @@ class Vendeur(object):
 
 		seller_query = where_products(seller_query, self.items)
 		seller_query = geography_select(seller_query, self.geo)
+
+		for _boutique in self.boutiques:
+			seller_query.where(boutique, "Description", _boutique)
 
 
 		"""
@@ -102,5 +108,6 @@ class Vendeur(object):
 		details = append_details_date([], self.numerical_dates)
 		details = append_details_products(details, self.items, self.product_sources)
 		details = append_details_geo(details, self.geo)
+		details = append_details_boutiques(details, self.boutiques)
 
 		return [seller_query.request, reponse, details]

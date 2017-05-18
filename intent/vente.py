@@ -181,12 +181,14 @@ class Vente(object):
 			details = append_details_date(details, [[second_start_date, second_end_date]])
 			details = append_details_products(details, self.items, self.product_sources)
 			details = append_details_geo(details, self.geo)
+			details = append_details_boutiques(details, self.boutiques)
 
 		else:
 
 			details = append_details_date([], self.numerical_dates)
 			details = append_details_products(details, self.items, self.product_sources)
 			details = append_details_geo(details, self.geo)
+			details = append_details_boutiques(details, self.boutiques)
 
 		"""
 		Mise en forme de la réponse
