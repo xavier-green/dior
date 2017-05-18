@@ -270,13 +270,15 @@ class Vente(object):
 			vente_date_n = ventes_n[1]
 			vente_date_n_moins_un = ventes_n_moins_un[1]
 
-			if vente_date_n_moins_un == "NULL" or vente_date_n == "NULL":
-				result = "Aucune vente enregistrée "
+			if vente_date_n_moins_un == "NULL" :
+				result = "Aucune vente enregistrée l'année dernière pour ces mots-clés"
+			elif vente_date_n == "NULL":
+				result = "Aucune vente enregistrée la semaine dernière pour ces mots-clés"
 			else:
 				vente_date_n = float(vente_date_n)
 				vente_date_n_moins_un = float(vente_date_n_moins_un)
 				croissance = 100 * (vente_date_n - vente_date_n_moins_un) / vente_date_n_moins_un if vente_date_n_moins_un > 0 else 0
-				result = "La croissance est de %.2f%% " %(croissance)
+				result = "La croissance est de %.2f%% par rapport à l'année dernière" %(croissance)
 
 		elif query_type["quantity"]:
 			details, quantite, valeur = calcul_somme_ventes(query_result, details, quantity = True)
