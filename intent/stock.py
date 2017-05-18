@@ -79,6 +79,8 @@ class Stock(object):
 		Traitement de la réponse
 		"""
 
+		stock_query.groupby(stock, "DateNumYYYYMMDD")
+
 		result_query = stock_query.write().split("\n")
 		res_stock = result_query[1][0]
 		res_date = result_query[1][1]
