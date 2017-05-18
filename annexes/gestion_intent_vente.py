@@ -107,13 +107,12 @@ def calcul_somme_ventes(query_result, details):
 			valeur += float(prix_ventes)
 			quantite += int(quantite_ventes)
 		if n > 0 and n < 10 and len(colonnes) > 2 :
-			details_quantity = separateur_milliers(quantite_ventes) + " ventes" if quantity else ""
-			details_and = " pour " if quantity and value else ""
-			details_value = affichage_euros(prix_ventes) + " HT" if value else ""
+			details_quantity = separateur_milliers(quantite_ventes) + " ventes"
+			details_value = affichage_euros(prix_ventes) + " HT"
 
 			categorie_item = colonnes[-3]
 
-			details.append([categorie + ' ' + categorie_item, details_quantity + details_and + details_value])
+			details.append([categorie + ' ' + categorie_item, details_quantity + " pour " + details_value])
 		if n == 10:
 			details.append(["...", "..."])
 
