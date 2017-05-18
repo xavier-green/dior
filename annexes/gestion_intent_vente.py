@@ -101,7 +101,7 @@ def calcul_somme_ventes(query_result, details, quantity = False, value = False):
 	for n, ligne in enumerate(query_result):
 		colonnes = ligne.split('#')
 		if n == 0 and len(colonnes) > value + quantity :
-			categorie = find_category(colonnes[-3]) if value and quantity else find_category(colonnes[-2])
+			categorie = find_category(colonnes[-3]) if (value and quantity) else find_category(colonnes[-2])
 		if n > 0:
 			prix_ventes = colonnes[-1] if value else "0"
 			quantite_ventes = colonnes[-2] if value else colonnes[-1]
