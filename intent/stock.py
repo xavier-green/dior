@@ -1,4 +1,4 @@
-from sql.request import query
+﻿from sql.request import query
 
 # Import de toutes les tables utilisées
 from sql.tables import item, sale, boutique, country, division, retail, theme, department, zone, stock_daily, zone, uzone, sub_zone
@@ -8,6 +8,7 @@ from annexes.gestion_geo import geography_joins, geography_select
 from annexes.gestion_products import what_products, sale_join_products, query_products, where_products
 from annexes.gestion_details import append_details_date, append_details_products, append_details_geo, find_category, append_details_boutiques
 from annexes.gestion_intent_vente import find_MDorFP
+from extraction.date import monthDifference
 
 class Stock(object):
 
@@ -33,14 +34,14 @@ class Stock(object):
 	def build_query(self):
 
 		"""
-		Détermine s'il s'agit d'une demande de stock ou de sellthru
+		Détermine s'il s'agit d'une demande de stock ou de couverture de stock
 		"""
 
-		sellthru_query = False
+		couv_query = False
 
-		if 'thru' in self.sentence:
-			print('It is a sellthru')
-			sellthru_query = True
+		if 'couverture' in self.sentence:
+			print('It is a couverture')
+			couv_query = True
 
 		"""
 		Initialisation de la query
@@ -80,7 +81,7 @@ class Stock(object):
 		details = append_details_geo(details, self.geo)
 		details = append_details_boutiques(details, self.boutiques)
 
-		if not sellthru_query:
+		if not couv_query:
 			if 'NULL' in res_stock:
 				res_stock = "Le stock est de 0"
 			else:
@@ -94,12 +95,12 @@ class Stock(object):
 		print('Stock:', res_stock)
 
 		"""
-		Query secondaire pour le sell-thru
+		Query secondaire pour la couverture de stock
 		Il faut ici calculer les sales en plus du stock
 		"""
 
-		if sellthru_query:
-			print('It is a sellthru')
+		if couv_query:
+			print('It is a couv')
 			
 			# Initialisation
 
@@ -138,12 +139,16 @@ class Stock(object):
 				res_sales = int(res_sales)
 
 			print("Sales:", res_sales)
+			
+			# Moyenne des ventes sur 1 mois
+			
+			moy_sales = res_sales / (monthDifference(int(self.numerical_dates[0][0]), int(self.numerical_dates[0][1]))
 
-			# Calcul du sell-thru
+			# Calcul de la couverture de stock
 
-			if (res_sales+res_stock > 0):
-				sellthru = (100 * res_sales / (res_sales  + res_stock))
-				res_sellthru = "Le sellthru est de %.2f%%" %(sellthru)
-				return [stock_query.request + '\n' + product_query.request,res_sellthru, details]
-			str_res_stock = "Le stock est null"
+			if (moy_sales > 0):
+				couv = (res_stock)/(moy_sales)
+				res_couv = "La couverture de stock est de %.2f mois" %(couv)
+				return [stock_query.request + '\n' + product_query.request,res_couv, details]
+			str_res_stock = "Pas de ventes, la couverture de stock est indéderminée"
 			return(stock_query.request + '\n' + product_query.request, str_res_stock, details)
