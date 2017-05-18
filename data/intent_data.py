@@ -30,11 +30,12 @@ class intentData():
                 "Comment évolue la croissance en Amérique",
                 "Quelle couleur de bags se vend le plus à Montaigne",
                 "Couleur de pantalon",
-                "sellthru for bags",
                 "Ventes de la division horlo"
             ]
         },"stock": {
             "examples" : [
+                "sellthru de bags",
+                "quel est le sellthru de rose des vents",
                 "Quel est le pourcentage du sellthru au Japon de la semaine dernière",
                 "Quel est le pourcentage de sellthru en Asie de l'année dernière",
                 "Quel est le nombre de points de sellthru de Madrid la semaine derniere en Lady Dior",
