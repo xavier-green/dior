@@ -69,6 +69,8 @@ glossaire_2G = {
     "haute horlogerie":"high horology",
     "horlo precieuse":"precious timepieces",
     "horlogerie precieuse":"precious timepieces",
+    "lunettes femme":"women eyewear",
+    "lunettes homme":"men eyewear",
 }
 
 glossaire_3G = {
