@@ -125,7 +125,7 @@ def monthDifference(a,b):
     date1 = datetime.datetime.strptime(a, "%Y%m%d")
     date2 = datetime.datetime.strptime(b, "%Y%m%d")
     r = relativedelta.relativedelta(date2, date1)
-    return r.months
+    return r.months+12*r.years
 
 def lastThreeMonth():
     dateFormat="%Y%m%d"
@@ -339,7 +339,7 @@ class DateExtractor(object):
             return " ".join(sentence_split).replace(date_string,"DATE").rstrip()
         return (allDates, " ".join(sentence_split).replace(date_string,"").rstrip())
 
-#print(lastThreeMonth())
+print(monthDifference("20120510","20160510"))
 #datex = DateExtractor()
 #print(datex.getPrevious("20160510",7))
 
