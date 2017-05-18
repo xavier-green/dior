@@ -145,8 +145,7 @@ class Vente(object):
 			product_query.orderby(None, quantity_MDorFP, " DESC")
 
 		elif query_type["exceptionnal"]:
-			#product_query.groupby(boutique, 'Description')
-			#product_query.groupby(sale, 'DateNumYYYYMMDD')
+			product_query.groupby(item, "Description")
 			product_query.having(sale, ("sum", sale, "RG_Net_Amount_WOTax_REF", sale, "MD_Net_Amount_WOTax_REF"), ">", str(self.seuil_exc))
 
 			product_query.orderby(None, ("sum", sale, "RG_Net_Amount_WOTax_REF", sale, "MD_Net_Amount_WOTax_REF"), "DESC")
