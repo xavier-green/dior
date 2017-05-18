@@ -108,7 +108,7 @@ class Stock(object):
 			# Jointures
 
 			product_query = geography_joins(product_query, self.geo)
-			seller_query = sale_join_products(seller_query, self.items)
+			seller_query = sale_join_products(product_query, self.items)
 
 			if len(self.boutiques) > 0 :
 				boutique_query.join(stock_daily, boutique, "Location", "Code")
