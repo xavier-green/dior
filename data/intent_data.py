@@ -31,7 +31,9 @@ class intentData():
                 "Quelle couleur de bags se vend le plus à Montaigne",
                 "Couleur de pantalon",
                 "Ventes de la division horlo",
-                "Quel est le prix d'un parfum"
+                "Quel est le prix d'un parfum",
+                "Prix d'un soulier",
+                "Dis moi le prix d'une bague au Japon"
             ]
         },"stock": {
             "examples" : [
