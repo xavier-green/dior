@@ -71,7 +71,7 @@ class Vente(object):
 		elif query_type["price"]:
 			product_query = query(sale, [(item, "Description"), ("sum", sale, "RG_Net_Amount_WOTax_REF", sale, "MD_Net_Amount_WOTax_REF")], top_distinct='DISTINCT TOP 1')
 		elif query_type["exceptionnal"]:
-			product_query = query(sale, columns_requested+[("sum", sale, "RG_Net_Amount_WOTax_REF", sale, "MD_Net_Amount_WOTax_REF"), "DateNumYYYYMMDD", (boutique, "Description")], top_distinct= 'DISTINCT')
+			product_query = query(sale, [(item, "Description"), ("sum", sale, "RG_Net_Amount_WOTax_REF", sale, "MD_Net_Amount_WOTax_REF"), "DateNumYYYYMMDD", (boutique, "Description")], top_distinct= 'DISTINCT')
 		elif query_type["croissance"]:
 			product_query = query(sale, [("sum", sale, "RG_Net_Amount_WOTax_REF", sale, "MD_Net_Amount_WOTax_REF")])
 		elif query_type["margin"]:
@@ -101,7 +101,7 @@ class Vente(object):
 			product_query.join(sale, color, "Color", "Code")
 			already_joined_product.append("Color")
 
-		if query_type["price"]:
+		if query_type["price"] or query_type["exceptionnal"]:
 			product_query.join(sale, item, "Style", "Code")
 			already_joined_product.append("Style")
 
@@ -145,8 +145,8 @@ class Vente(object):
 			product_query.orderby(None, quantity_MDorFP, " DESC")
 
 		elif query_type["exceptionnal"]:
-			product_query.groupby(boutique, 'Description')
-			product_query.groupby(sale, 'DateNumYYYYMMDD')
+			#product_query.groupby(boutique, 'Description')
+			#product_query.groupby(sale, 'DateNumYYYYMMDD')
 			product_query.having(sale, ("sum", sale, "RG_Net_Amount_WOTax_REF", sale, "MD_Net_Amount_WOTax_REF"), ">", str(self.seuil_exc))
 
 			product_query.orderby(None, ("sum", sale, "RG_Net_Amount_WOTax_REF", sale, "MD_Net_Amount_WOTax_REF"), "DESC")
@@ -223,13 +223,16 @@ class Vente(object):
 
 		elif query_type["exceptionnal"]:
 			result = "Il y a eu %i ventes exceptionnelles (supérieures à %s)" %(len(query_result)-1, affichage_euros(self.seuil_exc))
-			result += "\nVoici les 3 meilleures :" if len(query_result)-1 > 3 else ""
+			result += "\nVoici les meilleures :" if len(query_result)-1 > 3 else ""
 
 			for n, ligne in enumerate(query_result):
 				if n > 0 and n < 4:
 					colonnes = ligne.split('#')
-					item_desc, item_prix, item_date, item_lieu = colonnes
-					result += "%s vendu à %s le %s à %s\n" % (item_desc.rstrip(), affichage_euros(item_prix), affichage_date(item_date), item_lieu)
+					if len(colonnes) == 4:
+						item_desc, item_prix, item_date, item_lieu = colonnes
+						result += "%s vendu à %s le %s à %s\n" % (item_desc.rstrip(), affichage_euros(item_prix), affichage_date(item_date), item_lieu)
+					else:
+						result = "Aucune vente exceptionnelle pour ces mots-clés"
 
 		elif query_type["margin"]:
 			
