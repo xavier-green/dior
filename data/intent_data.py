@@ -30,7 +30,8 @@ class intentData():
                 "Comment évolue la croissance en Amérique",
                 "Quelle couleur de bags se vend le plus à Montaigne",
                 "Couleur de pantalon",
-                "Ventes de la division horlo"
+                "Ventes de la division horlo",
+                "Quel est le prix d'un parfum"
             ]
         },"stock": {
             "examples" : [
