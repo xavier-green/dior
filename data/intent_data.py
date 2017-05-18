@@ -103,7 +103,9 @@ class intentData():
                 "Ou vend on le plus de art de la table",
                 "Ou a-t-on les meilleures ventes en joa",
                 "Quelle zone vend le plus de custom jewellery",
-                "Quel pays de Pacific Asia vend le plus de cravates"
+                "Quel pays de Pacific Asia vend le plus de cravates",
+                "Quelle zone vend le plus de PAP femme",
+                "Quelle zone vend le plus de Ready to Wear Women"
             ]
         }, "vendeur": {
             "examples" : ["Qui est le meilleur vendeur",
