@@ -24,7 +24,7 @@ def what_products(list_of_dict):
 				products_requested.append((theme, "Description", "Theme", produit[produit_key], "theme"))
 			elif produit_key == "produit":
 				products_requested.append((item, "Description", "Style", produit[produit_key], "style"))
-			elif produit_key == "family":
+			elif produit_key == "famille":
 				products_requested.append((family, "Description", "Family", produit[produit_key], "famille"))
 			elif produit_key == "color":
 				products_requested.append((color, "Description", "Color", produit[produit_key], "couleur"))
