@@ -211,13 +211,13 @@ class ProductExtractor(object):
 
 #itm = ProductExtractor()
 #itm = ProductExtractor(
-    produit_path='/Users/xav/Downloads/products.csv',
-    division_path='/Users/xav/Desktop/DTY/Dior/rest/data/Divisions.csv',
-    departement_path='/Users/xav/Desktop/DTY/Dior/rest/data/Departements.csv',
-    groupe_path='/Users/xav/Desktop/DTY/Dior/rest/data/Groupe.csv',
-    theme_path='/Users/xav/Desktop/DTY/Dior/rest/data/Themes.csv',
-    family_path='/Users/xav/Desktop/DTY/Dior/rest/data/family.csv',
-    color_path='/Users/xav/Desktop/DTY/Dior/rest/data/color.csv',
-    material_path='/Users/xav/Desktop/DTY/Dior/rest/data/material.csv',
-    shape_path='/Users/xav/Desktop/DTY/Dior/rest/data/shape.csv')
+#    produit_path='/Users/xav/Downloads/products.csv',
+#    division_path='/Users/xav/Desktop/DTY/Dior/rest/data/Divisions.csv',
+#    departement_path='/Users/xav/Desktop/DTY/Dior/rest/data/Departements.csv',
+#    groupe_path='/Users/xav/Desktop/DTY/Dior/rest/data/Groupe.csv',
+#    theme_path='/Users/xav/Desktop/DTY/Dior/rest/data/Themes.csv',
+#    family_path='/Users/xav/Desktop/DTY/Dior/rest/data/family.csv',
+#    color_path='/Users/xav/Desktop/DTY/Dior/rest/data/color.csv',
+#    material_path='/Users/xav/Desktop/DTY/Dior/rest/data/material.csv',
+#    shape_path='/Users/xav/Desktop/DTY/Dior/rest/data/shape.csv')
 #print(itm.extract("combien de bags en croco avons nous vendu depuis"))
