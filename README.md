@@ -23,8 +23,10 @@ python fasttext_server.py
 
 Pour utiliser l'API Rest :
 
-GET sur /{mot} :: Retourne le vecteur (de dim 300) associé au mot (vecteur nul sinon)
-POST sur / avec un body = {"words":["madrid","chien"]} :: Retourne un tableau des vecteurs associés au mots du body
+```
+GET sur /{mot} : Retourne le vecteur (de dim 300) associé au mot (vecteur nul sinon)
+POST sur / avec un body = {"words":["madrid","chien"]} : Retourne un tableau des vecteurs associés au mots du body
+```
 
 ### Installation de l'API Principale
 
@@ -38,7 +40,7 @@ pip install -r requirements.txt
 Il faut ensuite créer un service dans le task scheduler de windows (crontab) qui run les script .bat (launch.bat et dumps_desc.bat), et vous pourrez enfin lancer le ChatBot avec la commande suivante (qui lance à la fois l'entraînement du ML et le webserver Flask) :
 
 ```
-4) python start.py
+python start.py
 ```
 
 ### Utilisation de l'API Principale
