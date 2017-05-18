@@ -227,9 +227,11 @@ class DateExtractor(object):
             endDate = datetime.datetime(currentDate["year"], currentDate["month"], currentDate["day"], 12, 00)
         else:
             final_month = (newMonth+remove) if ntd else (newMonth+1)
+            if final_month>12:
+                year += 1
+                final_month -= 12
             endDate = datetime.datetime(year, final_month, 1, 12, 00)
         endDate = endDate.strftime(dateFormat)
-        print(endDate)
         return [startDate,endDate]
 
     def semaine(self, remove=1,dateFormat="%Y%m%d",toDate=False,ntd=False):
@@ -337,8 +339,8 @@ class DateExtractor(object):
             return " ".join(sentence_split).replace(date_string,"DATE").rstrip()
         return (allDates, " ".join(sentence_split).replace(date_string,"").rstrip())
 
-print(lastThreeMonth())
+#print(lastThreeMonth())
 #datex = DateExtractor()
 #print(datex.getPrevious("20160510",7))
 
-#print(datex.extract_numerical("ou vend on le plus de bags sur 3 mois"))
+#print(datex.extract_numerical("quelle est la couverture de stocks sur 12 mois"))
