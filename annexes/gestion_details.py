@@ -27,10 +27,11 @@ def append_details_date(details, numerical_dates):
 	end_date = numerical_dates[0][1] if len(numerical_dates) > 0 else today()
 	dateFormat = "%Y%m%d"
 	# Parce que la BDD peut avoir des incohérences temporelles
-	if a[:-4] == '0229':
-		a  = a[:4] + '0228'
-	if b[:-4] == '0229':
-		b  = b[:4] + '0228'
+	if start_date[4:] == '0229':
+		start_date  = start_date[:4] + '0228'
+	if end_date[4:] == '0229':
+		end_date  = end_date[:4] + '0228'
+	print(end_date)
 	a = datetime.datetime.strptime(start_date, dateFormat)
 	b = datetime.datetime.strptime(end_date, dateFormat)
 	delta = b - a
