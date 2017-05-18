@@ -223,15 +223,15 @@ class Vente(object):
 				result = "Aucune vente concernant ces mots-clés, impossible de trouver un prix."
 
 		elif query_type["exceptionnal"]:
-			result = "Il y a eu %i ventes exceptionnelles (supérieures à %s)" %(len(query_result)-1, affichage_euros(self.seuil_exc))
-			result += "\nVoici les meilleures :" if len(query_result)-1 > 3 else ""
+			result = "Il y a eu %i ventes exceptionnelles (supérieures à %s)\n" %(len(query_result)-1, affichage_euros(self.seuil_exc))
+			result += "Voici les meilleures :\n" if len(query_result)-1 > 3 else ""
 
 			for n, ligne in enumerate(query_result):
 				if n > 0 and n < 4:
 					colonnes = ligne.split('#')
 					if len(colonnes) == 4:
 						item_desc, item_prix, item_date, item_lieu = colonnes
-						result += "%s vendu à %s le %s à %s\n" % (item_desc.rstrip(), affichage_euros(item_prix), affichage_date(item_date), item_lieu)
+						result += "%s vendu pour %s le %s à %s\n" % (item_desc.rstrip(), affichage_euros(item_prix), affichage_date(item_date), item_lieu)
 					else:
 						result = "Aucune vente exceptionnelle pour ces mots-clés"
 
