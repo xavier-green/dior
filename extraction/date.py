@@ -113,12 +113,35 @@ date_words = {
     "today":0
 }
 
+def getCurrent():
+    return {
+        "day": int(time.strftime("%d")),
+        "week": int(time.strftime("%W")),
+        "month": int(time.strftime("%m")),
+        "year": int(time.strftime("%Y")),
+    }
+
 def monthDifference(a,b):
     date1 = datetime.datetime.strptime(a, "%Y%m%d")
     date2 = datetime.datetime.strptime(b, "%Y%m%d")
     r = relativedelta.relativedelta(date2, date1)
-    return r.months
+    return r.months+12*r.years
 
+def lastThreeMonth():
+    dateFormat="%Y%m%d"
+    currentDate = getCurrent()
+    newMonth = currentDate["month"] - 3
+    year = currentDate["year"]
+    if (newMonth<=0):
+        newMonth += 12
+        year -= 1
+    startDate = datetime.datetime(year, newMonth, 1, 12, 00)
+    startDate = startDate.strftime(dateFormat)
+    final_month = (newMonth+3)
+    endDate = datetime.datetime(year, final_month, 1, 12, 00)    
+    endDate = endDate.strftime(dateFormat)
+    print(endDate)
+    return [startDate,endDate]
 
 class DateExtractor(object):
 
@@ -176,12 +199,7 @@ class DateExtractor(object):
         return previous_date.strftime(dateFormat)
 
     def getCurrentDate(self):
-        return {
-            "day": int(time.strftime("%d")),
-            "week": int(time.strftime("%W")),
-            "month": int(time.strftime("%m")),
-            "year": int(time.strftime("%Y")),
-        }
+        return getCurrent()
 
     def annee(self,remove=1,dateFormat="%Y%m%d",toDate=False,ntd=False):
         currentDate = self.getCurrentDate()
@@ -209,9 +227,11 @@ class DateExtractor(object):
             endDate = datetime.datetime(currentDate["year"], currentDate["month"], currentDate["day"], 12, 00)
         else:
             final_month = (newMonth+remove) if ntd else (newMonth+1)
+            if final_month>12:
+                year += 1
+                final_month -= 12
             endDate = datetime.datetime(year, final_month, 1, 12, 00)
         endDate = endDate.strftime(dateFormat)
-        print(endDate)
         return [startDate,endDate]
 
     def semaine(self, remove=1,dateFormat="%Y%m%d",toDate=False,ntd=False):
@@ -319,8 +339,8 @@ class DateExtractor(object):
             return " ".join(sentence_split).replace(date_string,"DATE").rstrip()
         return (allDates, " ".join(sentence_split).replace(date_string,"").rstrip())
 
-
+print(monthDifference("20120510","20160510"))
 #datex = DateExtractor()
 #print(datex.getPrevious("20160510",7))
 
-#print(datex.extract_numerical("ou vend on le plus de bags sur 3 mois"))
+#print(datex.extract_numerical("quelle est la couverture de stocks sur 12 mois"))

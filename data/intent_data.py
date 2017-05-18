@@ -1,4 +1,4 @@
-# coding=utf-8
+﻿# coding=utf-8
 
 class intentData():
     data = {
@@ -37,14 +37,14 @@ class intentData():
             ]
         },"stock": {
             "examples" : [
-                "sellthru de bags",
-                "quel est le sellthru de rose des vents",
-                "Quel est le pourcentage du sellthru au Japon de la semaine dernière",
-                "Quel est le pourcentage de sellthru en Asie de l'année dernière",
-                "Quel est le nombre de points de sellthru de Madrid la semaine derniere en Lady Dior",
-                "Quel est le sellthru de Paris le mois dernier",
-                "Quel est le sellthru à paris en dior homme la semaine derniere"
-                "Combien de points de sellthru en Asie le mois dernier"
+                "Couverture de socks de bags ",
+                "quel est la couverture de stock de rose des vents sur 6 mois",
+                "Quel est la couverture au Japon sur trois mois",
+                "Quel est la couverture de stock en Asie sur 12 mois",
+                "Quel est la couverture de stock de Madrid sur 3 mois en Lady Dior",
+                "Couverture de stocks de Paris sur six mois",
+                "Quel est la couverture de stock à paris en dior homme sur douze mois"
+                "couverture de stock en Asie sur 3 moisr"
                 "quelle est la couverture de stock de Ginza en Lady Dior",
                 "couverture de stock en joaillerie à paris",
                 "quelle est ma couverture de stock à madrid pour l'article coccinnelle",
