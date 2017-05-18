@@ -5,6 +5,7 @@ import unicodedata
 import sys
 sys.path.append('/usr/local/Cellar/python3/3.6.0/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages')
 import datetime
+from dateutil import relativedelta
 import time
 from calendar import monthrange
 
@@ -111,6 +112,13 @@ date_words = {
     "aujourd'hui":0,
     "today":0
 }
+
+def monthDifference(a,b):
+    date1 = datetime.datetime.strptime(a, "%Y%m%d")
+    date2 = datetime.datetime.strptime(b, "%Y%m%d")
+    r = relativedelta.relativedelta(date2, date1)
+    return r.months
+
 
 class DateExtractor(object):
 
