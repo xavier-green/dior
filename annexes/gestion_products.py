@@ -33,7 +33,7 @@ def what_products(list_of_dict):
 			elif produit_key == "shape":
 				products_requested.append((shape, "Description", "Shape", produit[produit_key], "shape"))
 			elif produit_key == "collection":
-				products_requested.append((collection, "Description", "Collection", produit[produit_key], "collection"))
+				products_requested.append((collection, "Description", "SCS_Collection", produit[produit_key], "collection"))
 			else:
 				print("Erreur, la catégorie de l'item %s, censée être %s, n'est pas connue !" %(produit[produit_key], produit_key))
 	return products_requested
