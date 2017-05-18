@@ -1,4 +1,4 @@
-from annexes.mise_en_forme import affichage_euros, affichage_date
+﻿from annexes.mise_en_forme import affichage_euros, affichage_date
 from annexes.gestion_dates import today, last_monday
 from annexes.gestion_products import what_products
 
@@ -26,6 +26,11 @@ def append_details_date(details, numerical_dates):
 	start_date = numerical_dates[0][0] if len(numerical_dates) > 0 else last_monday()
 	end_date = numerical_dates[0][1] if len(numerical_dates) > 0 else today()
 	dateFormat = "%Y%m%d"
+	# Parce que la BDD peut avoir des incohérences temporelles
+	if a[:-4] == '0229'
+		a  = a[:4] + '0228'
+	if b[:-4] == '0229'
+		b  = b[:4] + '0228'
 	a = datetime.datetime.strptime(start_date, dateFormat)
 	b = datetime.datetime.strptime(end_date, dateFormat)
 	delta = b - a

@@ -15,7 +15,7 @@ from nltk.util import ngrams
 class ProductExtractor(object):
 
     authorized = [
-        "JJ","NN","NNS","NN-JJ","JJ-NN","NN-NN","NNS-NNS","NNS-NN","NN-NNS","NNS-JJ","JJ-NNS","NNS-IN-NNS","NN-IN-NN","NN-IN-NNS","JJ-IN-NNS","NNS-IN-JJ","JJ-IN-NN","NN-IN-JJ","NN-NN-NN"
+        "JJ","NN","VB", "NNS","NN-JJ","JJ-NN","NN-NN","NNS-NNS","NNS-NN","NN-NNS","NNS-JJ","JJ-NNS","NNS-IN-NNS","NN-IN-NN","NN-IN-NNS","JJ-IN-NNS","NNS-IN-JJ","JJ-IN-NN","NN-IN-JJ","NN-NN-NN"
     ]
 
     not_replace = [
@@ -146,6 +146,7 @@ class ProductExtractor(object):
         d = dict()
         for a in t:
             d[a[0].lower()] = a[1]
+        print(d)
         return d
 
     def extract(self, sentence):
