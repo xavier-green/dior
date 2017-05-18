@@ -127,7 +127,7 @@ class Stock(object):
 
 			if len(self.numerical_dates) == 0:
 				# Default to last 3 months
-				self.numerical_dates = lastThreeMonth()
+				self.numerical_dates = [lastThreeMonth()]
 
 			product_query.wheredate(sale, 'DateNumYYYYMMDD', self.numerical_dates[0][0], self.numerical_dates[0][1])
 
