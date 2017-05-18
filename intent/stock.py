@@ -1,7 +1,7 @@
 ﻿from sql.request import query
 
 # Import de toutes les tables utilisées
-from sql.tables import item, sale, boutique, country, division, retail, theme, department, zone, stock_daily, zone, uzone, sub_zone
+from sql.tables import item, sale, boutique, country, division, retail, theme, department, zone, stock_daily, zone, uzone, sub_zone, collection, collectiondate
 
 from annexes.mise_en_forme import affichage_euros, affichage_date, separateur_milliers
 from annexes.gestion_geo import geography_joins, geography_select
@@ -86,7 +86,7 @@ class Stock(object):
 		details = append_details_geo(details, self.geo)
 		details = append_details_boutiques(details, self.boutiques)
 
-		if not couv_query:
+		if not couv_query and not thru_query:
 			if 'NULL' in res_stock:
 				res_stock = "Le stock est de 0"
 			else:
@@ -165,6 +165,8 @@ class Stock(object):
 				return [stock_query.request + '\n' + product_query.request,res_couv, details]
 			str_res_stock = "Pas de ventes, la couverture de stock est indéderminée"
 			return(stock_query.request + '\n' + product_query.request, str_res_stock, details)
+
+
 		# Sellthru query
 		elif thru_query:
 			collec = ""
@@ -176,12 +178,65 @@ class Stock(object):
 
 			
 			# Requete pour avoir la date de début
-			date_query = query(collectiondate, ['Code', 'Sale_date_deb'])
+			date_query = query(collectiondate, ['Sale_date_deb', 'Sale_date_fin'], top_distinct='TOP 1')
 			date_query.join(collectiondate, collection, "Code", "Code")
 			date_query.where(collection, "Description", collec)
-			
-			res_date = date_query.write()
+			date_query.orderby(collectiondate, "Sale_date_deb", "DESC")
+			res_date = date_query.write().split('\n')
 			print(res_date)
-			return(date_query.request, "", details)
+			if len(res_date) < 2:
+				return(date_query.request, "Erreur pendant la recherche des dates de la collection", details)
+			self.numerical_dates = [res_date[1].split('#')]
+			print(self.numerical_dates)
+			
+			product_query = query(sale, [('sum', sale, 'RG_Quantity'), ("sum", sale, 'MD_Quantity')])
+			# Jointures
+
+			product_query = geography_joins(product_query, self.geo)
+			product_query = sale_join_products(product_query, self.items)
+
+			if len(self.boutiques) > 0 :
+				product_query.join(sale, boutique, "Location", "Code")
+
+			# Conditions
+
+			product_query = where_products(product_query, self.items)
+			product_query = geography_select(product_query, self.geo)
+
+			for _boutique in self.boutiques:
+				product_query.where(boutique, "Description", _boutique)
+
+			product_query.whereNotJDAandOTH()
+
+			if len(self.numerical_dates) == 0:
+				# Default to last 3 months
+				self.numerical_dates = [lastThreeMonth()]
+
+			product_query.wheredate(sale, 'DateNumYYYYMMDD', self.numerical_dates[0][0], self.numerical_dates[0][1])
+
+			# Calcul des ventes
+
+			res_sales = product_query.write().split('\n')[1].split('#')
+
+			print("Sales:", res_sales)
+			sales_FP = 0
+			sales_MD = 0
+			if res_sales[0] != 'NULL':
+				sales_FP = int(res_sales[0])
+			if res_sales[1] != 'NULL':
+				sales_MD = int(res_sales[0])
+
+			print("Sales:", res_sales)
+
+			# Details
+			details = append_details_date([], self.numerical_dates)
+			details = append_details_products(details, self.items, self.product_sources)
+			details = append_details_geo(details, self.geo)
+			details = append_details_boutiques(details, self.boutiques)
+			
+			if res_stock + sales_FP + sales_MD ==0:
+				return(stock_query.request +'\n'+ date_query.request + '\n'+ product_query.request, 'Pas de ventes ni de stocks trouvés', details)
+			res_sellthru = (100 * sales_FP) / (sales_FP + sales_MD + res_stock)
+			return(date_query.request, 'Le sellthru est de %.2f%%' %(res_sellthru), details)
 			
 
