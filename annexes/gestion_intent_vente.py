@@ -100,24 +100,19 @@ def calcul_somme_ventes(query_result, details, quantity = False, value = False):
 	quantite = 0
 	for n, ligne in enumerate(query_result):
 		colonnes = ligne.split('#')
-		if n > 0 and len(colonnes) == 1:
-			chiffre = 0 if colonnes[0] == "NULL" else float(colonnes[0])
-			valeur = chiffre if value else 0
-			quantite = int(chiffre) if quantity else 0
-			return details, quantite, valeur
-		if n == 0 and len(colonnes)>1:
-			categorie = find_category(colonnes[-3]) if value and quantite else find_category(colonnes[-2])
+		if n == 0 and len(colonnes) > value + quantity :
+			categorie = find_category(colonnes[-3]) if value and quantity else find_category(colonnes[-2])
 		if n > 0:
 			prix_ventes = colonnes[-1] if value else "0"
 			quantite_ventes = colonnes[-2] if value else colonnes[-1]
 			valeur += float(prix_ventes)
 			quantite += int(quantite_ventes)
-		if n > 0 and n < 10:
+		if n > 0 and n < 10 and len(colonnes) > value + quantity  :
 			details_quantity = separateur_milliers(quantite_ventes) + " ventes" if quantity else ""
 			details_and = " pour " if quantity and value else ""
 			details_value = affichage_euros(prix_ventes) + " HT" if value else ""
 
-			categorie_item = colonnes[-3] if value and quantite else colonnes[-2]
+			categorie_item = colonnes[-3] if value and quantity else colonnes[-2]
 
 			details.append([categorie + ' ' + categorie_item, details_quantity + details_and + details_value])
 		if n == 10:
