@@ -41,10 +41,11 @@ def append_details_date(details, numerical_dates):
 
 def append_details_products(details, items, sources=[]):
 	try:
-		for idx,item in enumerate(items):
+		for index, item in enumerate(items):
 			for key in item:
-				print("bdd",sources[idx][0])
-				details.append([item[key]+" trouvé dans "+sources[idx][0],", ".join([upperfirst(w) for w in sources[idx][1]])])
+				print("Items trouvés dans la table " + sources[index][0])
+				liste_correspondances = [upperfirst(w).rstrip() for w in sources[index][1]]
+				details.append([item[key] + " trouvé dans " + sources[index][0], ", ".join(liste_correspondances)])
 	except:
 		products_requested = what_products(items)
 		for table, column, table_name, product_name, table_desc in products_requested:
