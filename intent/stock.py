@@ -7,6 +7,7 @@ from annexes.mise_en_forme import affichage_euros, affichage_date, separateur_mi
 from annexes.gestion_geo import geography_joins, geography_select
 from annexes.gestion_products import what_products, sale_join_products, query_products, where_products
 from annexes.gestion_details import append_details_date, append_details_products, append_details_geo, find_category, append_details_boutiques
+from annexes.gestion_intent_vente import find_MDorFP
 
 class Stock(object):
 
