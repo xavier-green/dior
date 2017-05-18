@@ -98,7 +98,8 @@ class intentData():
                 "Où est-ce que l'on vend beaucoup de jewelry",
                 "Ou vend on le plus de art de la table",
                 "Ou a-t-on les meilleures ventes en joa",
-                "Quelle zone vend le plus de custom jewellery"
+                "Quelle zone vend le plus de custom jewellery",
+                "Quel pays de Pacific Asia vend le plus de cravates"
             ]
         }, "vendeur": {
             "examples" : ["Qui est le meilleur vendeur",
