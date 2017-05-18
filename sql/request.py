@@ -104,7 +104,7 @@ class query(object):
 
 		self.request += where + "ZO.ZONE_Code NOT IN ('JDA', 'OTH')\n"
 
-	# whereComparaison(sale, prix, ">", 35000)
+	# whereComparaison(sale, "prix", ">", 35000)
 	def whereComparaison(self, table, column, comparaison, description):
 		assert table in self.joined_tables, "Vous faites appel à la table " + table.name + " absente de la requête, utilisez JOIN pour l'ajouter"
 
