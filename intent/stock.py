@@ -8,7 +8,7 @@ from annexes.gestion_geo import geography_joins, geography_select
 from annexes.gestion_products import what_products, sale_join_products, query_products, where_products
 from annexes.gestion_details import append_details_date, append_details_products, append_details_geo, find_category, append_details_boutiques
 from annexes.gestion_intent_vente import find_MDorFP
-from extraction.date import monthDifference
+from extraction.date import monthDifference, lastThreeMonth
 
 class Stock(object):
 
@@ -125,10 +125,11 @@ class Stock(object):
 
 			product_query.whereNotJDAandOTH()
 
-			if len(self.numerical_dates) > 0:
-				product_query.wheredate(sale, 'DateNumYYYYMMDD', self.numerical_dates[0][0], self.numerical_dates[0][1])
-			else:
-				product_query.wheredate(sale, 'DateNumYYYYMMDD')
+			if len(self.numerical_dates) == 0:
+				# Default to last 3 months
+				self.numerical_dates = lastThreeMonth()
+
+			product_query.wheredate(sale, 'DateNumYYYYMMDD', self.numerical_dates[0][0], self.numerical_dates[0][1])
 
 			# Calcul des ventes
 
