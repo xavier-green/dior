@@ -61,27 +61,43 @@ class Vente(object):
 		columns_requested.append(quantity_MDorFP)
 
 		"""
+		Création de la sous-requêtes pour la table vente
+		"""
+
+		sale_table = query(sale, ['*'])
+
+		sale_table.join(sale, zone, 'Zone', 'Code')
+		sale_table.whereNotJDAandOTH()
+
+		if len(self.numerical_dates) > 0:
+			sale_table.wheredate(sale, 'DateNumYYYYMMDD', self.numerical_dates[0][0], self.numerical_dates[0][1])
+		else:
+			sale_table.wheredate(sale, 'DateNumYYYYMMDD') # par défaut sur les 7 derniers jours
+
+		"""
 		On créé la query en fonction de la question
 		"""
 
 		if query_type["colour"]:
-			product_query = query(sale, [(color, 'Description'), quantity_MDorFP], top_distinct='DISTINCT TOP 3')
+			product_query = query(item, [(color, 'Description'), quantity_MDorFP], top_distinct='DISTINCT TOP 3')
 		elif query_type["location"]:
-			product_query = query(sale, [(boutique, 'Description'), quantity_MDorFP], top_distinct='DISTINCT TOP 5')
+			product_query = query(item, [(boutique, 'Description'), quantity_MDorFP], top_distinct='DISTINCT TOP 5')
 		elif query_type["price"]:
-			product_query = query(sale, [(item, "Description"), ("sum", sale, "RG_Net_Amount_WOTax_REF", sale, "MD_Net_Amount_WOTax_REF")], top_distinct='DISTINCT TOP 1')
+			product_query = query(item, [(item, "Description"), ("sum", sale, "RG_Net_Amount_WOTax_REF", sale, "MD_Net_Amount_WOTax_REF")], top_distinct='DISTINCT TOP 1')
 		elif query_type["exceptionnal"]:
-			product_query = query(sale, [(item, "Description"), ("sum", sale, "RG_Net_Amount_WOTax_REF", sale, "MD_Net_Amount_WOTax_REF"), "DateNumYYYYMMDD", (boutique, "Description")])
+			product_query = query(item, [(item, "Description"), ("sum", sale, "RG_Net_Amount_WOTax_REF", sale, "MD_Net_Amount_WOTax_REF"), "DateNumYYYYMMDD", (boutique, "Description")])
 		elif query_type["croissance"]:
-			product_query = query(sale, [("sum", sale, "RG_Net_Amount_WOTax_REF", sale, "MD_Net_Amount_WOTax_REF")])
+			product_query = query(item, [("sum", sale, "RG_Net_Amount_WOTax_REF", sale, "MD_Net_Amount_WOTax_REF")])
 		elif query_type["margin"]:
-			product_query = query(sale, columns_requested + [("sum", sale, "RG_Net_Amount_WOTax_REF", sale, "MD_Net_Amount_WOTax_REF"),("sum", sale, 'Unit_Avg_Cost_REF')])
+			product_query = query(item, columns_requested + [("sum", sale, "RG_Net_Amount_WOTax_REF", sale, "MD_Net_Amount_WOTax_REF"),("sum", sale, 'Unit_Avg_Cost_REF')])
 		elif query_type["quantity"]:
-			product_query = query(sale, columns_requested)
+			product_query = query(item, columns_requested)
 		elif query_type["netsale"]:
-			product_query = query(sale, columns_requested + [("sum", sale, "RG_Net_Amount_WOTax_REF", sale, "MD_Net_Amount_WOTax_REF")])
+			product_query = query(item, columns_requested + [("sum", sale, "RG_Net_Amount_WOTax_REF", sale, "MD_Net_Amount_WOTax_REF")])
 		else:
-			product_query = query(sale, columns_requested + [("sum", sale, "RG_Net_Amount_WOTax_REF", sale, "MD_Net_Amount_WOTax_REF")])
+			product_query = query(item, columns_requested + [("sum", sale, "RG_Net_Amount_WOTax_REF", sale, "MD_Net_Amount_WOTax_REF")])
+
+		product_query.join_custom(item, sale_table.request, sale, "Code", "Style")
 
 		"""
 		Jointures
@@ -96,14 +112,10 @@ class Vente(object):
 			product_query.join(sale, country, "Cust_Nationality", "Code_ISO")
 			already_joined_geo.append("country")
 
-		already_joined_product = []
+		already_joined_product = ["Style"]
 		if query_type["colour"]:
 			product_query.join(sale, color, "Color", "Code")
 			already_joined_product.append("Color")
-
-		if query_type["price"] or query_type["exceptionnal"]:
-			product_query.join(sale, item, "Style", "Code")
-			already_joined_product.append("Style")
 
 		product_query = geography_joins(product_query, self.geo, already_joined = already_joined_geo)
 		product_query = sale_join_products(product_query, self.items, already_joined = already_joined_product)
@@ -111,14 +123,6 @@ class Vente(object):
 		"""
 		Conditions
 		"""
-
-		product_query.whereNotJDAandOTH()
-
-		if not query_type["croissance"]:
-			if len(self.numerical_dates) > 0:
-				product_query.wheredate(sale, 'DateNumYYYYMMDD', self.numerical_dates[0][0], end=self.numerical_dates[0][1])
-			else:
-				product_query.wheredate(sale, 'DateNumYYYYMMDD') # par défaut en week-to-date
 
 		if query_type["nationality"]:
 			if query_type["foreign"]:
