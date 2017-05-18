@@ -144,6 +144,12 @@ class Stock(object):
 			# Moyenne des ventes sur 1 mois
 			
 			moy_sales = res_sales / monthDifference(self.numerical_dates[0][0], self.numerical_dates[0][1])
+			# Details
+			details = append_details_date([], self.numerical_dates)
+			details = append_details_products(details, self.items, self.product_sources)
+			details = append_details_geo(details, self.geo)
+			details = append_details_boutiques(details, self.boutiques)
+
 
 			# Calcul de la couverture de stock
 			if res_stock == 0:
