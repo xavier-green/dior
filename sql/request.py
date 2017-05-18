@@ -60,6 +60,7 @@ class query(object):
 		# Stock les tables utilisées dans la requête, et le nombre de where
 		self.joined_tables = [None, table]
 		self.wcount = []
+		self.hcount = []
 		self.grouped_by = False
 
 	# Pour faire une jointure entre deux tables sous la condition t1.join1 = t2.join2
@@ -104,7 +105,7 @@ class query(object):
 
 		self.request += where + "ZO.ZONE_Code NOT IN ('JDA', 'OTH')\n"
 
-	# whereComparaison(sale, "prix", ">", 35000)
+	# whereComparaison(sale, prix, ">", 35000)
 	def whereComparaison(self, table, column, comparaison, description):
 		assert table in self.joined_tables, "Vous faites appel à la table " + table.name + " absente de la requête, utilisez JOIN pour l'ajouter"
 
@@ -120,6 +121,26 @@ class query(object):
 		elif (table.alias + _column) not in self.wcount:
 			where_and_or = "AND "
 			self.wcount.append(table.alias + _column)
+		else:
+			where_and_or = "OR "
+
+		self.request += where_and_or + self.proprify_columns(table, [column], 1) + " " + comparaison + " " + description + "\n"
+
+	def having(self, table, column, comparaison, description):
+		assert table in self.joined_tables, "Vous faites appel à la table " + table.name + " absente de la requête, utilisez JOIN pour l'ajouter"
+
+		if type(column) is tuple:
+			_column = column[2]
+		else:
+			_column = column
+
+		# Choix d'utiliser HAVING, AND ou OR au début de la condition
+		if len(self.hcount) == 0:
+			where_and_or = "HAVING "
+			self.hcount.append(table.alias + _column)
+		elif (table.alias + _column) not in self.hcount:
+			where_and_or = "AND "
+			self.hcount.append(table.alias + _column)
 		else:
 			where_and_or = "OR "
 
@@ -150,7 +171,6 @@ class query(object):
 		else:
 			self.request += "GROUP BY " + self.proprify_columns(table, [column], 1) + '\n'
 			self.grouped_by = True
-
 
 	def orderby(self, table, column, desc=""):
 		if table:

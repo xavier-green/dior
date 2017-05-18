@@ -132,10 +132,6 @@ class Vente(object):
 				product_query.wheredate(sale, 'DateNumYYYYMMDD', self.numerical_dates[0][0], end=self.numerical_dates[0][1])
 			else:
 				product_query.wheredate(sale, 'DateNumYYYYMMDD') # par défaut en week-to-date
-
-		if query_type["exceptionnal"]:
-			product_query.whereComparaison(sale, ("sum", sale, "RG_Net_Amount_WOTax_REF", sale, "MD_Net_Amount_WOTax_REF"), ">", str(self.seuil_exc))
-
 		"""
 		Finitions
 		"""
@@ -149,7 +145,11 @@ class Vente(object):
 			product_query.orderby(None, quantity_MDorFP, " DESC")
 
 		elif query_type["exceptionnal"]:
-			product_query.orderby(sale, ("sum", sale, "RG_Net_Amount_WOTax_REF", sale, "MD_Net_Amount_WOTax_REF"), "DESC")
+			product_query.groupby(boutique, 'Description')
+			product_query.groupby(sale, 'DateNumYYYYMMDD')
+			product_query.having(sale, ("sum", sale, "RG_Net_Amount_WOTax_REF", sale, "MD_Net_Amount_WOTax_REF"), ">", str(self.seuil_exc))
+
+			product_query.orderby(None, ("sum", sale, "RG_Net_Amount_WOTax_REF", sale, "MD_Net_Amount_WOTax_REF"), "DESC")
 		
 		elif query_type["price"]:
 			product_query.groupby(item, "Description")
@@ -181,21 +181,19 @@ class Vente(object):
 			details = append_details_date(details, [[second_start_date, second_end_date]])
 			details = append_details_products(details, self.items, self.product_sources)
 			details = append_details_geo(details, self.geo)
-			details = append_details_boutiques(details, self.boutiques)
 
 		else:
 
 			details = append_details_date([], self.numerical_dates)
 			details = append_details_products(details, self.items, self.product_sources)
 			details = append_details_geo(details, self.geo)
-			details = append_details_boutiques(details, self.boutiques)
 
 		"""
 		Mise en forme de la réponse
 		"""
 
 		if query_type["colour"]:
-			result = "Voici les couleurs les plus vendues : \n"
+			result = "Voici les 3 couleurs les plus vendues : \n"
 			for n, ligne in enumerate(query_result):
 				if n > 0:
 					colonnes = ligne.split('#')
@@ -206,7 +204,7 @@ class Vente(object):
 						result += couleur.rstrip() + " avec " + separateur_milliers(nb_ventes) + " ventes \n"
 
 		elif query_type["location"]:
-			result = "Voici les boutiques avec les meilleurs ventes : \n"
+			result = "Voici les 3 boutiques avec les meilleurs ventes : \n"
 			for n, ligne in enumerate(query_result):
 				if n > 0:
 					colonnes = ligne.split('#')
