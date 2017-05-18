@@ -88,31 +88,30 @@ def find_MDorFP(sentence):
 
 	return MDorFP, Quantity
 
-def calcul_somme_ventes(query_result, details, quantity = False, value = False):
+def calcul_somme_ventes(query_result, details):
 	"""
-	A partir d'une query_result comportant à la fin [nom, nb_vente (if quantity), prix_vente (if value)],
+	A partir d'une query_result comportant à la fin [nom, nb_vente, prix_vente],
 	renvoit la quantite de ventes totale et le CA total,
 	tout en ajoutant le détail aux détails.
 	"""
-	assert (quantity or value), "Vous n'avez demandé ni quantité ni valeur"
 	
 	valeur = 0
 	quantite = 0
 	for n, ligne in enumerate(query_result):
 		colonnes = ligne.split('#')
-		if n == 0 and len(colonnes) > value + quantity :
-			categorie = find_category(colonnes[-3]) if (value and quantity) else find_category(colonnes[-2])
+		if n == 0 and len(colonnes) > 2 :
+			categorie = find_category(colonnes[-3])
 		if n > 0:
-			prix_ventes = colonnes[-1] if value else "0"
-			quantite_ventes = colonnes[-2] if value else colonnes[-1]
+			prix_ventes = colonnes[-1]
+			quantite_ventes = colonnes[-2]
 			valeur += float(prix_ventes)
 			quantite += int(quantite_ventes)
-		if n > 0 and n < 10 and len(colonnes) > value + quantity  :
+		if n > 0 and n < 10 and len(colonnes) > 2 :
 			details_quantity = separateur_milliers(quantite_ventes) + " ventes" if quantity else ""
 			details_and = " pour " if quantity and value else ""
 			details_value = affichage_euros(prix_ventes) + " HT" if value else ""
 
-			categorie_item = colonnes[-3] if value and quantity else colonnes[-2]
+			categorie_item = colonnes[-3]
 
 			details.append([categorie + ' ' + categorie_item, details_quantity + details_and + details_value])
 		if n == 10:

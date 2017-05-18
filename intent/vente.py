@@ -93,10 +93,6 @@ class Vente(object):
 			product_query = query(item, [("sum", sale, "RG_Net_Amount_WOTax_REF", sale, "MD_Net_Amount_WOTax_REF")])
 		elif query_type["margin"]:
 			product_query = query(item, columns_requested + [("sum", sale, "RG_Net_Amount_WOTax_REF", sale, "MD_Net_Amount_WOTax_REF"),("sum", sale, 'Unit_Avg_Cost_REF')])
-		elif query_type["quantity"]:
-			product_query = query(item, columns_requested)
-		elif query_type["netsale"]:
-			product_query = query(item, columns_requested + [("sum", sale, "RG_Net_Amount_WOTax_REF", sale, "MD_Net_Amount_WOTax_REF")])
 		else:
 			product_query = query(item, columns_requested + [("sum", sale, "RG_Net_Amount_WOTax_REF", sale, "MD_Net_Amount_WOTax_REF")])
 
@@ -291,17 +287,17 @@ class Vente(object):
 				result = "La croissance est de %.2f%% par rapport à l'année dernière" %(croissance)
 
 		elif query_type["quantity"]:
-			details, quantite, valeur = calcul_somme_ventes(query_result, details, quantity = True, value = False)
+			details, quantite, valeur = calcul_somme_ventes(query_result, details)
 			result = "Il y a eu " + separateur_milliers(str(quantite)) + " ventes "
 			result += text_MDorFP
 
 		elif query_type["netsale"]:
-			details, quantite, valeur = calcul_somme_ventes(query_result, details, quantity = False, value = True)
+			details, quantite, valeur = calcul_somme_ventes(query_result, details)
 			result = "Il y a eu " + affichage_euros(str(valeur)) + " HT de CA "
 			result += text_MDorFP
 
 		else:
-			details, quantite, valeur = calcul_somme_ventes(query_result, details, quantity = True, value = True)
+			details, quantite, valeur = calcul_somme_ventes(query_result, details)
 			result = "Il y a eu " + separateur_milliers(str(quantite)) + " ventes pour un total de " + affichage_euros(str(valeur)) + " HT "
 			result += text_MDorFP
 
