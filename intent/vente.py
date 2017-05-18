@@ -114,6 +114,12 @@ class Vente(object):
 
 		product_query.whereNotJDAandOTH()
 
+		if not query_type["croissance"]:
+			if len(self.numerical_dates) > 0:
+				product_query.wheredate(sale, 'DateNumYYYYMMDD', self.numerical_dates[0][0], end=self.numerical_dates[0][1])
+			else:
+				product_query.wheredate(sale, 'DateNumYYYYMMDD') # par défaut en week-to-date
+
 		if query_type["nationality"]:
 			if query_type["foreign"]:
 				product_query.whereComparaison(sale, "Country", "<>", "CO.COUN_Code")
@@ -127,11 +133,6 @@ class Vente(object):
 			for _boutique in self.boutiques :
 				product_query.where(boutique, "Description", _boutique)
 
-		if not query_type["croissance"]:
-			if len(self.numerical_dates) > 0:
-				product_query.wheredate(sale, 'DateNumYYYYMMDD', self.numerical_dates[0][0], end=self.numerical_dates[0][1])
-			else:
-				product_query.wheredate(sale, 'DateNumYYYYMMDD') # par défaut en week-to-date
 		"""
 		Finitions
 		"""
@@ -194,26 +195,26 @@ class Vente(object):
 		"""
 
 		if query_type["colour"]:
-			result = "Voici les 3 couleurs les plus vendues : \n"
+			result = "Voici les couleurs les plus vendues : "
 			for n, ligne in enumerate(query_result):
 				if n > 0:
 					colonnes = ligne.split('#')
 					if len(colonnes) != 2:
-						result = "Aucune vente avec des couleurs pour les mots-clés demandés."
+						result = "\nAucune vente avec des couleurs pour les mots-clés demandés."
 					else:
 						couleur, nb_ventes = colonnes
-						result += couleur.rstrip() + " avec " + separateur_milliers(nb_ventes) + " ventes \n"
+						result += "\n" + couleur.rstrip() + " avec " + separateur_milliers(nb_ventes) + " ventes"
 
 		elif query_type["location"]:
-			result = "Voici les 3 boutiques avec les meilleurs ventes : \n"
+			result = "Voici les boutiques avec les meilleurs ventes :"
 			for n, ligne in enumerate(query_result):
 				if n > 0:
 					colonnes = ligne.split('#')
 					if len(colonnes) != 2:
-						result = "Aucune vente pour les mots-clés demandés."
+						result = "\nAucune vente pour les mots-clés demandés."
 					else:
 						_boutique, nb_ventes = colonnes
-						result += _boutique + " avec " + separateur_milliers(nb_ventes) + " ventes \n"
+						result += "\n" + _boutique + " avec " + separateur_milliers(nb_ventes) + " ventes"
 
 		elif query_type["price"]:
 			if len(query_result) > 1 and len(query_result[1].split('#')) == 2:
@@ -223,17 +224,17 @@ class Vente(object):
 				result = "Aucune vente concernant ces mots-clés, impossible de trouver un prix."
 
 		elif query_type["exceptionnal"]:
-			result = "Il y a eu %i ventes exceptionnelles (supérieures à %s)\n" %(len(query_result)-1, affichage_euros(self.seuil_exc))
-			result += "Voici les meilleures :\n" if len(query_result)-1 > 3 else ""
+			result = "Il y a eu %i ventes exceptionnelles (supérieures à %s)" %(len(query_result)-1, affichage_euros(self.seuil_exc))
+			result += "\nVoici les meilleures :" if len(query_result)-1 > 3 else ""
 
 			for n, ligne in enumerate(query_result):
 				if n > 0 and n < 4:
 					colonnes = ligne.split('#')
 					if len(colonnes) == 4:
 						item_desc, item_prix, item_date, item_lieu = colonnes
-						result += "%s vendu pour %s le %s à %s\n" % (item_desc.rstrip(), affichage_euros(item_prix), affichage_date(item_date), item_lieu)
+						result += "\n%s vendu pour %s le %s à %s" % (item_desc.rstrip(), affichage_euros(item_prix), affichage_date(item_date), item_lieu)
 					else:
-						result = "Aucune vente exceptionnelle pour ces mots-clés"
+						result = "\nAucune vente exceptionnelle pour ces mots-clés"
 
 		elif query_type["margin"]:
 			

@@ -89,17 +89,17 @@ class Vendeur(object):
 		result = seller_query.write()
 		print("***************\n", result)
 
-		reponse = "Voici les meilleurs vendeurs : \n"
+		reponse = "Voici les meilleurs vendeurs :"
 
 		liste_resultat = result.split("\n")
 		for n, ligne in enumerate(liste_resultat):
 			if n == 0:
 				pass
 			elif len(ligne.split('#')) < 3:
-				reponse = "Aucun vendeur n'a réalisé ce genre de vente durant cette période."
+				reponse = "\nAucun vendeur n'a réalisé ce genre de vente durant cette période."
 			else:
 				nom_vendeur, nombre_ventes, montant_ventes = ligne.split('#')
-				reponse += nom_vendeur + " avec " + nombre_ventes + " ventes pour un montant de " + affichage_euros(montant_ventes) + " HT ; \n"
+				reponse += "\n" + nom_vendeur + " avec " + nombre_ventes + " ventes pour un montant de " + affichage_euros(montant_ventes) + " HT"
 
 		"""
 		Ajout des details

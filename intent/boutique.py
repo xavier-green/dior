@@ -109,7 +109,7 @@ class Boutique(object):
 		result = boutique_query.write()
 		print("***************\n", result)
 
-		reponse = "Voici les " + scale_cible + " ayant eu les meilleures ventes : \n"
+		reponse = "Voici les " + scale_cible + " ayant eu les meilleures ventes :"
 
 		liste_resultat = result.split("\n")
 		for n, ligne in enumerate(liste_resultat):
@@ -118,9 +118,9 @@ class Boutique(object):
 			elif len(ligne.split('#')) == 3:
 				colonnes = ligne.split('#')
 				nom, nombre_ventes, montant_ventes = colonnes
-				reponse += nom + " avec " + nombre_ventes + " ventes pour un montant de " + affichage_euros(montant_ventes) + " HT ; \n"
+				reponse += "\n" + nom + " avec " + nombre_ventes + " ventes pour un montant de " + affichage_euros(montant_ventes) + " HT"
 			else:
-				reponse = "Aucun(e) " + scale_cible + " n'a réalisé ce genre de vente durant cette période."
+				reponse = "\nAucun(e) " + scale_cible + " n'a réalisé ce genre de vente durant cette période."
 
 		"""
 		Ajout des détails
