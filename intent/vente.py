@@ -69,10 +69,13 @@ class Vente(object):
 		sale_table.join(sale, zone, 'Zone', 'Code')
 		sale_table.whereNotJDAandOTH()
 
-		if len(self.numerical_dates) > 0:
+		if len(self.numerical_dates) > 0 and not query_type["croissance"]:
 			sale_table.wheredate(sale, 'DateNumYYYYMMDD', self.numerical_dates[0][0], self.numerical_dates[0][1])
+		elif query_type["croissance"]:
+			pass
 		else:
 			sale_table.wheredate(sale, 'DateNumYYYYMMDD') # par défaut sur les 7 derniers jours
+
 
 		"""
 		On créé la query en fonction de la question
