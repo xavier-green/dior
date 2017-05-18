@@ -149,6 +149,8 @@ class DateExtractor(object):
                 return self.getPreviousAmount(current_index-1,sentence)
             elif previous_word.isdigit():
                 return previous_word
+            elif previous_word in chiffres:
+                return chiffres[previous_word]
         return 1
 
     def get_new_date(self,dateFormat="%Y%m%d", addDays=0):
@@ -303,7 +305,7 @@ class DateExtractor(object):
         return (allDates, " ".join(sentence_split).replace(date_string,"").rstrip())
 
 
-datex = DateExtractor()
+#datex = DateExtractor()
 #print(datex.getPrevious("20160510",7))
 
-print(datex.extract_numerical("ou vend on le plus de bags depuis 1 an"))
+#print(datex.extract_numerical("ou vend on le plus de bags les trois derniers mois"))

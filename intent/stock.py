@@ -46,7 +46,7 @@ class Stock(object):
 		Initialisation de la query
 		"""
 
-		stock_query = query(stock_daily, [('sum', stock_daily, 'Quantity')])
+		stock_query = query(stock_daily, [('sum', stock_daily, 'Quantity')], top_distinct='TOP 1')
 
 		"""
 		Jointures
