@@ -71,7 +71,7 @@ class Vente(object):
 		elif query_type["price"]:
 			product_query = query(sale, [(item, "Description"), ("sum", sale, "RG_Net_Amount_WOTax_REF", sale, "MD_Net_Amount_WOTax_REF")], top_distinct='DISTINCT TOP 1')
 		elif query_type["exceptionnal"]:
-			product_query = query(sale, [(item, "Description"), ("sum", sale, "RG_Net_Amount_WOTax_REF", sale, "MD_Net_Amount_WOTax_REF"), "DateNumYYYYMMDD", (boutique, "Description")], top_distinct= 'DISTINCT')
+			product_query = query(sale, [(item, "Description"), ("sum", sale, "RG_Net_Amount_WOTax_REF", sale, "MD_Net_Amount_WOTax_REF"), "DateNumYYYYMMDD", (boutique, "Description")])
 		elif query_type["croissance"]:
 			product_query = query(sale, [("sum", sale, "RG_Net_Amount_WOTax_REF", sale, "MD_Net_Amount_WOTax_REF")])
 		elif query_type["margin"]:
