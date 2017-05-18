@@ -113,7 +113,7 @@ class Stock(object):
 			product_query = sale_join_products(product_query, self.items)
 
 			if len(self.boutiques) > 0 :
-				product_query.join(stock_daily, boutique, "Location", "Code")
+				product_query.join(sale, boutique, "Location", "Code")
 
 			# Conditions
 
@@ -142,11 +142,12 @@ class Stock(object):
 			
 			# Moyenne des ventes sur 1 mois
 			
-			moy_sales = res_sales / (monthDifference(int(self.numerical_dates[0][0]), int(self.numerical_dates[0][1]))
+			moy_sales = res_sales / monthDifference(int(self.numerical_dates[0][0]), int(self.numerical_dates[0][1]))
 
 			# Calcul de la couverture de stock
-
-			if (moy_sales > 0):
+			if res_stock == 0:
+				return [stock_query.request + '\n' + product_query.request,"Pas de stock trouvé. La couverture de stock est indéterminée", details]
+			if moy_sales > 0:
 				couv = (res_stock)/(moy_sales)
 				res_couv = "La couverture de stock est de %.2f mois" %(couv)
 				return [stock_query.request + '\n' + product_query.request,res_couv, details]
