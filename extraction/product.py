@@ -28,7 +28,7 @@ class ProductExtractor(object):
     def __init__(self, produit_path='data/products.csv', division_path='data/Divisions.csv',
         departement_path='data/Departements.csv', groupe_path='data/Groupe.csv', theme_path='data/Themes.csv',
         family_path='data/family.csv', color_path='data/color.csv', material_path='data/material.csv',
-        shape_path='data/shape.csv', n_max=3):
+        shape_path='data/shape.csv', n_max=4):
 
         self.produit = pd.read_csv(produit_path,names=['Produit']).dropna().drop_duplicates()
         self.division = pd.read_csv(division_path,names=['Division']).dropna().drop_duplicates()
