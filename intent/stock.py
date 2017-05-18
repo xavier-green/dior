@@ -55,7 +55,7 @@ class Stock(object):
 		stock_query = geography_joins(stock_query, self.geo, main_table = stock_daily)
 
 		if len(self.boutiques) > 0 :
-			boutique_query.join(stock_daily, boutique, "Location", "Code")
+			stock_query.join(stock_daily, boutique, "Location", "Code")
 
 
 		"""
@@ -66,7 +66,7 @@ class Stock(object):
 		stock_query = geography_select(stock_query, self.geo)
 
 		for _boutique in self.boutiques:
-			seller_query.where(boutique, "Description", _boutique)
+			stock_query.where(boutique, "Description", _boutique)
 
 		"""
 		Traitement de la réponse
@@ -108,10 +108,10 @@ class Stock(object):
 			# Jointures
 
 			product_query = geography_joins(product_query, self.geo)
-			seller_query = sale_join_products(product_query, self.items)
+			product_query = sale_join_products(product_query, self.items)
 
 			if len(self.boutiques) > 0 :
-				boutique_query.join(stock_daily, boutique, "Location", "Code")
+				product_query.join(stock_daily, boutique, "Location", "Code")
 
 			# Conditions
 
@@ -119,7 +119,7 @@ class Stock(object):
 			product_query = geography_select(product_query, self.geo)
 
 			for _boutique in self.boutiques:
-				seller_query.where(boutique, "Description", _boutique)
+				product_query.where(boutique, "Description", _boutique)
 
 			product_query.whereNotJDAandOTH()
 
