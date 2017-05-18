@@ -34,15 +34,20 @@ class Stock(object):
 	def build_query(self):
 
 		"""
-		Détermine s'il s'agit d'une demande de stock ou de couverture de stock
+		Détermine s'il s'agit d'une demande de stock ou de couverture de stock ou de sellthru
 		"""
 
 		couv_query = False
+		thru_query = False
 
 		if 'couverture' in self.sentence:
 			print('It is a couverture')
 			couv_query = True
 
+		if 'thru' in self.sentence:
+			print('It is a sellthru')
+			thru_query = True
+		
 		"""
 		Initialisation de la query
 		"""
@@ -160,3 +165,23 @@ class Stock(object):
 				return [stock_query.request + '\n' + product_query.request,res_couv, details]
 			str_res_stock = "Pas de ventes, la couverture de stock est indéderminée"
 			return(stock_query.request + '\n' + product_query.request, str_res_stock, details)
+		# Sellthru query
+		elif thru_query:
+			collec = ""
+			for x in self.items:
+				if 'collection' in x.keys():
+					collec = x['collection']
+			if collec == "":
+				return("", "Pas de collection trouvée. Merci d'en préciser une.", details)
+
+			
+			# Requete pour avoir la date de début
+			date_query = query(collectiondate, ['Code', 'Sale_date_deb'])
+			date_query.join(collectiondate, collection, "Code", "Code")
+			date_query.where(collection, "Description", collec)
+			
+			res_date = date_query.write()
+			print(res_date)
+			return(date_query.request, "", details)
+			
+
