@@ -83,7 +83,7 @@ class Vendeur(object):
 		result = seller_query.write()
 		print("***************\n", result)
 
-		reponse = "Voici les 3 meilleurs vendeurs : \n"
+		reponse = "Voici les meilleurs vendeurs : \n"
 
 		liste_resultat = result.split("\n")
 		for n, ligne in enumerate(liste_resultat):

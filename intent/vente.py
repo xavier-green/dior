@@ -193,7 +193,7 @@ class Vente(object):
 		"""
 
 		if query_type["colour"]:
-			result = "Voici les 3 couleurs les plus vendues : \n"
+			result = "Voici les couleurs les plus vendues : \n"
 			for n, ligne in enumerate(query_result):
 				if n > 0:
 					colonnes = ligne.split('#')
@@ -204,7 +204,7 @@ class Vente(object):
 						result += couleur.rstrip() + " avec " + separateur_milliers(nb_ventes) + " ventes \n"
 
 		elif query_type["location"]:
-			result = "Voici les 3 boutiques avec les meilleurs ventes : \n"
+			result = "Voici les boutiques avec les meilleurs ventes : \n"
 			for n, ligne in enumerate(query_result):
 				if n > 0:
 					colonnes = ligne.split('#')
