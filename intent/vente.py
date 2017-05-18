@@ -287,17 +287,17 @@ class Vente(object):
 				result = "La croissance est de %.2f%% par rapport à l'année dernière" %(croissance)
 
 		elif query_type["quantity"]:
-			details, quantite, valeur = calcul_somme_ventes(query_result, details)
+			details, quantite, valeur = calcul_somme_ventes(query_result, details, quantity = True)
 			result = "Il y a eu " + separateur_milliers(str(quantite)) + " ventes "
 			result += text_MDorFP
 
 		elif query_type["netsale"]:
-			details, quantite, valeur = calcul_somme_ventes(query_result, details)
+			details, quantite, valeur = calcul_somme_ventes(query_result, details, value = True)
 			result = "Il y a eu " + affichage_euros(str(valeur)) + " HT de CA "
 			result += text_MDorFP
 
 		else:
-			details, quantite, valeur = calcul_somme_ventes(query_result, details)
+			details, quantite, valeur = calcul_somme_ventes(query_result, details, quantity = True, value = True)
 			result = "Il y a eu " + separateur_milliers(str(quantite)) + " ventes pour un total de " + affichage_euros(str(valeur)) + " HT "
 			result += text_MDorFP
 

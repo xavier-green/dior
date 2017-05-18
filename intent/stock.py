@@ -52,7 +52,7 @@ class Stock(object):
 		Initialisation de la query
 		"""
 
-		stock_query = query(stock_daily, [('sum', stock_daily, 'Quantity')], top_distinct='TOP 1')
+		stock_query = query(stock_daily, [('sum', stock_daily, 'Quantity'), "DateNumYYYYMMDD"], top_distinct='TOP 1')
 
 		"""
 		Jointures
@@ -79,9 +79,11 @@ class Stock(object):
 		Traitement de la réponse
 		"""
 
-		res_stock = stock_query.write().replace("\n","")
+		result_query = stock_query.write().split("\n")
+		res_stock = result_query[1][0]
+		res_date = result_query[1][1]
 
-		details = append_details_date([], self.numerical_dates)
+		details = append_details_date([], [[res_date, res_date]])
 		details = append_details_products(details, self.items, self.product_sources)
 		details = append_details_geo(details, self.geo)
 		details = append_details_boutiques(details, self.boutiques)
