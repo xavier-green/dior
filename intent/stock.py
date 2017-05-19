@@ -82,10 +82,15 @@ class Stock(object):
 		stock_query.groupby(stock_daily, "DateNumYYYYMMDD")
 		stock_query.orderby(stock_daily, "DateNumYYYYMMDD", "DESC")
 
-		result_query = stock_query.write().split("\n")[1].split('#')
-		print(result_query)
-		res_stock = result_query[0]
-		res_date = result_query[1]
+		result_query = stock_query.write().split("\n")
+		
+		if len(result_query)<2:
+			return(stock_query.request, 'Pas de stock trouvé', append_details_boutiques(append_details_geo(append_details_products([], self.items, self.product_sources), self.geo),self.boutiques))
+		else:
+			result_query = result_query[1].split('#')
+			print(result_query)
+			res_stock = result_query[0]
+			res_date = result_query[1]
 		print(res_date)
 		details = append_details_date([], [[res_date, res_date]])
 		details = append_details_products(details, self.items, self.product_sources)
