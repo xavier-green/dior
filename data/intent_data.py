@@ -41,6 +41,7 @@ class intentData():
 		"Quel est le sellthru de la Spring en Asie",
 		"Quel est le sellthru de la fall à Montaigne",
 		"Sellthru de la Winter en bags au japon",
+		"Quel est le sellthru de la Cruise en shoes",
                 "Couverture de socks de bags ",
                 "quel est la couverture de stock de rose des vents sur 6 mois",
                 "Quel est la couverture au Japon sur trois mois",
