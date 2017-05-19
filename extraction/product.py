@@ -185,7 +185,7 @@ class ProductExtractor(object):
                 words_tags = ""
                 for itm in item:
                     words_tags += tags_dict[itm]+"-"
-                if (words_tags[:-1] in self.authorized) or (len([w for w in item if w in allowed])>0):
+                if (words_tags[:-1] in self.authorized) or (len([w for w in item if w in self.allowed])>0):
                     #print(short_sentence)
                     #print("getting product for "+str(csv))
                     products_matched = self.get_product(short_sentence, csv["file"], csv["column"], csv["single"])
