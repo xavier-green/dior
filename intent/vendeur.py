@@ -92,7 +92,7 @@ class Vendeur(object):
 		reponse = "Voici les meilleurs vendeurs :"
 
 		liste_resultat = result.split("\n")
-		if len(ligne_resultat) < 2:
+		if len(liste_resultat) < 2:
 			reponse = "\nAucun vendeur n'a réalisé ce genre de vente durant cette période."
 		for n, ligne in enumerate(liste_resultat):
 			if n == 0:
