@@ -33,7 +33,9 @@ class intentData():
                 "Ventes de la division horlo",
                 "Quel est le prix d'un parfum",
                 "Prix d'un soulier",
-                "Dis moi le prix d'une bague au Japon"
+                "Dis moi le prix d'une bague au Japon",
+                "Quel est le margin des souliers",
+                "Quelle couleur de pantalon se vend le plus"
             ]
         },"stock": {
             "examples" : [
