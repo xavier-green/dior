@@ -1,5 +1,4 @@
 import sys
-sys.path.append('/usr/local/Cellar/python3/3.6.0/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages')
 
 from flask import Flask, render_template
 from flask import request, jsonify
