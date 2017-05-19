@@ -255,7 +255,7 @@ class DateExtractor(object):
         endDate = endDate.strftime(dateFormat)
         return [startDate,endDate]
 
-    def jour(self, remove=1,dateFormat="%Y%m%d"):
+    def jour(self, remove=1,dateFormat="%Y%m%d",toDate=False,ntd=False):
         currentDate = self.getCurrentDate()
         newDay = currentDate["day"] - remove
         year = currentDate["year"]
@@ -339,8 +339,7 @@ class DateExtractor(object):
             return " ".join(sentence_split).replace(date_string,"DATE").rstrip()
         return (allDates, " ".join(sentence_split).replace(date_string,"").rstrip())
 
-print(monthDifference("20120510","20160510"))
-#datex = DateExtractor()
+datex = DateExtractor()
 #print(datex.getPrevious("20160510",7))
 
-#print(datex.extract_numerical("quelle est la couverture de stocks sur 12 mois"))
+print(datex.extract_numerical("combien de bags avons nous vendu hier"))
