@@ -44,7 +44,7 @@ class query(object):
 						method_columns.append(method_table.alias + '.' + method_table.prefix + method_column)
 					response.append(' + '.join(method_columns))
 			else:
-				assert False, "Impossible de proprifier les colonnes suivantes :", c
+				assert False, "Impossible de proprifier les colonnes suivantes : "
 		# Pour les requêtes comme ORDER BY et GROUP BY qui demandent uniquement une colonne
 		if max_columns > 0:
 			response = response[0:max_columns]
