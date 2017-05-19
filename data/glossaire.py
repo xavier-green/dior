@@ -69,6 +69,7 @@ glossaire_2G = {
     "horlogerie precieuse":"precious timepieces",
     "lunettes femme":"women eyewear",
     "lunettes homme":"men eyewear",
+    "souliers femme":"women shoes"
 }
 
 glossaire_3G = {
@@ -80,3 +81,22 @@ glossaire_3G = {
 glossaire_4G = {
     "art de la table":"gift tableware"
 }
+
+"""
+Le code ci-dessous permet d'importer les dictionnaires précédents au format XLS
+"""
+"""
+import xlwt
+
+book = xlwt.Workbook(encoding="utf-8")
+sheet = book.add_sheet("Sheet 1")
+sheet.write(0,0, "mot")
+sheet.write(0,1, "traduction")
+i = 1
+for dictionnaire in [glossaire_1G, glossaire_2G, glossaire_3G, glossaire_4G]:
+        for key in dictionnaire:
+            sheet.write(i, 0, key)
+            sheet.write(i, 1, dictionnaire[key])
+            i += 1
+book.save("glossaire.xls")
+"""
