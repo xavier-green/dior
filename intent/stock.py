@@ -243,6 +243,6 @@ class Stock(object):
 			if res_stock + sales_FP + sales_MD ==0:
 				return(stock_query.request +'\n'+ date_query.request + '\n'+ product_query.request, 'Pas de ventes ni de stocks trouvés', details)
 			res_sellthru = (100 * sales_FP) / (sales_FP + sales_MD + res_stock)
-			return(date_query.request, 'Le sellthru est de %.2f%%' %(res_sellthru), details)
+			return(date_query.request+'\n'+ date_query.request + '\n'+ product_query.request, 'Le sellthru est de %.2f%%' %(res_sellthru), details)
 			
 
