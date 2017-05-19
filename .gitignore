@@ -2,3 +2,4 @@ __pycache__/
 */.DS_Store
 wiki.fr.bin
 data/*.csv
+config.py
