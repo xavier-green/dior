@@ -1,6 +1,7 @@
-# Projet ChatBot Dior
+﻿# Projet ChatBot Dior
 
 Prototype de ChatBot permettant d'accéder aux données précises de la BDD de Dior en posant des questions en langage naturel. Par exemple, permet der répondre aux questions "Combien de Lady Dior vendu cette semaine" ou "Quelle est la couverture de stock en chemises"
+ * Tous les programmes sont modifiables avec un simple éditeur de texte comme le Bloc-note de Windows *
 
 ## Getting started
 
@@ -30,17 +31,27 @@ POST sur / avec un body = {"words":["madrid","chien"]} : Retourne un tableau des
 
 ### Installation de l'API Principale
 
-Commandes à effectuer pour pouvoir lancer le bot :
+Tout d'abord cloner le dépôt à l'aide de Git (Git bash sous Windows)
+`git clone <depot_distant>`
+et installer python3.6 (avec Anaconda sur Windows)
 
-```
-git clone ...
-pip install -r requirements.txt
-```
+Commandes à effectuer pour pouvoir lancer le bot (dans cmd.exe):
 
-Il faut ensuite créer un service dans le task scheduler de windows (crontab) qui run les script .bat (launch.bat et dumps_desc.bat), et vous pourrez enfin lancer le ChatBot avec la commande suivante (qui lance à la fois l'entraînement du ML et le webserver Flask) :
+`pip install -r requirements.txt`
 
+Il faut ensuite créer un service dans le task scheduler de windows (crontab) qui run les script .bat (launch.bat et dumps_desc.bat).
+Vous pouvez lancer le ChatBot (si non lancé avec le Task schedueler) en démarrant launcher.bat ou avec la commande suivante :
 ```
 python start.py
+```
+
+Il faut enfin copier ou créer le fichier config.py, à mettre dans le dossier principal. Ce fichier est à remplir de la façon suivante :
+```
+fasttext_url = "url_server_fasttext"
+SQL_Server = "url_server_SQL"
+SQL_Username = "username_SQL"
+SQL_Password = "password_SQL"
+SQL_Database = "database_SQL"
 ```
 
 ### Utilisation de l'API Principale
@@ -49,6 +60,19 @@ POST sur / avec un body = {"sentence":"combien avons nous vendu de sac hier","se
 --> Sentence contient la phrase de l'utilisateur, le seuil est le seuil de transactions exceptionnelles
 
 GET /admin/logs :: Tableau avec tous les logs de l'app (date-question-requête SQL-réponse)
+
+### Modifications de l'accès SQL
+
+Pour modifier l'authentification SQL, on change le fichier config.py.
+Il contient les variables SQL_Server, SQL_Username, SQL_Password et SQL_Database
+
+Tables utilisées : dans sql/tables.py se trouve l'ensemble des tables.
+
+<table_name_interne> = table(<TABLE_NAME_SQL>, <TABLE_Prefix>, <Alias>, [<colonne1>, <colonne2>,...])
+
+Si les colonnes de la base changent, il faut modifier ce fichier ainsi que tous les fichiers .py aux lignes où on trouve table_name_interne et colonne.
+
+Vous pouvez rechercher quels fichiers doivent être modifiés dans Git Bash avec `git grep -e ".*<table_name>.*<colonne>.*`
 
 ## Architecture du code
 
@@ -78,7 +102,7 @@ Contient intent.py et train.py qui se chargent du ML, et un fichier par intent p
 
 ### OVH
 
-Contient le serveur fasttext
+Contient le serveur fasttext.
 
 ### SQL
 

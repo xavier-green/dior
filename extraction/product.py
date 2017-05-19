@@ -15,7 +15,7 @@ from nltk.util import ngrams
 class ProductExtractor(object):
 
     authorized = [
-        "JJ","NN","VB", "NNS","NN-JJ","JJ-NN","NN-NN","NNS-NNS","NNS-NN","NN-NNS","NNS-JJ","JJ-NNS","NNS-IN-NNS","NN-IN-NN","NN-IN-NNS","JJ-IN-NNS","NNS-IN-JJ","JJ-IN-NN","NN-IN-JJ","NN-NN-NN"
+        "JJ","NN", "NNS","NN-JJ","JJ-NN","NN-NN","NNS-NNS","NNS-NN","NN-NNS","NNS-JJ","JJ-NNS","NNS-IN-NNS","NN-IN-NN","NN-IN-NNS","JJ-IN-NNS","NNS-IN-JJ","JJ-IN-NN","NN-IN-JJ","NN-NN-NN"
     ]
 
     not_replace = [
@@ -24,6 +24,8 @@ class ProductExtractor(object):
         "nom", "collection", "endroit", "ete", "md", "fp", "mark", "down", "full", "price", "markdown", "fullprice",
         "net", "sale", "division", "pays", "tu"
     ]
+
+    allowed = ["winter", "montre", "summer"]
 
     def __init__(self, produit_path='data/products.csv', division_path='data/Divisions.csv',
         departement_path='data/Departements.csv', groupe_path='data/Groupe.csv', theme_path='data/Themes.csv',
@@ -183,7 +185,7 @@ class ProductExtractor(object):
                 words_tags = ""
                 for itm in item:
                     words_tags += tags_dict[itm]+"-"
-                if words_tags[:-1] in self.authorized:
+                if (words_tags[:-1] in self.authorized) or (len([w for w in item if w in self.allowed])>0):
                     #print(short_sentence)
                     #print("getting product for "+str(csv))
                     products_matched = self.get_product(short_sentence, csv["file"], csv["column"], csv["single"])
