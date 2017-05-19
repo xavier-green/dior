@@ -25,6 +25,8 @@ class ProductExtractor(object):
         "net", "sale", "division", "pays", "tu"
     ]
 
+    allowed = ["winter", "montre", "summer"]
+
     def __init__(self, produit_path='data/products.csv', division_path='data/Divisions.csv',
         departement_path='data/Departements.csv', groupe_path='data/Groupe.csv', theme_path='data/Themes.csv',
         family_path='data/family.csv', color_path='data/color.csv', material_path='data/material.csv',
@@ -183,7 +185,7 @@ class ProductExtractor(object):
                 words_tags = ""
                 for itm in item:
                     words_tags += tags_dict[itm]+"-"
-                if words_tags[:-1] in self.authorized:
+                if (words_tags[:-1] in self.authorized) or (len([w for w in items if w in allowed])>0):
                     #print(short_sentence)
                     #print("getting product for "+str(csv))
                     products_matched = self.get_product(short_sentence, csv["file"], csv["column"], csv["single"])
