@@ -207,7 +207,7 @@ class DateExtractor(object):
         startDate = datetime.datetime(newYear, 1, 1, 12, 00)
         startDate = startDate.strftime(dateFormat)
         if toDate:
-            endDate = datetime.datetime(currentDate["year"], 12, 31, 12, 00)
+            endDate = datetime.datetime(currentDate["year"], currentDate["month"], currentDate["day"], 12, 00)
         else:
             final_year = (newYear+remove) if ntd else (newYear+1)
             endDate = datetime.datetime(final_year, 1, 1, 12, 00)
