@@ -93,12 +93,12 @@ class Vendeur(object):
 
 		liste_resultat = result.split("\n")
 		if len(liste_resultat) < 2:
-			reponse = "\nAucun vendeur n'a réalisé ce genre de vente durant cette période."
+			reponse = "Aucun vendeur n'a réalisé ce genre de vente durant cette période."
 		for n, ligne in enumerate(liste_resultat):
 			if n == 0:
 				pass
 			elif len(ligne.split('#')) < 3:
-				reponse = "\nAucun vendeur n'a réalisé ce genre de vente durant cette période."
+				reponse = "Aucun vendeur n'a réalisé ce genre de vente durant cette période."
 			else:
 				nom_vendeur, nombre_ventes, montant_ventes = ligne.split('#')
 				reponse += "\n" + nom_vendeur + " avec " + nombre_ventes + " ventes pour un montant de " + affichage_euros(montant_ventes) + " HT"
